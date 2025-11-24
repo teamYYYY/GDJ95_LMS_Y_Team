@@ -1,3 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mapper.Login"></mapper>
+<mapper namespace="com.example.lms.mapper.login.LoginMapper">
+
+	<!-- 사용자 로그인 검증-->
+	<select id="userLoginValidate" parameterType="com.example.lms.dto.SysUserDTO" resultType="int">
+		
+		select
+			count(user_id)
+		from
+			tb_sysuser
+		where user_id = #{userId} 
+		and user_password = #{userPassword} 
+		and user_status != '4'
+	
+	</select>
+	
+	<select id="loginUserSession" parameterType="com.example.lms.dto.SysUserDTO" resultType="com.example.lms.dto.SysUserDTO">
+		
+		select
+			user_no AS userNo,
+			user_id AS userId,
+			user_auth AS userAuth,
+			user_status AS userStatus,
+			dept_code AS deptCode,
+			user_grade AS userGrade,
+			user_position AS userPosition
+		from
+			tb_sysuser
+		where user_id = #{userId} 
+		and user_password = #{userPassword} 
+		and user_status != '4'
+		
+	
+	</select>
+	
+	
+
+</mapper>
