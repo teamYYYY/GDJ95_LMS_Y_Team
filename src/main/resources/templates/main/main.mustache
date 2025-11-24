@@ -1,10 +1,362 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리시스템</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Pretendard',sans-serif;background:#f9fafb;color:#1e293b;line-height:1.5}
+
+        /* 헤더 */
+        header{
+            height:160px;
+            background:linear-gradient(to right,#2563eb,#3b82f6);
+            color:white;
+            position:relative;
+            overflow:hidden;
+            box-shadow:0 4px 20px rgba(37,99,235,.3)
+        }
+        header::after{
+            content:"";
+            position:absolute;
+            top:0;right:0;bottom:0;
+            width:45%;
+            background:url('/images/campus-night.jpg') center/cover no-repeat;
+            opacity:.35
+        }
+        .header-inner{
+            position:relative;
+            z-index:2;
+            padding:28px 50px 0
+        }
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:8px
+        }
+        .logo svg{width:42px;height:42px}
+        .logo h1{font-size:26px;font-weight:800}
+        .logo small{font-size:15px;opacity:.95}
+        .welcome{font-size:16px;margin-bottom:22px;opacity:.98}
+        nav{
+            display:flex;
+            gap:48px
+        }
+        nav a{
+            color:rgba(255,255,255,.9);
+            text-decoration:none;
+            font-weight:600;
+            font-size:16px;
+            padding:12px 0;
+            border-bottom:4px solid transparent;
+            transition:all .3s
+        }
+        nav a:hover,nav a.active{
+            color:white;
+            border-bottom:4px solid white
+        }
+
+        /* 메인 컨테이너 */
+        .container{
+            max-width:1400px;
+            margin:50px auto;
+            padding:0 50px;
+            display:grid;
+            grid-template-columns:1fr 400px;
+            gap:50px
+        }
+
+        /* 카드 공통 */
+        .card{
+            background:white;
+            border-radius:28px;
+            padding:38px;
+            box-shadow:0 12px 40px rgba(0,0,0,.09);
+            border:1px solid #e2e8f0
+        }
+        .card h2{
+            font-size:22px;
+            font-weight:800;
+            margin-bottom:28px;
+            color:#1e293b
+        }
+
+        /* 캘린더 */
+        .calendar-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:24px
+        }
+        .calendar-header span{
+            font-size:32px;
+            color:#94a3b8;
+            cursor:pointer
+        }
+        .calendar-header strong{
+            font-size:22px;
+            font-weight:700
+        }
+        .calendar-grid{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:14px;
+            text-align:center
+        }
+        .calendar-grid div{
+            padding:10px 0
+        }
+        .day-name{
+            font-size:14px;
+            color:#64748b;
+            font-weight:600
+        }
+        .day{
+            width:48px;
+            height:48px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:50%;
+            font-size:15px;
+            transition:.2s
+        }
+        .day.other{color:#cbd5e1}
+        .day.today{
+            background:#3b82f6;
+            color:white;
+            font-weight:800;
+            box-shadow:0 6px 16px rgba(59,130,246,.5)
+        }
+
+        /* 오늘의 시간표 */
+        .schedule-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:20px 0;
+            border-bottom:1px solid #f1f5f9
+        }
+        .schedule-item:last-child{border:none}
+        .subject{font-size:17px;font-weight:700}
+        .time{font-size:14px;color:#64748b;margin-top:4px}
+        .room{
+            background:#dbeafe;
+            color:#3b82f6;
+            padding:8px 16px;
+            border-radius:14px;
+            font-size:13px;
+            font-weight:600
+        }
+
+        /* 사이드바 */
+        .user-card{
+            background:#3b82f6;
+            color:white;
+            border-radius:28px;
+            padding:40px;
+            text-align:center;
+            box-shadow:0 12px 40px rgba(59,130,246,.35)
+        }
+        .avatar{
+            width:100px;
+            height:100px;
+            background:rgba(255,255,255,.25);
+            border-radius:50%;
+            margin:0 auto 24px
+        }
+        .user-name{
+            font-size:24px;
+            font-weight:800;
+            margin-bottom:8px
+        }
+        .user-role{
+            font-size:16px;
+            opacity:.95;
+            margin-bottom:28px
+        }
+        .logout-btn{
+            display:inline-block;
+            background:rgba(255,255,255,.25);
+            padding:14px 40px;
+            border-radius:20px;
+            font-weight:600;
+            font-size:15px;
+            transition:.3s
+        }
+        .logout-btn:hover{
+            background:rgba(255,255,255,.35);
+            transform:translateY(-2px)
+        }
+
+        /* 공지사항 */
+        .notice-item{
+            padding:18px 0;
+            border-bottom:1px solid #f1f5f9
+        }
+        .notice-item:last-child{border:none}
+        .notice-header{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-bottom:6px
+        }
+        .tag{
+            font-size:11px;
+            padding:4px 10px;
+            border-radius:8px;
+            font-weight:700
+        }
+        .tag.new{background:#fef3c7;color:#92400e}
+        .tag.important{background:#fee2e2;color:#991b1b}
+        .notice-title{
+            font-size:15px;
+            font-weight:700
+        }
+        .notice-meta{
+            font-size:13px;
+            color:#94a3b8
+        }
+
+        footer{
+            text-align:center;
+            padding:80px 20px 40px;
+            color:#94a3b8;
+            font-size:13px;
+            margin-top:100px;
+            border-top:1px solid #e2e8f0
+        }
+    </style>
 </head>
 <body>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L1 9L12 16L23 9L12 2Z" stroke="white" stroke-width="2"/>
+                <path d="M12 16V22" stroke="white" stroke-width="2"/>
+                <path d="M6 12L12 16L18 12" stroke="white" stroke-width="2"/>
+            </svg>
+            <div>
+                <h1>학사관리시스템</h1>
+                <small>Academic Management System</small>
+            </div>
+        </div>
+        <div class="welcome">안녕하세요, 홍길동님. 오늘도 좋은 하루 되세요!</div>
+        <nav>
+            <a href="#" class="active">수강신청</a>
+            <a href="#">성적조회</a>
+            <a href="#">학사일정</a>
+            <a href="#">증명서발급</a>
+            <a href="#">환경설정</a>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="left">
+
+        <!-- 학사 일정 -->
+        <div class="card">
+            <h2>학사 일정</h2>
+            <div class="calendar-header">
+                <span>‹</span>
+                <strong>November 2025</strong>
+                <span>›</span>
+            </div>
+            <div class="calendar-grid">
+                <div class="day-name">Su</div><div class="day-name">Mo</div><div class="day-name">Tu</div>
+                <div class="day-name">We</div><div class="day-name">Th</div><div class="day-name">Fr</div><div class="day-name">Sa</div>
+                <div class="day other">26</div><div class="day other">27</div><div class="day other">28</div><div class="day other">29</div><div class="day other">30</div><div class="day other">31</div><div class="day">1</div>
+                <div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day">8</div>
+                <div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day">15</div>
+                <div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div>
+                <div class="day">23</div><div class="day">24</div><div class="day today">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div><div class="day">29</div>
+                <div class="day">30</div><div class="day other">1</div><div class="day other">2</div><div class="day other">3</div><div class="day other">4</div><div class="day other">5</div><div class="day other">6</div>
+            </div>
+        </div>
+
+        <!-- 오늘의 시간표 -->
+        <div class="card">
+            <h2>오늘의 시간표</h2>
+            <div class="schedule-item">
+                <div>
+                    <div class="subject">알고리즘</div>
+                    <div class="time">09:00 - 10:30</div>
+                </div>
+                <div class="room">공학관 301호</div>
+            </div>
+            <div class="schedule-item">
+                <div>
+                    <div class="subject">웹프로그래밍</div>
+                    <div class="time">11:00 - 12:30</div>
+                </div>
+                <div class="room">공학관 205호</div>
+            </div>
+            <div class="schedule-item">
+                <div>
+                    <div class="subject">소프트웨어공학</div>
+                    <div class="time">14:00 - 15:30</div>
+                </div>
+                <div class="room">공학관 401호</div>
+            </div>
+            <div class="schedule-item">
+                <div>
+                    <div class="subject">스포츠와 건강</div>
+                    <div class="time">16:00 - 17:30</div>
+                </div>
+                <div class="room">운동관 301호</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <!-- 사용자 정보 -->
+        <div class="user-card">
+            <div class="avatar"></div>
+            <div class="user-name">admin</div>
+            <div class="user-role">시스템 관리자</div>
+            <a href="/logout" class="logout-btn">로그아웃</a>
+        </div>
+
+        <!-- 최근 공지사항 -->
+        <div class="card">
+            <h2>최근 공지사항</h2>
+            <div class="notice-item">
+                <div class="notice-header">
+                    <span class="tag new">새글</span>
+                    <div class="notice-title">2025학년도 1학기 수강신청 안내</div>
+                </div>
+                <div class="notice-meta">2025-11-20 · 조회 1250</div>
+            </div>
+            <div class="notice-item">
+                <div class="notice-header">
+                    <span class="tag important">중요</span>
+                    <div class="notice-title">학기말 시험 일정 공지</div>
+                </div>
+                <div class="notice-meta">2025-11-19 · 조회 980</div>
+            </div>
+            <div class="notice-item">
+                <div class="notice-title">도서관 이용시간 변경 안내</div>
+                <div class="notice-meta">2025-11-17 · 조회 420</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    © 2025 학사관리시스템. All rights reserved.<br>
+    본 시스템은 학생, 교직원 전용입니다. 무단 접근 시 법적 조치될 수 있습니다.
+</footer>
 
 </body>
 </html>
