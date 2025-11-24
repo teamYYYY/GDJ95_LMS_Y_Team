@@ -1,10 +1,277 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리시스템 | Academic Management System</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
 </head>
-<body>
+<body class="text-gray-800">
+
+    <header>
+        <div class="bg-white py-4 px-6 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">학사관리시스템</h1>
+                    <p class="text-xs text-gray-500">Academic Management System</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-bg h-32 w-full"></div>
+
+        <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <nav class="flex space-x-8 overflow-x-auto scrollbar-hide">
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-book-open"></i> 수강신청
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-chart-bar"></i> 성적조회
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-regular fa-calendar-check"></i> 학사일정
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-file-lines"></i> 증명서발급
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-gear"></i> 설정
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">학사 일정</h2>
+                    <p class="text-sm text-gray-500">이번 달 주요 일정을 확인하세요</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span class="font-semibold text-gray-700">November 2025</span>
+                        <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2 text-center text-xs mb-2 text-gray-400">
+                        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2 text-center text-sm text-gray-600">
+                        <span class="text-gray-300">26</span><span class="text-gray-300">27</span><span class="text-gray-300">28</span><span class="text-gray-300">29</span><span class="text-gray-300">30</span><span class="text-gray-300">31</span>
+                        <span>1</span>
+                        <span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+                        <span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
+                        <span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span>
+                        <span>23</span>
+                        <span class="bg-black text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto">24</span>
+                        <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span>
+                        <span>30</span><span class="text-gray-300">1</span><span class="text-gray-300">2</span><span class="text-gray-300">3</span><span class="text-gray-300">4</span><span class="text-gray-300">5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-regular fa-clock text-blue-500"></i> 오늘의 시간표
+                    </h2>
+                    <p class="text-sm text-gray-500">2025년 11월 21일 (금)</p>
+                </div>
+
+                <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scroll pr-1">
+                    <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800 group-hover:text-blue-600">데이터베이스</h3>
+                            <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded font-medium">김교수</span>
+                        </div>
+                        <div class="text-sm text-gray-500 flex flex-col gap-1">
+                            <div class="flex items-center gap-2"><i class="fa-regular fa-clock text-xs"></i> 09:00 - 10:30</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-xs"></i> 공학관 301호</div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800 group-hover:text-blue-600">알고리즘</h3>
+                            <span class="bg-indigo-100 text-indigo-600 text-xs px-2 py-1 rounded font-medium">이교수</span>
+                        </div>
+                        <div class="text-sm text-gray-500 flex flex-col gap-1">
+                            <div class="flex items-center gap-2"><i class="fa-regular fa-clock text-xs"></i> 11:00 - 12:30</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-xs"></i> 공학관 205호</div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800 group-hover:text-blue-600">웹프로그래밍</h3>
+                            <span class="bg-sky-100 text-sky-600 text-xs px-2 py-1 rounded font-medium">박교수</span>
+                        </div>
+                        <div class="text-sm text-gray-500 flex flex-col gap-1">
+                            <div class="flex items-center gap-2"><i class="fa-regular fa-clock text-xs"></i> 14:00 - 15:30</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-xs"></i> 정보관 401호</div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-gray-800 group-hover:text-blue-600">소프트웨어공학</h3>
+                            <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded font-medium">최교수</span>
+                        </div>
+                        <div class="text-sm text-gray-500 flex flex-col gap-1">
+                            <div class="flex items-center gap-2"><i class="fa-regular fa-clock text-xs"></i> 16:00 - 17:30</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-xs"></i> 공학관 301호</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-fit">
+                <div class="mb-6">
+                    <h2 class="text-lg font-bold text-gray-800">환영합니다!</h2>
+                    <p class="text-gray-600 mt-1">홍길동님</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                    <span class="text-xs text-gray-500 block mb-1">학번</span>
+                    <span class="text-blue-700 font-semibold">20251234</span>
+                </div>
+
+                <div class="space-y-3">
+                    <button class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+                        <i class="fa-regular fa-user w-5"></i> 내 정보
+                    </button>
+                    <button class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+                        <i class="fa-solid fa-book w-5"></i> 학점관리
+                    </button>
+                    <a href="/logout" class="w-full py-2.5 px-4 border border-red-200 rounded-lg text-red-500 text-sm hover:bg-red-50 flex items-center gap-3 transition">
+                        <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> 로그아웃
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 rounded-xl border border-blue-100 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white shadow-md">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">학교 공지사항</h2>
+                        <p class="text-sm text-gray-500">최신 공지사항을 확인하세요</p>
+                    </div>
+                </div>
+                <a href="#" class="text-sm text-gray-500 bg-white px-3 py-1.5 rounded border hover:bg-gray-50 shadow-sm">전체보기</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex gap-2">
+                            <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded font-bold">학사</span>
+                            <span class="bg-red-100 text-red-500 text-[10px] px-2 py-0.5 rounded font-bold">중요</span>
+                        </div>
+                        <span class="text-xs text-gray-400">2025-11-20</span>
+                    </div>
+                    <h3 class="text-gray-800 font-medium mb-4">2025학년도 1학기 수강신청 안내</h3>
+                    <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+                        <span class="flex items-center gap-1"><i class="fa-regular fa-file-lines"></i> 자세히 보기</span>
+                        <span>조회 1250</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex gap-2">
+                            <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded font-bold">학사</span>
+                            <span class="bg-red-100 text-red-500 text-[10px] px-2 py-0.5 rounded font-bold">중요</span>
+                        </div>
+                        <span class="text-xs text-gray-400">2025-11-19</span>
+                    </div>
+                    <h3 class="text-gray-800 font-medium mb-4">학기말 시험 일정 공지</h3>
+                    <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+                        <span class="flex items-center gap-1"><i class="fa-regular fa-file-lines"></i> 자세히 보기</span>
+                        <span>조회 980</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex gap-2">
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-bold">일반</span>
+                        </div>
+                        <span class="text-xs text-gray-400">2025-11-18</span>
+                    </div>
+                    <h3 class="text-gray-800 font-medium mb-4">겨울방학 학사일정 안내</h3>
+                    <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+                        <span class="flex items-center gap-1"><i class="fa-regular fa-file-lines"></i> 자세히 보기</span>
+                        <span>조회 650</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex gap-2">
+                            <span class="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-0.5 rounded font-bold">시설</span>
+                        </div>
+                        <span class="text-xs text-gray-400">2025-11-17</span>
+                    </div>
+                    <h3 class="text-gray-800 font-medium mb-4">도서관 이용시간 변경 안내</h3>
+                    <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+                        <span class="flex items-center gap-1"><i class="fa-regular fa-file-lines"></i> 자세히 보기</span>
+                        <span>조회 420</span>
+                    </div>
+                </div>
+
+                 <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex gap-2">
+                            <span class="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded font-bold">장학</span>
+                            <span class="bg-red-100 text-red-500 text-[10px] px-2 py-0.5 rounded font-bold">중요</span>
+                        </div>
+                        <span class="text-xs text-gray-400">2025-11-15</span>
+                    </div>
+                    <h3 class="text-gray-800 font-medium mb-4">장학금 신청 안내</h3>
+                    <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+                        <span class="flex items-center gap-1"><i class="fa-regular fa-file-lines"></i> 자세히 보기</span>
+                        <span>조회 1580</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2025 학사관리시스템. All rights reserved.</p>
+        <p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+    </footer>
 
 </body>
 </html>
