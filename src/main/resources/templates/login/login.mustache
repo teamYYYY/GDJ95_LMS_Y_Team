@@ -3,158 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학사관리시스템 로그인</title>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+    <title>로그인 | 학사관리시스템</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body, html { height:100%; font-family:'Pretendard', sans-serif; background:#0f172a; }
-
-        .wrapper {
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:40px 20px;
-            background:linear-gradient(135deg,#1e293b,#0f172a);
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #EEF2FF; /* 부드러운 연한 파란색 배경 */
         }
-
-        .card {
-            width:1120px;
-            max-width:95vw;
-            background:white;
-            border-radius:32px;
-            overflow:hidden;
-            box-shadow:0 32px 80px rgba(0,0,0,0.4);
-            display:flex;
+        /* 좌측 이미지 배경 설정 */
+        .login-bg-image {
+            background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
         }
-
-        /* 왼쪽 사진 */
-        .left {
-            flex:1;
-            position:relative;
-            background:url('/images/school-building.jpg') center/cover no-repeat;
+        /* 이미지 위 오버레이 그라데이션 */
+        .overlay-gradient {
+            background: linear-gradient(to bottom, rgba(30, 58, 138, 0.4), rgba(23, 37, 84, 0.8));
         }
-        .left::before {
-            content:''; position:absolute; inset:0;
-            background:linear-gradient(to top,rgba(15,23,42,0.9),rgba(15,23,42,0.4) 50%,transparent);
-        }
-        .left-text {
-            position:absolute; left:50px; bottom:50px; color:white;
-            font-size:34px; font-weight:800; line-height:1.2;
-        }
-        .left-text span { font-size:18px; font-weight:500; opacity:0.95; }
-
-        /* 오른쪽 폼 */
-        .right {
-            width:460px;
-            padding:60px 55px 70px;   /* ← 아래쪽 패딩 크게 늘림 */
-            display:flex;
-            flex-direction:column;
-            justify-content:flex-start;
-        }
-
-        .logo {
-            width:90px; height:90px;
-            background:#3b82f6;
-            border-radius:50%;
-            display:flex; align-items:center; justify-content:center;
-            margin:0 auto 30px;
-            box-shadow:0 12px 30px rgba(59,130,246,0.35);
-        }
-
-        .title { text-align:center; font-size:26px; font-weight:800; color:#1e293b; margin-bottom:8px; }
-        .subtitle { text-align:center; font-size:15px; color:#64748b; margin-bottom:50px; }
-
-        label { display:block; font-size:15px; font-weight:700; color:#374151; margin-bottom:10px; }
-        input {
-            width:100%; height:56px; padding:0 20px; border:1px solid #e2e8f0;
-            border-radius:16px; background:#f8fafc; font-size:16px;
-            transition:all .3s;
-        }
-        input:focus { outline:none; border-color:#3b82f6; background:white;
-            box-shadow:0 0 0 4px rgba(59,130,246,0.15); }
-
-        .btn {
-            width:100%; height:58px; background:#3b82f6; color:white;
-            border:none; border-radius:16px; font-size:18px; font-weight:700;
-            cursor:pointer; margin-top:12px; transition:all .3s;
-        }
-        .btn:hover { background:#2563eb; transform:translateY(-1px); }
-
-        .find { text-align:center; margin:32px 0 40px; }
-        .find a { color:#64748b; font-size:14px; text-decoration:none; }
-        .find a:hover { text-decoration:underline; }
-
-        .test {
-            background:#f1f5f9; padding:18px 20px; border-radius:14px;
-            font-size:13.5px; color:#475569; text-align:center; line-height:1.7;
-        }
-
-        .footer {
-            margin-top:30px; text-align:center; font-size:13px; color:#94a3b8; line-height:1.7;
-        }
-
-        .error { color:#ef4444; font-size:14px; text-align:center; margin-bottom:16px; font-weight:600; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4">
 
-<body>
-
-<div class="wrapper">
-    <div class="card">
-        <!-- 왼쪽 -->
-        <div class="left">
-            <div class="left-text">
-                학사관리시스템
-                <span>Academic Management System</span>
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden flex w-full max-w-5xl h-[650px]">
+        
+        <div class="hidden lg:block lg:w-1/2 relative login-bg-image">
+            <div class="absolute inset-0 overlay-gradient"></div>
+            
+            <div class="absolute bottom-10 left-10 text-white z-10">
+                <h1 class="text-3xl font-bold mb-2">학사관리시스템</h1>
+                <p class="text-gray-200 font-light tracking-wide opacity-80">Academic Management System</p>
             </div>
         </div>
 
-        <!-- 오른쪽 -->
-        <div class="right">
-            <div class="logo">
-                <svg width="54" height="54" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2L1 9L12 16L23 9L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 16V22" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M6 12L12 16L18 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+        <div class="w-full lg:w-1/2 flex flex-col justify-center px-12 py-10 bg-white relative">
+            
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4 shadow-lg shadow-blue-200">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-white"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">학사관리시스템</h2>
+                <p class="text-gray-500 mt-1 text-sm">로그인하여 시작하세요</p>
             </div>
 
-            <h1 class="title">학사관리시스템</h1>
-            <p class="subtitle">로그인하여 시작하세요</p>
+            <form action="/loginForm" method="POST" class="space-y-5">
+                
+                <div>
+                    <label for="userId" class="block text-xs font-bold text-gray-700 mb-1.5 ml-1">학번</label>
+                    <input type="text" id="userId" name="userId" placeholder="학번을 입력하세요" 
+                           class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                           required>
+                </div>
 
-            {{#error}}
-            <div class="error">{{error}}</div>
-            {{/error}}
+                <div>
+                    <label for="password" class="block text-xs font-bold text-gray-700 mb-1.5 ml-1">비밀번호</label>
+                    <input type="password" id="userPassword" name="userPassword" placeholder="비밀번호를 입력하세요" 
+                           class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                           required>
+                </div>
 
-            <form action="/loginForm" method="post">
-                <label for="userId">학번</label>
-                <input type="text" id="userId" name="userId" placeholder="학번을 입력하세요"
-                       required autofocus>
+                <button type="submit" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg shadow-md shadow-blue-200 hover:shadow-lg transition-all duration-200 mt-2">
+                    로그인
+                </button>
 
-                <label for="userPassword" style="margin-top:24px;">비밀번호</label>
-                <input type="password" id="userPassword" name="userPassword" placeholder="비밀번호를 입력하세요" required>
-
-                <button type="submit" class="btn">로그인</button>
+                <div class="text-center mt-4">
+                    <a href="#" class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">비밀번호 찾기</a>
+                </div>
             </form>
 
-            <div class="find"><a href="#">비밀번호 찾기</a></div>
-
-            <div class="test">
-                테스트 계정: admin (관리자) / 20240001 (학생)
+            <div class="mt-12 pt-6 border-t border-gray-100 text-center">
+                <p class="text-[11px] text-gray-400 mb-1">테스트 계정: admin (관리자) / 20240001 (학생)</p>
+                <div class="flex items-center justify-center gap-2 text-[11px] text-gray-400 mb-1">
+                    <i class="fa-solid fa-phone text-[10px]"></i> 문의사항 안내: 02-000-0000
+                </div>
+                <p class="text-[10px] text-gray-300">© 2025 학사관리시스템. All rights reserved.</p>
             </div>
 
-            <div class="footer">
-                문의사항 안내: 02-000-0000<br>
-                © 2025 학사관리시스템. All rights reserved.
-            </div>
         </div>
     </div>
-</div>
-
-</body>
 
 </body>
 </html>
