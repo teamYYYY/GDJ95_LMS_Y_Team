@@ -10,13 +10,14 @@ import lombok.Data;
 
 @Data
 public class AssignmentSubmissionDTO {
-    private int assignmentSubmissionId;
-    private int assignmentId;
-    private int writerUserNo;
-    private String assignmentSubmissionFileUrl;
-    private String assignmentSubmissionContent;
-    private Integer assignmentScore;
-    private int assignmentSubmissionStatus;
-    private String createdate;
-    private String updatedate;
+
+    private int assignmentSubmissionNo;        // 제출번호 PK
+    private int assignmentNo;                  // 과제번호 FK
+    private int writerUserNo;                  // 학생번호 FK
+    private String assignmentSubmissionFileUrl;// 제출 파일 URL
+    private String assignmentSubmissionContent;// 제출 내용
+    private Integer assignmentScore;           // 채점 점수
+    private int assignmentSubmissionStatus;    // 0=제출, 1=미제출
+    private String createdate;                 // 제출일
+    private String updatedate;                 // 수정일
 }
