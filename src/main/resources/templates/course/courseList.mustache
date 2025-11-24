@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>강의 목록</h2>
+	<table border="1">
+		<tr>
+			<th>강의번호</th>
+			<th>개설연도</th>
+			<th>학기</th>
+			<th>강의명</th>
+			<th>상태</th>
+		</tr>
+		{{#list}}
+		<tr>
+			<td>{{courseNo}}</td>
+			<td>{{courseYear}}</td>
+			<td>{{courseSemester}}</td>
+			<td><a href="/courseDetail?courseNo={{courseNo}}">{{courseName}}</a></td>
+			<td>{{courseStatus}}</td>
+		</tr>
+		{{/list}}
+		
+		{{^list}}
+		<tr>
+			<td>등록된 강의가 없습니다.</td>
+		</tr>
+		{{/list}}
+	</table>
+	
+	<div>
+        <a href="/courseList?currentPage={{prePage}}">이전</a>
+        
+        <a class="active">{{currentPage}}</a>
+        
+        <a href="/courseList?currentPage={{nextPage}}">다음</a>
+    </div>
+</body>
+</html>

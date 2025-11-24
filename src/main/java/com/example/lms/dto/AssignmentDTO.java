@@ -1,6 +1,6 @@
 package com.example.lms.dto;
 
-public class assignmentDTO {
+public class AssignmentDTO {
 	private int assignmentNo;
 	private int courseNo;
 	private String assignmentTitle;
