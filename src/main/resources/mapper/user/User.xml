@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.user.UserMapper">
+
+	<!-- 2025. 11. 25. JM. 개인정보 관리 - 기본정보 -->
+	<select id="userInfoMap" parameterType="com.example.lms.dto.SysUserDTO" resultType="java.util.Map">
+		
+		SELECT
+		    a.user_no            AS userNo,
+		    a.user_id            AS userId,
+		    a.user_auth          AS userAuth,
+		    b.auth_name			 as authName,
+		    a.user_status        AS userStatus,
+		    d.status_name		 as statusName,
+		    a.user_name          AS userName,
+		    a.user_password      AS userPassword,
+		    a.user_email       AS userEmail,
+		    a.user_phone      AS userPhone,
+		    a.user_birth       AS userBirth,
+		    a.dept_code          AS deptCode,
+		    c.dept_name			 as deptName,
+		    a.user_grade         AS userGrade,
+		    a.user_position      AS userPosition,
+			a.user_addr        AS userAddr,
+			a.user_addr_detail AS userAddrDetail,
+			a.user_zipcode     AS userZipcode,
+		    a.user_last_login    AS userLastLogin,
+		    a.user_login_fail_cnt 	AS userLoginFailCnt,
+		    a.user_createdate         AS createDate,
+		    a.user_updatedate         AS updateDate
+		FROM tb_sysuser a
+		INNER JOIN tb_sys_auth b 
+		ON a.user_auth = b.auth_code
+		INNER JOIN tb_dept c 
+		ON a.dept_code = c.dept_code
+		INNER JOIN tb_sysuser_status d
+		ON a.user_status = d.status_code
+		WHERE user_no = #{userNo} and user_id = #{userId}
+		
+	</select>
+	
+	
+	<!-- 2025. 11. 25. JM. 개인정보 관리 - 기본정보 수정 -->
+	<update id="updateUserInfo" parameterType="com.example.lms.dto.SysUserDTO">
+	
+		UPDATE
+			tb_sysuser
+		SET
+			user_email = #{userEmail},
+			user_phone = #{userPhone},
+			user_addr = #{userAddr},
+			user_addr_detail = #{userAddrDetail},
+			user_zipcode = #{userZipcode},
+			user_login_fail_cnt = 0,
+			user_updatedate = NOW()
+		WHERE
+			user_no = #{userNo}
+			AND user_id = #{userId}
+	
+	</update>
+	
+	<!-- 2025. 11. 25. JM. 개인정보 관리 - 비밀번호 수정 -->
+	<update id="modifyUserInfoPassword" parameterType="java.util.Map">
+	
+		UPDATE
+			tb_sysuser
+		SET
+			user_password = #{userNewPassword},
+			user_updatedate = NOW()
+		WHERE
+			user_no = #{userNo}
+			and user_id = #{userId}
+			and user_password = #{userPassword}
+	
+	</update>
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 사용자 전체 조회 -->
+	<select id="userInfoMapList" resultType="java.util.Map">
+		
+		SELECT
+		    a.user_no            AS userNo,
+		    a.user_id            AS userId,
+		    a.user_auth          AS userAuth,
+		    b.auth_name			 as authName,
+		    a.user_status        AS userStatus,
+		    d.status_name		 as statusName,
+		    a.user_name          AS userName,
+		    a.user_password      AS userPassword,
+		    a.user_email       AS userEmail,
+		    a.user_phone      AS userPhone,
+		    a.user_birth       AS userBirth,
+		    a.dept_code          AS deptCode,
+		    c.dept_name			 as deptName,
+		    a.user_grade         AS userGrade,
+		    a.user_position      AS userPosition,
+			a.user_addr        AS userAddr,
+			a.user_addr_detail AS userAddrDetail,
+			a.user_zipcode     AS userZipcode,
+		    a.user_last_login    AS userLastLogin,
+		    a.user_login_fail_cnt 	AS userLoginFailCnt,
+		    a.user_createdate         AS createDate,
+		    a.user_updatedate         AS updateDate
+		FROM tb_sysuser a
+		inner join tb_sys_auth b 
+		on a.user_auth = b.auth_code
+		inner join tb_dept c 
+		on a.dept_code = c.dept_code
+		inner join tb_sysuser_status d
+		on a.user_status = d.status_code
+		
+	</select>
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 사용자 등록 -->
+	<insert id="insertUserInfo" parameterType="com.example.lms.dto.SysUserDTO">
+	
+		INSERT INTO tb_sysuser (
+			  user_no,
+			  user_auth,
+			  user_status,
+			  user_name,
+			  user_password,
+			  user_email,
+			  user_phone,
+			  user_birth,
+			  dept_code,
+			  user_grade,
+			  user_position,
+			  user_addr,
+			  user_addr_detail,
+			  user_zipcode,
+			  user_last_login,
+			  user_login_fail_cnt,
+			  user_createdate,
+			  user_updatedate
+		 ) VALUES (
+			  #{userNo},
+			  #{userAuth},
+			  #{userStatus},
+			  #{userName},
+			  #{userPassword},
+			  #{userEmail},
+			  #{userPhone},
+			  #{userBirth},
+			  #{deptCode},
+			  #{userGrade},
+			  #{userPosition},
+			  #{userAddr},
+			  #{userAddrDetail},
+			  #{userZipcode},
+			  #{userLastLogin},
+			  #{userLoginFailCnt},
+			  NOW(),
+			  NOW()
+		  );
+	
+	</insert>
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 시스템 사용자 정보 수정 -->
+	<update id="updateUserInfoByAdmin" parameterType="com.example.lms.dto.SysUserDTO">
+		
+		UPDATE
+			tb_sysuser
+		SET
+			user_status = #{userStatus},
+			user_auth = #{userAuth},
+			user_name = #{userName},
+			user_password = #{userPassword},
+			user_email = #{userEmail},
+			user_phone = #{userPhone},
+			user_birth = #{userBirth},
+			dept_code = #{deptCode},
+			user_grade = #{userGrade},
+			user_position = #{userPosition},
+			user_addr = #{userAddr},
+			user_addr_detail = #{userAddrDetail},
+			user_zipcode = #{userZipcode},
+			user_login_fail_cnt = #{userLoginFailCnt},
+			user_updatedate = NOW()
+		WHERE
+			user_no = #{userNo}
+			AND user_id = #{userId};
+	
+	</update>
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 시스템 사용자 검색 조회 -->
+	<select id="searchUserInfoMapList" parameterType="com.example.lms.dto.SysUserDTO" resultType="java.util.Map">
+		
+		SELECT
+		    a.user_no            AS userNo,
+		    a.user_id            AS userId,
+		    a.user_auth          AS userAuth,
+		    b.auth_name			 as authName,
+		    a.user_status        AS userStatus,
+		    d.status_name		 as statusName,
+		    a.user_name          AS userName,
+		    a.user_password      AS userPassword,
+		    a.user_email       AS userEmail,
+		    a.user_phone      AS userPhone,
+		    a.user_birth       AS userBirth,
+		    a.dept_code          AS deptCode,
+		    c.dept_name			 as deptName,
+		    a.user_grade         AS userGrade,
+		    a.user_position      AS userPosition,
+			a.user_addr        AS userAddr,
+			a.user_addr_detail AS userAddrDetail,
+			a.user_zipcode     AS userZipcode,
+		    a.user_last_login    AS userLastLogin,
+		    a.user_login_fail_cnt 	AS userLoginFailCnt,
+		    a.user_createdate         AS createDate,
+		    a.user_updatedate         AS updateDate
+		FROM tb_sysuser a
+		INNER JOIN tb_sys_auth b 
+		ON a.user_auth = b.auth_code
+		INNER JOIN tb_dept c 
+		ON a.dept_code = c.dept_code
+		INNER JOIN tb_sysuser_status d
+		ON a.user_status = d.status_code
+		WHERE 1=1
+			<if test="userId != null and userId != ''">
+	    	   a.user_id = #{userId}
+	  		</if>
+			<if test="userName != null and userName != ''">
+			   AND a.user_name = #{userName}
+			</if>
+		
+	</select>
+
+</mapper>
