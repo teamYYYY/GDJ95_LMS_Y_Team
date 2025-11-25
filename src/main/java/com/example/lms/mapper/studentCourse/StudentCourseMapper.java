@@ -5,12 +5,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.example.lms.dto.CourseDTO;
+import com.example.lms.dto.StudentCourseDTO;
 
 @Mapper
 public interface StudentCourseMapper {
 	// 수강 신청 가능 강의
-	List<CourseDTO> selectCourseListForStudent();
+	List<StudentCourseDTO> selectCourseListForStudent();
 	 
 	// 강의 정원 조회
 	int getCourseCapacity(@Param("courseNo") int courseNo);

@@ -1,46 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>수강 신청</title>
+    <meta charset="UTF-8">
+    <title>수강신청 | 학사관리시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
 </head>
-<body>
 
-<div class="container mt-5">
+<body class="bg-[#F5F7FA] text-gray-800">
 
-    <h3 class="mb-4">수강신청 가능한 강의 목록</h3>
+{{> studentLayout/studentHeader}}
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>강의번호</th>
-                <th>강의명</th>
-                <th>담당교수</th>
-                <th>정원</th>
-                <th>현재 인원</th>
-                <th>수강신청</th>
+<main class="max-w-7xl mx-auto px-4 py-10">
+
+    {{#message}}
+    <div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 text-sm shadow-sm">
+        {{message}}
+    </div>
+    {{/message}}
+
+    <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-blue-600"></i>
+            수강신청 가능한 강의
+        </h2>
+
+        <table class="w-full border-collapse shadow-sm rounded-lg overflow-hidden">
+            <thead class="bg-blue-50 border-b">
+            <tr class="text-left text-gray-700 text-sm">
+                <th class="py-3 px-4">강의번호</th>
+                <th class="py-3 px-4">강의명</th>
+                <th class="py-3 px-4">담당교수</th>
+                <th class="py-3 px-4">정원</th>
+                <th class="py-3 px-4">현재 인원</th>
+                <th class="py-3 px-4 text-center">신청</th>
             </tr>
-        </thead>
+            </thead>
 
-        <tbody>
+            <tbody>
             {{#courseList}}
-            <tr>
-                <td>{{courseNo}}</td>
-                <td>{{courseName}}</td>
-                <td>{{userNo}}</td>
-                <td>{{courseCapacity}}</td>
-                <td>{{currentCount}}</td>
-                <td>
-                    <form action="/enrollment/addEnrollment" method="post">
-                        <input type="hidden" name="studentUserNo" value="{{studentUserNo}}">
+            <tr class="border-b hover:bg-gray-50 text-sm">
+                <td class="py-3 px-4">{{courseNo}}</td>
+                <td class="py-3 px-4">{{courseName}}</td>
+                <td class="py-3 px-4">{{professorName}}</td>
+                <td class="py-3 px-4">{{courseCapacity}}</td>
+                <td class="py-3 px-4">{{currentCount}}</td>
+
+                <td class="py-3 px-4 text-center">
+                    <form action="/addEnrollment" method="post">
                         <input type="hidden" name="courseNo" value="{{courseNo}}">
 
                         {{#isFull}}
-                            <button class="btn btn-secondary btn-sm" disabled>정원 초과</button>
+                        <button disabled
+                                class="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-not-allowed">
+                            정원초과
+                        </button>
                         {{/isFull}}
 
                         {{^isFull}}
-                            <button class="btn btn-primary btn-sm">신청</button>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
+                            수강신청
+                        </button>
                         {{/isFull}}
                     </form>
                 </td>
@@ -49,15 +75,17 @@
 
             {{^courseList}}
             <tr>
-                <td colspan="6" class="text-center text-muted">
+                <td colspan="6" class="py-6 text-center text-gray-500 text-sm">
                     개설된 강의가 없습니다.
                 </td>
             </tr>
             {{/courseList}}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+</main>
 
-</div>
+{{> studentLayout/studentFooter}}
 
 </body>
 </html>
