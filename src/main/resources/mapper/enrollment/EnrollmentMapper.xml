@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.enrollment.EnrollmentMapper">
+	<!-- 수강신청 insert -->
+	<insert id="innsertEnrollment">
+		INSERT INTO enrollment
+		(student_user_no, course_no, enrollment_status)
+		VALUES
+		(#{studentUserNo}, #{courseNo}, 0)
+	</insert>
+	
+	<!-- 중복 체크: 이미 신청했는지 -->
+	<select id="countEnrollment" resultType="int">
+		SELECT COUNT(*)
+		FROM enrollment
+		WHERE student_user_no=#{studentUserNo}
+			AND course_no=#{courseNo}
+			AND enrollment_status=0
+	</select>
+	
+	<!-- 학생별 수강 목록 조회 -->
+	<select id="selectEnrollmentList" resultType="com.example.lms.dto.EnrollmentDTO">
+		SELECT
+			enrollment_no enrollmentNo
+			, student_user_no studentUserNo
+			, course_no courseNo
+			, enrollment_status enrollmentStatus
+			, createdate
+			, updatedate
+		FROM enrollmnet
+		WHERE student_user_no=#{studentUserNo}
+		ORDER BY createdate DESC
+	</select>
+	
+	<!-- 수강취소 -->
+	<update id="cancelEnrollment">
+		UPDATE enrollment
+		SET enrollment_status=1
+			, updatedate=NOW()
+		WHERE student_user_no=#{studentUserNo}
+		AND course_no=#{courseNo}
+	</update>
+	
+</mapper>

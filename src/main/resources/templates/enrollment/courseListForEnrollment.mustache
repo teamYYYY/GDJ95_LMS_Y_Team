@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>수강 신청</title>
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <h3 class="mb-4">수강신청 가능한 강의 목록</h3>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>강의번호</th>
+                <th>강의명</th>
+                <th>담당교수</th>
+                <th>정원</th>
+                <th>현재 인원</th>
+                <th>수강신청</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#courseList}}
+            <tr>
+                <td>{{courseNo}}</td>
+                <td>{{courseName}}</td>
+                <td>{{userNo}}</td>
+                <td>{{courseCapacity}}</td>
+                <td>{{currentCount}}</td>
+                <td>
+                    <form action="/enrollment/addEnrollment" method="post">
+                        <input type="hidden" name="studentUserNo" value="{{studentUserNo}}">
+                        <input type="hidden" name="courseNo" value="{{courseNo}}">
+
+                        {{#isFull}}
+                            <button class="btn btn-secondary btn-sm" disabled>정원 초과</button>
+                        {{/isFull}}
+
+                        {{^isFull}}
+                            <button class="btn btn-primary btn-sm">신청</button>
+                        {{/isFull}}
+                    </form>
+                </td>
+            </tr>
+            {{/courseList}}
+
+            {{^courseList}}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    개설된 강의가 없습니다.
+                </td>
+            </tr>
+            {{/courseList}}
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

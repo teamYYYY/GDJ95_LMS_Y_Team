@@ -28,4 +28,5 @@
 		from course
 		where course_no = #{courseNo}
 	</select>
+
 </mapper>
