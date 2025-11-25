@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>강의 공지사항</h2>
+	
+	<table border="1">
+		<tr>
+			<th>번호</th>
+			<th>제목</th>
+			<th>조회수</th>
+			<th>작성날짜</th>
+		</tr>
+		
+		{{#list}}
+			<tr>
+				<td>{{courseNoticeNo}}</td>
+				<td><a href="/courseNoticeDetail?courseNoticeNo={{courseNoticeNo}}">{{courseNoticeTitle}}</a></td>
+				<td>{{courseNoticeViewCount}}</td>
+				<td>{{createdate}}</td>
+			</tr>
+		{{/list}}
+		
+		{{^list}}
+		<tr>
+			<td>등록된 공지사항이 없습니다.</td>
+		</tr>
+		{{/list}}
+	</table>
+	
+	<div>
+		<a href="/addCourseNotice?courseNo={{courseNo}}">등록</a>
+	</div>
+	
+	<div>
+		<!-- 처음 -->
+	    <a href="/courseNoticeList?courseNo={{courseNo}}&currentPage={{startPage}}">처음</a>
+		
+		<!-- 이전 -->
+	    <a href="/courseNoticeList?courseNo={{courseNo}}&currentPage={{prePage}}">이전</a>
+	
+	    <!-- 번호 -->
+	    {{#pages}}
+	        <a href="/courseNoticeList?courseNo={{courseNo}}&currentPage={{.}}">
+	            {{.}}
+	        </a>
+	    {{/pages}}
+	
+	    <!-- 다음 -->
+	    <a href="/courseNoticeList?courseNo={{courseNo}}&currentPage={{nextPage}}">다음</a>
+	    
+	    <!-- 끝 -->
+	    <a href="/courseNoticeList?courseNo={{courseNo}}&currentPage={{endPage}}">끝</a>
+	</div>
+</div>
+</body>
+</html>

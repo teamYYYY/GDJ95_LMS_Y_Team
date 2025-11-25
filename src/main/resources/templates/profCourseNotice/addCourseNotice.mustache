@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>공지사항 등록</h2>
+	
+	{{#courseNo}}
+	 <form action="/addCourseNotice" method="post">
+	 
+	 	<input type="hidden" name="courseNo" value="{{courseNo}}">
+	 
+	 	<table border="1">
+	        <tr>
+	            <th>제목</th>
+	            <td>
+	                <input type="text" name="courseNoticeTitle" required>
+	            </td>
+	        </tr>
+	
+	        <tr>
+	            <th>내용</th>
+	            <td>
+	                <textarea name="courseNoticeContent" required></textarea>
+	            </td>
+	        </tr>
+	 	</table>
+	 	
+	 	<input type="hidden" name="courseNoticeViewCount" value="0">
+	 	
+	 	 <button type="submit">등록</button>
+	 	 <a href="/courseNoticeList?courseNo={{courseNo}}">취소</a>
+	 </form>
+	 {{/courseNo}}
+</body>
+</html>

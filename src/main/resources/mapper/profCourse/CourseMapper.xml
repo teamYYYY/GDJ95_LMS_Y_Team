@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.profCourse.CourseMapper">
+	
+	<!-- 교수별 강의 리스트 -->
+	<select id="selectCourseListByProfessor" resultType="com.example.lms.dto.CourseDTO">
+		select course_no AS courseNo, course_name AS courseName, course_year AS courseYear, course_semester AS courseSemester
+		from tb_course
+		where professor_user_no = #{professorUserNo}
+		order by course_year DESC, course_semester desc
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="insertCourse" parameterType="com.example.lms.dto.CourseDTO"
+		useGeneratedKeys="true" keyColumn="course_no" keyProperty="courseNo">
+		insert into tb_course(
+			professor_user_no,
+	        course_year,
+	        course_semester,
+	        course_name,
+	        course_description,
+	        course_capacity,
+	        course_score,
+	        course_classroom,
+	        course_status,
+	        createdate, updatedate
+		) values (
+			#{professorUserNo},
+	        #{courseYear},
+	        #{courseSemester},
+	        #{courseName},
+	        #{courseDescription},
+	        #{courseCapacity},
+	        #{courseScore},
+	        #{courseClassroom},
+	        #{courseStatus},
+	        NOW(), NOW()
+		)
+	</insert>
+	
+	<!-- 대시보드 -->
+    <select id="selectCourseDetail" resultType="com.example.lms.dto.CourseDTO">
+        select 
+			course_no AS courseNo,
+	        professor_user_no AS professorUserNo,
+	        course_year AS courseYear,
+	        course_semester AS courseSemester,
+	        course_name AS courseName,
+	        course_description AS courseDescription,
+	        course_capacity AS courseCapacity,
+	        course_score AS courseScore,
+	        course_classroom AS courseClassroom,
+	        course_status AS courseStatus,
+	        createdate, updatedate
+        from tb_course
+        where course_no = #{courseNo}
+    </select>
+	
+	<!-- 수정 -->
+    <update id="updateCourse" parameterType="com.example.lms.dto.CourseDTO">
+        update tb_course
+        set
+            course_year = #{courseYear},
+            course_semester = #{courseSemester},
+            course_name = #{courseName},
+            course_description = #{courseDescription},
+            course_capacity = #{courseCapacity},
+            course_score = #{courseScore},
+            course_classroom = #{courseClassroom},
+            course_status = #{courseStatus},
+            updatedate = NOW()
+        where course_no = #{courseNo}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deleteCourse">
+        delete from tb_course
+        where course_no = #{courseNo}
+    </delete>
+</mapper>

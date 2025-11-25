@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리시스템 | Academic Management System</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+        }
+        .hero-bg {
+            background-image: none;
+            background-color: #3B82F6;
+        }
+        /* 입력 필드 기본 스타일 */
+        input[type="text"], input[type="number"], select, textarea {
+            border: 1px solid #D1D5DB; /* gray-300 */
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header>
+        <div class="bg-white py-4 px-6 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">학사관리시스템</h1>
+                    <p class="text-xs text-gray-500">Academic Management System</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-bg h-24 w-full bg-blue-500"></div>
+
+        <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <nav class="flex space-x-8 overflow-x-auto">
+                    <a href="#" class="flex items-center gap-2 py-4 text-blue-600 font-medium border-b-2 border-blue-600 transition">
+                        <i class="fa-solid fa-chalkboard-user"></i> 강의관리
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-bullhorn"></i> 공지관리
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-user-check"></i> 출석관리
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-square-poll-vertical"></i> 성적관리
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+        
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">강의 등록</h2>
+
+            <form action="/addCourse" method="post" class="space-y-4">
+                
+                <table class="min-w-full divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50 rounded-tl-lg">강의명</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="text" name="courseName" required placeholder="강의명을 입력하세요">
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">개설연도</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseYear" min="2000" max="2100" value="2025" required>
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">학기</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <select name="courseSemester">
+                                    <option value="1">1학기</option>
+                                    <option value="2">2학기</option>
+                                </select>
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">정원</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseCapacity" value="30" required>
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">학점</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseScore" value="3" required>
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">강의실</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="text" name="courseClassroom" placeholder="예: 공학관 301호">
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">강의 상태</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <select name="courseStatus">
+                                    <option value="1">개설</option>
+                                    <option value="0">종료</option>
+                                </select>
+                            </td>
+                        </tr>
+                        
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50 rounded-bl-lg">강의 설명</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <textarea name="courseDescription" rows="5" placeholder="강의에 대한 상세 설명을 입력하세요"></textarea>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="pt-6 flex justify-end gap-3">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-md">
+                        <i class="fa-solid fa-check mr-2"></i> 등록하기
+                    </button>
+                    <a href="/prof/course/list" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-400 transition">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> 뒤로가기
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2025 학사관리시스템. All rights reserved.</p>
+        <p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+    </footer>
+
+</body>
+</html>

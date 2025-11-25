@@ -1,0 +1,22 @@
+package com.example.lms.mapper.profCourseNotice;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.example.lms.dto.CourseNoticeDTO;
+
+@Mapper
+public interface CourseNoticeMapper {
+	
+	// 공지사항 리스트
+	List<CourseNoticeDTO> selectCourseNoticeListByPage(int courseNo, int startRow, int rowPerPage);
+	int selectCourseNoticeCount(int courseNo);
+	
+	// 상세보기
+	CourseNoticeDTO selectCourseNoticeDetail(int courseNoticeNo);
+	
+	// 등록
+	int insertCourseNotice(CourseNoticeDTO cn);
+
+}

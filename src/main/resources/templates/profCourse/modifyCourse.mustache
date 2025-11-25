@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의 수정</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+        }
+        .hero-bg {
+            background-image: none;
+            background-color: #3B82F6;
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            border: 1px solid #D1D5DB;
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">강의 수정</h2>
+
+            {{#course}}
+            <form action="/modifyCourse" method="post" class="space-y-4">
+
+                <input type="hidden" name="courseNo" value="{{courseNo}}">
+
+                <table class="min-w-full divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200">
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 w-1/4 bg-gray-50">강의명</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="text" name="courseName" value="{{courseName}}" required>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">개설연도</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseYear" value="{{courseYear}}" required>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">학기</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <select name="courseSemester">
+                                    <option value="1" {{#isSem1}}selected{{/isSem1}}>1학기</option>
+                                    <option value="2" {{#isSem2}}selected{{/isSem2}}>2학기</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">정원</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseCapacity" value="{{courseCapacity}}" required>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">학점</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="number" name="courseScore" value="{{courseScore}}" required>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">강의실</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <input type="text" name="courseClassroom" value="{{courseClassroom}}">
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">강의 상태</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <select name="courseStatus">
+                                    <option value="1" {{#isActive}}selected{{/isActive}}>개설</option>
+                                    <option value="0" {{#isClosed}}selected{{/isClosed}}>종료</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50">강의 설명</th>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                <textarea name="courseDescription" rows="5">{{courseDescription}}</textarea>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="pt-6 flex justify-end gap-3">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-md">
+                        <i class="fa-solid fa-check mr-2"></i> 수정하기
+                    </button>
+                    <a href="/courseDashboard?courseNo={{courseNo}}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-400 transition">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> 뒤로가기
+                    </a>
+                </div>
+
+            </form>
+            {{/course}}
+        </div>
+
+    </main>
+
+    {{> profLayout/profFooter }}
+
+</body>
+</html>

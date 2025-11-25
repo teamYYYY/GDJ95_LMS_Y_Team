@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>공지사항 상세정보</h2>
+
+    <table border="1">
+        <tr>
+        	<th>번호</th>
+        	<td>{{courseNotice.courseNo}}</td>
+        </tr>
+        <tr>
+	        <th>제목</th>
+	        <td>{{courseNotice.courseNoticeTitle}}</td>
+        </tr>
+        <tr>
+	        <th>내용</th>
+	        <td>{{courseNotice.courseNoticeContent}}</td>
+        </tr>
+        <tr>
+	        <th>조회수</th>
+	        <td>{{courseNotice.courseNoticeViewCount}}</td>
+        </tr>
+        <tr>
+	        <th>등록일시</th>
+	        <td>{{courseNotice.createdate}}</td>
+        </tr>
+        <tr>
+	        <th>수정일시</th>
+	        <td>{{courseNotice.updatedate}}</td>
+        </tr>
+        
+    </table>
+
+    <a class="back-btn" href="/courseNoticeList">← 목록으로</a>
+</body>
+</html>
