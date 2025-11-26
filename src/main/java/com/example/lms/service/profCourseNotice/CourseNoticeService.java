@@ -27,8 +27,10 @@ public class CourseNoticeService {
 		return courseNoticeMapper.selectCourseNoticeCount(courseNo);
 	}
 	
-	// 상세보기
+	// 상세보기 + 조회수
 	public CourseNoticeDTO getCourseNoticeDetail(int courseNoticeNo) {
+		
+		courseNoticeMapper.updateCourseNoticeViewCount(courseNoticeNo); // 조회수
 		
 		return courseNoticeMapper.selectCourseNoticeDetail(courseNoticeNo);
 	}
@@ -37,5 +39,17 @@ public class CourseNoticeService {
 	public int addCourseNotice(CourseNoticeDTO cn) {
 		
 		return courseNoticeMapper.insertCourseNotice(cn);
+	}
+	
+	// 수정
+	public int modifyCourseNotice(CourseNoticeDTO cn) {
+		 
+		return courseNoticeMapper.updateCourseNotice(cn);
+	}
+	
+	// 삭제
+	public int removeCourseNotice(int courseNoticeNo) {
+		
+		return courseNoticeMapper.deleteCourseNotice(courseNoticeNo);
 	}
 }

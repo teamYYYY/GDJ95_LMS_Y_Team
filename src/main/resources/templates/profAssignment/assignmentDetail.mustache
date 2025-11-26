@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>과제 상세정보</title>
+</head>
+<body>
+
+	<h2>과제 상세보기</h2>
+
+	<table border="1" cellpadding="8">
+	    <tr>
+	        <th>과제번호</th>
+	        <td>{{assignment.assignmentNo}}</td>
+	    </tr>
+	    <tr>
+	        <th>강의번호</th>
+	        <td>{{assignment.courseNo}}</td>
+	    </tr>
+	    <tr>
+	        <th>제목</th>
+	        <td>{{assignment.assignmentTitle}}</td>
+	    </tr>
+	    <tr>
+	        <th>내용</th>
+	        <td>{{assignment.assignmentDescription}}</td>
+	    </tr>
+	    <tr>
+	        <th>마감일</th>
+	        <td>{{assignment.assignmentDueDate}}</td>
+	    </tr>
+	    <tr>
+	        <th>상태</th>
+	        <td>{{assignment.assignmentStatus}}</td>
+	    </tr>
+	    <tr>
+	        <th>등록일</th>
+	        <td>{{assignment.createdate}}</td>
+	    </tr>
+	</table>
+	
+	<br>
+	
+	<a href="/modifyAssignment?assignmentNo={{assignment.assignmentNo}}">수정</a>
+	&nbsp;
+	<a href="/removeAssignment?assignmentNo={{assignment.assignmentNo}}">삭제</a>
+	&nbsp;
+	<a href="/assignmentListByProf?courseNo={{assignment.courseNo}}">목록</a>
+
+
+</body>
+</html>

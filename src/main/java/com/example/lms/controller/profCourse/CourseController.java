@@ -105,8 +105,8 @@ public class CourseController {
     }
 	
 	//삭제
-	@GetMapping("/deleteCourse")
-    public String deleteCourse(@RequestParam int courseNo, HttpSession session) {
+	@GetMapping("/removeCourse")
+    public String remove(@RequestParam int courseNo, HttpSession session) {
 		
 		SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
 

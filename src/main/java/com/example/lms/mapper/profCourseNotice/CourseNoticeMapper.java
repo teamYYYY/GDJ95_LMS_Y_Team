@@ -11,12 +11,18 @@ public interface CourseNoticeMapper {
 	
 	// 공지사항 리스트
 	List<CourseNoticeDTO> selectCourseNoticeListByPage(int courseNo, int startRow, int rowPerPage);
-	int selectCourseNoticeCount(int courseNo);
+	int selectCourseNoticeCount(int courseNo); // 페이징
+	int updateCourseNoticeViewCount(int courseNoticeNo); // 조회수
 	
 	// 상세보기
 	CourseNoticeDTO selectCourseNoticeDetail(int courseNoticeNo);
 	
 	// 등록
 	int insertCourseNotice(CourseNoticeDTO cn);
-
+	
+	// 수정
+	int updateCourseNotice(CourseNoticeDTO cn);
+	
+	// 삭제
+	int deleteCourseNotice(int courseNoticeNo);
 }

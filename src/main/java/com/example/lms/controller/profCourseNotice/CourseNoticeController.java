@@ -21,13 +21,21 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class CourseNoticeController {
 
+    private final CourseService courseService;
+
 	@Autowired
 	CourseNoticeService courseNoticeService;
+
+    CourseNoticeController(CourseService courseService) {
+        this.courseService = courseService;
+    }
 	
 	// 공지사항 리스트
 	@GetMapping("/courseNoticeList")
-	public String courseNoticeList(Model model, @RequestParam("courseNo") int courseNo, @RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
-		
+	public String courseNoticeList(Model model, 
+									@RequestParam("courseNo") int courseNo, 
+									@RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
+								
 		int rowPerPage = 10;
 	    int startRow = (currentPage - 1) * rowPerPage;
 		
@@ -60,9 +68,11 @@ public class CourseNoticeController {
 		return "profCourseNotice/courseNoticeList";
 	}
 	
-	// 상세보기
+	
+	// 상세보기 + 조회수
 	@GetMapping("/courseNoticeDetail")
-	public String courseNoticeDetai(Model model, @RequestParam("courseNoticeNo") int courseNoticeNo) {
+	public String courseNoticeDetai(Model model, 
+									@RequestParam("courseNoticeNo") int courseNoticeNo) {
 		
 		CourseNoticeDTO courseNoticeDTO = courseNoticeService.getCourseNoticeDetail(courseNoticeNo);
 		model.addAttribute("courseNotice", courseNoticeDTO);
@@ -109,5 +119,54 @@ public class CourseNoticeController {
 		 model.addAttribute("courseNo", courseNo);
 		
 		 return "profCourseNotice/addCourseNotice";
+	}
+	
+	// 수정
+	@GetMapping("/modifyCourseNotice")
+	public String modifyCourseNoticeForm(Model model, 
+										HttpSession session, 
+										@RequestParam("courseNoticeNo") int courseNoticeNo) {
+		
+		SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+		if (loginUser == null || !"PROFESSOR".equals(loginUser.getUserAuth())) {
+			return "redirect:/login";
+		}
+		
+		CourseNoticeDTO courseNotice = courseNoticeService.getCourseNoticeDetail(courseNoticeNo);
+		model.addAttribute("courseNotice", courseNotice);
+
+		return "profCourseNotice/modifyCourseNotice";
+	}
+	
+	@PostMapping("/modifyCourseNotice")
+	public String modifyCourseNoitce(HttpSession session, 
+									CourseNoticeDTO courseNotice) {
+		
+		SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+		if (loginUser == null || !"PROFESSOR".equals(loginUser.getUserAuth())) {
+	        return "redirect:/login";
+	    }
+		
+		courseNotice.setWriterUserNo(loginUser.getUserNo());
+		courseNoticeService.modifyCourseNotice(courseNotice);
+		
+		 return "redirect:/courseNoticeDetail?courseNoticeNo=" + courseNotice.getCourseNoticeNo();
+	}
+	
+	// 삭제
+	@GetMapping("/removeCourseNotice")
+	public String removeCourseNotice(HttpSession session, @RequestParam int courseNoticeNo) {
+	
+		SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+	    if (loginUser == null || !"PROFESSOR".equals(loginUser.getUserAuth())) {
+	        return "redirect:/login";
+	    }
+	    
+	    CourseNoticeDTO courseNotice = courseNoticeService.getCourseNoticeDetail(courseNoticeNo);
+	    int courseNo = courseNotice.getCourseNo();
+		
+		courseNoticeService.removeCourseNotice(courseNoticeNo);
+		
+		return "redirect:/courseNoticeList?courseNo=" + courseNo;
 	}
 }

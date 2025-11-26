@@ -34,7 +34,12 @@
         </tr>
         
     </table>
+    
+    <a href="/modifyCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}">수정</a>
+    <a href="/removeCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}">
+    	삭제
+	</a>
 
-    <a class="back-btn" href="/courseNoticeList">← 목록으로</a>
+    <a class="back-btn" href="/courseNoticeList?courseNo={{courseNotice.courseNo}}">← 목록으로</a>
 </body>
 </html>
