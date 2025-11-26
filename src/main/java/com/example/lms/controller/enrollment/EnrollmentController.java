@@ -63,6 +63,8 @@ public class EnrollmentController {
         }
 
         enrollment.setStudentUserNo(loginUser.getUserNo());
+        // 상태코드: 0 = 신청, 1 = 취소  (XML, 중복체크 로직이 이렇게 설계되어 있음)
+        enrollment.setEnrollmentStatus(0);
 
         try {
             String msg = enrollmentService.addEnrollment(enrollment);
@@ -98,8 +100,8 @@ public class EnrollmentController {
             Integer status = e.getEnrollmentStatus();
             if (status == null) status = 1; // 필요하면 기본값 처리
 
-            row.put("isActive", status == 1);   // 신청완료
-            row.put("isCanceled", status == 0); // 취소됨
+            row.put("isActive", status == 0);   // 신청완료
+            row.put("isCanceled", status == 1); // 취소됨
 
             viewList.add(row);
         }

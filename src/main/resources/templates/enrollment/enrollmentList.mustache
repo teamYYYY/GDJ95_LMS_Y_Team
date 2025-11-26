@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body { font-family: 'Pretendard', sans-serif; }
@@ -18,98 +17,84 @@
 
 {{> studentLayout/studentHeader}}
 
-<main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+<main class="max-w-6xl mx-auto px-4 py-10">
 
-    <div class="bg-white rounded-2xl shadow p-8 border border-gray-100">
+    <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-blue-600"></i>
+            수강신청 내역
+        </h2>
 
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <i class="fa-solid fa-clipboard-list text-blue-600"></i>
-                수강신청 내역
-            </h2>
-
-            <a href="/courseListForEnrollment"
-               class="text-sm px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100">
-                수강신청 화면으로 이동
-            </a>
-        </div>
-
-        {{#message}}
-        <div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 text-sm">
-            {{message}}
-        </div>
-        {{/message}}
-
-        <table class="w-full border-collapse shadow rounded-lg overflow-hidden">
+        <table class="w-full border-collapse shadow-sm rounded-lg overflow-hidden">
             <thead class="bg-blue-50 border-b">
-                <tr class="text-left text-gray-700 text-sm">
-                    <th class="py-3 px-4">수강번호</th>
-                    <th class="py-3 px-4">강의번호</th>
-                    <th class="py-3 px-4">상태</th>
-                    <th class="py-3 px-4">신청일</th>
-                    <th class="py-3 px-4 text-center">수강취소</th>
-                </tr>
+            <tr class="text-left text-gray-700 text-sm">
+                <th class="py-3 px-4">신청번호</th>
+                <th class="py-3 px-4">강의번호</th>
+                <th class="py-3 px-4">신청일</th>
+                <th class="py-3 px-4 text-center">상태</th>
+                <th class="py-3 px-4 text-center">취소</th>
+            </tr>
             </thead>
 
             <tbody>
-			    {{#list}}
-			    <tr class="border-b hover:bg-gray-50 text-sm">
-			        <td class="py-3 px-4">{{enrollmentNo}}</td>
-			        <td class="py-3 px-4">{{courseNo}}</td>
-			
-			        <!-- 상태 표시 -->
-			        <td class="py-3 px-4">
-			            {{#isActive}}
-			                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
-			                    신청완료
-			                </span>
-			            {{/isActive}}
-			
-			            {{#isCanceled}}
-			                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-			                    취소됨
-			                </span>
-			            {{/isCanceled}}
-			        </td>
-			
-			        <td class="py-3 px-4">{{createdate}}</td>
-			
-			        <td class="py-3 px-4 text-center">
-			            <form action="/cancelEnrollment" method="post">
-			                <input type="hidden" name="courseNo" value="{{courseNo}}"/>
-			
-			                {{#isCanceled}}
-			                    <button type="button"
-			                            class="bg-gray-200 text-gray-500 px-4 py-2 rounded-lg text-sm cursor-not-allowed"
-			                            disabled>
-			                        취소 완료
-			                    </button>
-			                {{/isCanceled}}
-			
-			                {{#isActive}}
-			                    <button type="submit"
-			                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
-			                        수강취소
-			                    </button>
-			                {{/isActive}}
-			            </form>
-			        </td>
-			    </tr>
-			    {{/list}}
-			
-			    {{^list}}
-			    <tr>
-			        <td colspan="5" class="py-6 text-center text-gray-500 text-sm">
-			            신청한 강의가 없습니다.
-			        </td>
-			    </tr>
-			    {{/list}}
-			</tbody>
+            {{#list}}
+            <tr class="border-b hover:bg-gray-50 text-sm">
+                <td class="py-3 px-4">{{enrollmentNo}}</td>
+                <td class="py-3 px-4">{{courseNo}}</td>
+                <td class="py-3 px-4">{{createdate}}</td>
 
+                <td class="py-3 px-4 text-center">
+                    {{#isActive}}
+                    <span class="px-3 py-1 rounded-lg text-xs bg-green-50 text-green-700 font-medium">
+                        신청완료
+                    </span>
+                    {{/isActive}}
+
+                    {{#isCanceled}}
+                    <span class="px-3 py-1 rounded-lg text-xs bg-gray-200 text-gray-600 font-medium">
+                        취소됨
+                    </span>
+                    {{/isCanceled}}
+                </td>
+
+                <td class="py-3 px-4 text-center">
+                    {{#isActive}}
+                    <form action="/cancelEnrollment" method="post">
+                        <input type="hidden" name="courseNo" value="{{courseNo}}">
+                        <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                            취소
+                        </button>
+                    </form>
+                    {{/isActive}}
+
+                    {{#isCanceled}}
+                    <button disabled class="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-not-allowed">
+                        취소됨
+                    </button>
+                    {{/isCanceled}}
+                </td>
+            </tr>
+            {{/list}}
+
+            {{^list}}
+            <tr>
+                <td colspan="5" class="py-6 text-center text-gray-500 text-sm">
+                    수강신청 내역이 없습니다.
+                </td>
+            </tr>
+            {{/list}}
+            </tbody>
         </table>
 
-    </div>
+        <!-- ⭐ 수강신청 목록으로 돌아가기 버튼 추가 -->
+        <div class="mt-8 text-right">
+            <a href="/courseListForEnrollment"
+               class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm shadow">
+                ← 수강신청 목록으로 돌아가기
+            </a>
+        </div>
 
+    </div>
 </main>
 
 {{> studentLayout/studentFooter}}

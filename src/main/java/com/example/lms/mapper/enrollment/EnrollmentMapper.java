@@ -6,23 +6,21 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.lms.dto.EnrollmentDTO;
 
-/**
- * 
- * 2025. 11. 24.
- * Author - yj
- * 학생 수강신청 기능 Mapper 인터페이스
- */
 @Mapper
 public interface EnrollmentMapper {
-	// 수강신청 등록
-	int insertEnrollment(EnrollmentDTO enrollment);
-	
-	// 학생이 특정 강의를 신청했는지 체크
-	int countEnrollment(EnrollmentDTO enrollment);
-	
-	// 학생번호 기준 수강 목록
-	List <EnrollmentDTO> selectEnrollmentList(int studentUserNo);
-	
-	// 수강 신청 취소
-	int cancelEnrollment(EnrollmentDTO enrollment);
+
+    // 신규 수강신청 INSERT
+    int insertEnrollment(EnrollmentDTO enrollment);
+
+    // 이미 신청된 강의인지 (status = 0) 확인
+    int countEnrollment(EnrollmentDTO enrollment);
+
+    // 학생별 수강신청 목록 조회
+    List<EnrollmentDTO> selectEnrollmentList(int studentUserNo);
+
+    // 수강취소 (status = 0 → 1)
+    int cancelEnrollment(EnrollmentDTO enrollment);
+
+    // 취소된 수강신청 복구 (status = 1 → 0)
+    int reactivateEnrollment(EnrollmentDTO enrollment);
 }

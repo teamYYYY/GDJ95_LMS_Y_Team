@@ -9,7 +9,7 @@ import com.example.lms.dto.StudentCourseDTO;
 
 @Mapper
 public interface StudentCourseMapper {
-	// 수강 신청 가능 강의
+	// 수강 신청 가능 강의 목록 조회
 	List<StudentCourseDTO> selectCourseListForStudent();
 	 
 	// 강의 정원 조회

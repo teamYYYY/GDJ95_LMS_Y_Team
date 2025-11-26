@@ -34,11 +34,14 @@
         <table class="w-full border-collapse shadow-sm rounded-lg overflow-hidden">
             <thead class="bg-blue-50 border-b">
             <tr class="text-left text-gray-700 text-sm">
-                <th class="py-3 px-4">강의번호</th>
+               	<!-- 강의번호 -->
                 <th class="py-3 px-4">강의명</th>
                 <th class="py-3 px-4">담당교수</th>
+                <th class="py-3 px-4">학점</th>
+                <th class="py-3 px-4">요일</th>
+                <th class="py-3 px-4">시간</th>
                 <th class="py-3 px-4">정원</th>
-                <th class="py-3 px-4">현재 인원</th>
+                <th class="py-3 px-4">현재</th>
                 <th class="py-3 px-4 text-center">신청</th>
             </tr>
             </thead>
@@ -46,9 +49,22 @@
             <tbody>
             {{#courseList}}
             <tr class="border-b hover:bg-gray-50 text-sm">
-                <td class="py-3 px-4">{{courseNo}}</td>
+
+                <!-- {{courseNo}} -->
                 <td class="py-3 px-4">{{courseName}}</td>
                 <td class="py-3 px-4">{{professorName}}</td>
+                <td class="py-3 px-4">{{courseScore}}</td>
+
+                <!-- 요일 -->
+                <td class="py-3 px-4">
+				    {{courseTimeYoil}}
+				</td>
+
+                <!-- 시간 -->
+                <td class="py-3 px-4">
+				    {{courseTimeStart}} ~ {{courseTimeEnd}}
+				</td>
+
                 <td class="py-3 px-4">{{courseCapacity}}</td>
                 <td class="py-3 px-4">{{currentCount}}</td>
 
@@ -64,7 +80,8 @@
                         {{/isFull}}
 
                         {{^isFull}}
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
+                        <button
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
                             수강신청
                         </button>
                         {{/isFull}}
@@ -75,7 +92,7 @@
 
             {{^courseList}}
             <tr>
-                <td colspan="6" class="py-6 text-center text-gray-500 text-sm">
+                <td colspan="9" class="py-6 text-center text-gray-500 text-sm">
                     개설된 강의가 없습니다.
                 </td>
             </tr>

@@ -17,4 +17,3 @@ public class CourseDTO {
 	private String createdate;
 	private String updatedate;
 }
-   

@@ -23,8 +23,7 @@
 			user_auth AS userAuth,
 			user_status AS userStatus,
 			dept_code AS deptCode,
-			user_grade AS userGrade,
-			user_position AS userPosition
+			user_grade AS userGrade
 		from
 			tb_sysuser
 		where user_id = #{userId} 
