@@ -68,7 +68,7 @@ public class LoginController {
 	    // 1. 로그인 검증 ( 계정잠금 사용자 확인: 이전 시도에서 이미 잠금된 상태인지 확인)
 	    int lockValid = loginService.userStatusLockValidate(loginDto);
 	    
-	    log.info("lockValid" + lockValid);
+	    log.info("lockValid : " + lockValid);
 	    
 	    // 이미 계정이 잠금 되어 있음
 	    if (lockValid == 1) {
@@ -82,7 +82,8 @@ public class LoginController {
 	    
 	    // 1.1 로그인 검증 ( 퇴학자, 계정잠금 사용자 필터 됨 )
 	    int isValid = loginService.userLoginValidate(loginDto);
-
+	    log.info("isValid : " + isValid);
+	    
 	    if (isValid == 1) {
 	       
 	    	// 🚨 1.2 로그인 성공 시: 실패 카운트 0으로 초기화 처리 (추가)

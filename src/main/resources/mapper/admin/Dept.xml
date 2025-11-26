@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.DeptMapper">
+
+	<!-- 2025. 11. 26. JM. 학과 관리 - 학과 정보 조회 -->
+	<select id="deptList" resultType="com.example.lms.dto.DeptDTO">
+	
+		SELECT
+			dept_code AS deptCode,
+			dept_name AS deptName,
+			dept_createdate AS deptCreatedate
+		FROM
+			tb_dept
+	
+	</select>
+
+</mapper>

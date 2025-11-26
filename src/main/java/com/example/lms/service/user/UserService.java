@@ -3,6 +3,7 @@ package com.example.lms.service.user;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,10 +46,17 @@ public class UserService {
 		return userMapper.modifyUserInfoPassword(passwordData);
 	}
 	
+	
+	/*
+	 * 
+	 * 이 하단 부터는 userManagementController
+	 *
+	 */
+	
 	// 시스템사용자 관리 - 시스템 사용자 전체 조회
-	public List<Map<String, Object>> userInfoMapList() {
+	public List<Map<String, Object>> userInfoMapList(Integer startRow, Integer limit) {
 		
-		return userMapper.userInfoMapList();
+		return userMapper.userInfoMapList(startRow, limit);
 	}
 	
 	// 시스템사용자관리 - 사용자 등록
@@ -64,8 +72,20 @@ public class UserService {
 	}
 	
 	// 시스템사용자 관리 - 시스템 사용자 검색 조회 ( 학번이나 사용자명으로 검색 // 같은 이름의 사용자 가능성 있음)
-	public List<Map<String, Object>> searchUserInfoMapList(SysUserDTO sysUserDTO) {
+	public List<Map<String, Object>> searchUserInfoMapList(String searchUserCondition) {
 		
-		return userMapper.searchUserInfoMapList(sysUserDTO);
+		return userMapper.searchUserInfoMapList(searchUserCondition);
+	}
+	
+	// 시스템사용자 관리 - 시스템 전체 사용자 수 ( 페이징 시 사용 )
+	public Integer selectSysUserCnt() {
+		
+		return userMapper.selectSysUserCnt();
+	}
+	
+	// 시스템사용자 관리 - 다수 사용자 계정 폐지 처리 기능
+	public Integer modifySysUserStatusRetire(List<Integer> retireUserNoList) {
+		
+		return userMapper.modifySysUserStatusRetire(retireUserNoList);
 	}
 }

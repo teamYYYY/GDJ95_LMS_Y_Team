@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.lms.mapper.login.LoginMapper">
 	
-	<!-- 2025. 11. 24. JM. 사용자 로그인 검증 -->
+	<!-- 2025. 11. 24. JM. 사용자 로그인 검증 user_status 값이 1 사용중이여야함 -->
 	<select id="userLoginValidate" parameterType="com.example.lms.dto.SysUserDTO" resultType="int">
 		
 		SELECT
@@ -11,21 +11,24 @@
 			tb_sysuser
 		WHERE user_id = #{userId} 
 		AND user_password = #{userPassword} 
-		AND user_status NOT IN ('4', '99') 
+		AND user_status = '1'
 	
 	</select>
 	
 	<!-- 2025. 11. 24. JM. 계정 잠금 사용자 검증 -->
 	<select id="userStatusLockValidate" parameterType="com.example.lms.dto.SysUserDTO" resultType="int">
 	
-		SELECT
-			count(user_id)
-		FROM
-			tb_sysuser
-		WHERE user_id = #{userId} 
-		AND user_password = #{userPassword}
-		AND user_status = '99'
-		AND user_login_fail_cnt &gt;= '5'
+	<![CDATA[
+	    SELECT
+	        COUNT(user_id)
+	    FROM
+	        tb_sysuser
+	    WHERE
+	        user_id = #{userId}
+	        AND user_password = #{userPassword}
+	        AND user_status != '1'
+	        AND user_login_fail_cnt >= '5'
+    ]]>
 	
 	</select>
 	
@@ -42,17 +45,19 @@
 	
 	</update>
 	
-	<!-- 2025. 11. 24. JM. 사용자 로그인 계정 잠금 처리 -->
+	<!-- 2025. 11. 25. JM. 사용자 로그인 계정 잠금 처리 user_status = 0 은 사용대기 -->
 	<update id="userStatusLock" parameterType="String">
 	
-		UPDATE
-			tb_sysuser
-		SET
-			user_status = '99',
-			user_updatedate = NOW()
-		WHERE
-			user_id = #{user_id}
-			AND user_login_fail_cnt = '5'
+	<![CDATA[
+	    UPDATE
+	        tb_sysuser
+	    SET
+	        user_status = '0',
+	        user_updatedate = NOW()
+	    WHERE
+	        user_id = #{user_id}
+	        AND user_login_fail_cnt >= '5'
+    ]]>
 			
 	</update>
 	
@@ -61,19 +66,25 @@
 	<select id="loginUserSession" parameterType="com.example.lms.dto.SysUserDTO" resultType="com.example.lms.dto.SysUserDTO">
 		
 		SELECT
-			user_no AS userNo,
-			user_id AS userId,
-			user_name AS userName,
-			user_auth AS userAuth,
-			user_status AS userStatus,
-			dept_code AS deptCode,
-			user_grade AS userGrade,
-			user_position AS userPosition
+			a.user_no AS userNo,
+			a.user_id AS userId,
+			a.user_name AS userName,
+			a.user_auth AS userAuth,
+			b.auth_detail_name	 AS authDetailName,
+		    c.auth_code 		 AS authCode,
+		    c.auth_name			 AS authName,
+			a.user_status AS userStatus,
+			a.dept_code AS deptCode,
+			a.user_grade AS userGrade,
+			b.auth_code AS dAuthCode
 		FROM
-			tb_sysuser
-		WHERE user_id = #{userId} 
-		AND user_password = #{userPassword} 
-		AND user_status != '4'
+			tb_sysuser a
+		INNER JOIN tb_sysauth_detail b ON
+			a.user_auth = b.auth_detail_code
+		INNER JOIN tb_sysauth c ON
+			b.auth_code = c.auth_code
+		WHERE a.user_id = #{userId} 
+		AND a.user_password = #{userPassword} 
 		
 	</select>
 	

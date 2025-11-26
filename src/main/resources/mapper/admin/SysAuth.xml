@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.SysAuthMapper">
+
+	<!-- 2025. 11. 26. JM. 학과 관리 - 학과 정보 조회 -->
+	<select id="sysAuthList" resultType="com.example.lms.dto.SysAuthDTO">
+	
+		SELECT
+			a.auth_detail_code AS authDetailCode,
+			a.auth_detail_name AS authDetailName,
+			a.auth_code AS authCode,
+			b.auth_name AS authName,
+			a.auth_detail_createdate AS authDetailCreatedate,
+			b.auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth_detail a
+		INNER JOIN tb_sysauth b ON
+			a.auth_code = b.auth_code
+	
+	</select>
+
+</mapper>

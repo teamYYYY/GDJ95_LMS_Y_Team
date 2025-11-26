@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.SysUserGradeMapper">
+
+	<!-- 2025. 11. 26. JM. 학과 관리 - 학과 정보 조회 -->
+	<select id="sysUserGradeList" resultType="com.example.lms.dto.SysUserStatusDTO">
+	
+		SELECT
+			status_code AS statusCode,
+			status_name AS statusName,
+			status_createdate AS statusCreatedate
+		FROM
+			tb_sysuser_status
+	
+	</select>
+
+</mapper>
