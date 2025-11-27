@@ -3,24 +3,42 @@ package com.example.lms.mapper.enrollment;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.lms.dto.EnrollmentDTO;
+import com.example.lms.dto.EnrollmentListDTO;
 
 @Mapper
 public interface EnrollmentMapper {
 
-    // 신규 수강신청 INSERT
-    int insertEnrollment(EnrollmentDTO enrollment);
+    // 시간표 겹침 체크
+    int countTimeOverlap(
+            @Param("studentUserNo") int studentUserNo,
+            @Param("courseNo") int courseNo
+    );
 
-    // 이미 신청된 강의인지 (status = 0) 확인
-    int countEnrollment(EnrollmentDTO enrollment);
+    // 중복 신청 체크
+    int countEnrollment(
+            @Param("studentUserNo") int studentUserNo,
+            @Param("courseNo") int courseNo
+    );
 
-    // 학생별 수강신청 목록 조회
-    List<EnrollmentDTO> selectEnrollmentList(int studentUserNo);
+    // 신규 신청
+    int insertEnrollment(EnrollmentDTO dto);
 
-    // 수강취소 (status = 0 → 1)
-    int cancelEnrollment(EnrollmentDTO enrollment);
+    // 신청 내역 페이징 조회
+    List<EnrollmentListDTO> selectEnrollmentListPaged(
+            @Param("studentUserNo") int studentUserNo,
+            @Param("startRow") int startRow,
+            @Param("rowPerPage") int rowPerPage
+    );
 
-    // 취소된 수강신청 복구 (status = 1 → 0)
-    int reactivateEnrollment(EnrollmentDTO enrollment);
+    // 전체 row
+    int countEnrollmentList(@Param("studentUserNo") int studentUserNo);
+
+    // 수강 취소
+    int cancelEnrollment(
+            @Param("studentUserNo") int studentUserNo,
+            @Param("enrollmentNo") int enrollmentNo
+    );
 }

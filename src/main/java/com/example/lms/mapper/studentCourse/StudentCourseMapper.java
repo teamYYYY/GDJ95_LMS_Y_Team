@@ -9,12 +9,14 @@ import com.example.lms.dto.StudentCourseDTO;
 
 @Mapper
 public interface StudentCourseMapper {
-	// 수강 신청 가능 강의 목록 조회
-	List<StudentCourseDTO> selectCourseListForStudent();
-	 
-	// 강의 정원 조회
-	int getCourseCapacity(@Param("courseNo") int courseNo);
-	
-	// 특정 강의의 현재 신청 인원 조회
-	int getCurrentEnrollment(@Param("courseNo") int courseNo);
+
+    // 학생용 수강신청 리스트 조회 (학생번호 + 페이징)
+    List<StudentCourseDTO> selectCourseListForStudent(
+            @Param("studentUserNo") int studentUserNo,
+            @Param("startRow") int startRow,
+            @Param("rowPerPage") int rowPerPage
+    );
+
+    // 전체 강의 수
+    int countCourseList();
 }

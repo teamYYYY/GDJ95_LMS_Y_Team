@@ -1,9 +1,9 @@
 package com.example.lms.controller.enrollment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.lms.dto.EnrollmentDTO;
+import com.example.lms.dto.EnrollmentListDTO;
+import com.example.lms.dto.StudentCourseDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.enrollment.EnrollmentService;
 import com.example.lms.service.studentCourse.StudentCourseService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class EnrollmentController {
@@ -29,111 +29,162 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     private final StudentCourseService studentCourseService;
 
-    /** 수강신청 가능 강의 리스트 */
+    // ---------------------------------------------------------
+    // 수강신청 가능 강의 목록
+    // ---------------------------------------------------------
     @GetMapping("/courseListForEnrollment")
-    public String courseListForEnrollment(Model model,
-                                         HttpSession session,
-                                         @RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
+    public String courseListForEnrollment(
+            Model model,
+            HttpSession session,
+            @RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
+        if (loginUser == null) return "redirect:/login";
+
+        int studentUserNo = loginUser.getUserNo();
+        int rowPerPage = 10;
+        int startRow = (currentPage - 1) * rowPerPage;
+
+        // 강의 목록 조회
+        List<StudentCourseDTO> courseList =
+                studentCourseService.getCourseListForStudent(studentUserNo, startRow, rowPerPage);
+
+        model.addAttribute("courseList", courseList);
+
+        // 전체 강의 수
+        int totalRow = studentCourseService.getTotalCourseCount();
+        int lastPage = (totalRow + rowPerPage - 1) / rowPerPage;
+
+        // 페이지 그룹 (5개 단위)
+        int pageGroup = (currentPage - 1) / 5;
+        int startPage = pageGroup * 5 + 1;
+        int endPage = startPage + 4;
+        if (endPage > lastPage) endPage = lastPage;
+
+        // pageList 구성
+        List<Map<String, Object>> pageList = new ArrayList<>();
+        for (int i = startPage; i <= endPage; i++) {
+            Map<String, Object> p = new HashMap<>();
+            p.put("page", i);
+            p.put("current", i == currentPage);
+            pageList.add(p);
         }
 
-        log.info("수강신청 화면 요청 - studentUserNo={}", loginUser.getUserNo());
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("lastPage", lastPage);
+        model.addAttribute("hasPrev", currentPage > 1);
+        model.addAttribute("hasNext", currentPage < lastPage);
+        model.addAttribute("prevPage", currentPage - 1);
+        model.addAttribute("nextPage", currentPage + 1);
 
-        model.addAttribute("courseList", studentCourseService.getCourseListForStudent());
-        model.addAttribute("studentUserNo", loginUser.getUserNo());
-
-        // 네비게이션 활성화
         model.addAttribute("nav_enrollment", "border-blue-600 text-blue-600");
 
         return "enrollment/courseListForEnrollment";
     }
 
-    /** 수강신청 처리 */
+    // ---------------------------------------------------------
+    // 수강 신청 처리
+    // ---------------------------------------------------------
     @PostMapping("/addEnrollment")
-    public String addEnrollment(EnrollmentDTO enrollment,
-                                HttpSession session,
-                                RedirectAttributes redirectAttributes) {
+    public String addEnrollment(
+            EnrollmentDTO dto,
+            @RequestParam(defaultValue="1") int currentPage,
+            HttpSession session,
+            Model model) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
 
-        enrollment.setStudentUserNo(loginUser.getUserNo());
-        // 상태코드: 0 = 신청, 1 = 취소  (XML, 중복체크 로직이 이렇게 설계되어 있음)
-        enrollment.setEnrollmentStatus(0);
+        // ★ 반드시 넣어줘야 하는 부분 ★
+        dto.setStudentUserNo(loginUser.getUserNo());
 
-        try {
-            String msg = enrollmentService.addEnrollment(enrollment);
-            redirectAttributes.addFlashAttribute("message", msg);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "오류가 발생했습니다.");
-        }
+        dto.setEnrollmentStatus(0); // 기본 신청값
 
-        return "redirect:/courseListForEnrollment";
+        String msg = enrollmentService.addEnrollment(dto);
+
+        model.addAttribute("message", msg);
+        model.addAttribute("currentPage", currentPage);
+
+        return "redirect:/courseListForEnrollment?currentPage=" + currentPage;
     }
 
-    /** 수강신청 내역 조회 */
+    // ---------------------------------------------------------
+    // 수강 신청 내역
+    // ---------------------------------------------------------
     @GetMapping("/enrollmentList")
-    public String enrollmentList(HttpSession session, Model model) {
+    public String enrollmentList(
+            Model model,
+            HttpSession session,
+            @RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
         int studentUserNo = loginUser.getUserNo();
+        int rowPerPage = 10;
+        int startRow = (currentPage - 1) * rowPerPage;
 
-        List<EnrollmentDTO> rawList = enrollmentService.selectEnrollmentList(studentUserNo);
+        // 신청 내역 조회
+        List<EnrollmentListDTO> list =
+                enrollmentService.getEnrollmentList(studentUserNo, startRow, rowPerPage);
 
-        List<Map<String, Object>> viewList = new ArrayList<>();
-
-        for (EnrollmentDTO e : rawList) {
-            Map<String, Object> row = new HashMap<>();
-            row.put("enrollmentNo", e.getEnrollmentNo());
-            row.put("courseNo", e.getCourseNo());
-            row.put("createdate", e.getCreatedate());
-
+        // Mustache 전용 상태값 세팅
+        for (EnrollmentListDTO e : list) {
             Integer status = e.getEnrollmentStatus();
-            if (status == null) status = 1; // 필요하면 기본값 처리
-
-            row.put("isActive", status == 0);   // 신청완료
-            row.put("isCanceled", status == 1); // 취소됨
-
-            viewList.add(row);
+            e.setIsActive(status != null && status == 0);
+            e.setIsCanceled(status != null && status == 1);
         }
 
-        model.addAttribute("list", viewList);
+        model.addAttribute("list", list);
+
+        // 전체 row
+        int totalRow = enrollmentService.getEnrollmentTotalCount(studentUserNo);
+        int lastPage = (totalRow + rowPerPage - 1) / rowPerPage;
+
+        // 페이지 그룹 (5개 단위)
+        int pageGroup = (currentPage - 1) / 5;
+        int startPage = pageGroup * 5 + 1;
+        int endPage = startPage + 4;
+        if (endPage > lastPage) endPage = lastPage;
+
+        // pageList 구성
+        List<Map<String, Object>> pageList = new ArrayList<>();
+        for (int i = startPage; i <= endPage; i++) {
+            Map<String, Object> p = new HashMap<>();
+            p.put("page", i);
+            p.put("current", i == currentPage);
+            pageList.add(p);
+        }
+
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("lastPage", lastPage);
+        model.addAttribute("hasPrev", currentPage > 1);
+        model.addAttribute("hasNext", currentPage < lastPage);
+        model.addAttribute("prevPage", currentPage - 1);
+        model.addAttribute("nextPage", currentPage + 1);
+
         model.addAttribute("nav_enrollmentList", "border-blue-600 text-blue-600");
 
         return "enrollment/enrollmentList";
     }
 
-    /** 수강취소 */
+    // ---------------------------------------------------------
+    // 수강 취소
+    // ---------------------------------------------------------
     @PostMapping("/cancelEnrollment")
-    public String cancelEnrollment(@RequestParam int courseNo,
-                                   HttpSession session,
-                                   RedirectAttributes redirectAttributes) {
+    public String cancelEnrollment(
+            @RequestParam int enrollmentNo,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
-        EnrollmentDTO enrollment = new EnrollmentDTO();
-        enrollment.setStudentUserNo(loginUser.getUserNo());
-        enrollment.setCourseNo(courseNo);
-
-        try {
-            String msg = enrollmentService.cancelEnrollment(enrollment);
-            redirectAttributes.addFlashAttribute("message", msg);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "취소 처리 중 오류 발생");
-        }
+        String msg = enrollmentService.cancelEnrollment(loginUser.getUserNo(), enrollmentNo);
+        redirectAttributes.addFlashAttribute("message", msg);
 
         return "redirect:/enrollmentList";
     }
+
 }

@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.lms.mapper.enrollment.EnrollmentMapper">
 
-    <!-- 1) 취소 → 재신청 -->
-    <update id="reactivateEnrollment">
-        UPDATE tb_enrollment
-        SET enrollment_status = 0
-          , updatedate = NOW()
-        WHERE student_user_no = #{studentUserNo}
-          AND course_no = #{courseNo}
-          AND enrollment_status = 1
-    </update>
+    <!-- 시간표 겹침 체크 -->
+    <select id="countTimeOverlap" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_enrollment e
+        INNER JOIN tb_course_time t1 ON t1.course_no = e.course_no
+        INNER JOIN tb_course_time t2 ON t2.course_no = #{courseNo}
+        WHERE e.student_user_no = #{studentUserNo}
+          AND e.enrollment_status = 0
+          AND t1.course_time_yoil = t2.course_time_yoil
+          AND (
+                    t1.course_time_start BETWEEN t2.course_time_start AND t2.course_time_end
+                OR  t1.course_time_end   BETWEEN t2.course_time_start AND t2.course_time_end
+                OR  t2.course_time_start BETWEEN t1.course_time_start AND t1.course_time_end
+          )
+    </select>
 
-    <!-- 2) 신규 수강신청 -->
-    <insert id="insertEnrollment">
-        INSERT INTO tb_enrollment
-        ( student_user_no
-        , course_no
-        , enrollment_status
-        , createdate )
-        VALUES
-        ( #{studentUserNo}
-        , #{courseNo}
-        , #{enrollmentStatus}
-        , NOW() )
-    </insert>
-
-    <!-- 3) 중복 체크 -->
+    <!-- 중복 신청 체크 -->
     <select id="countEnrollment" resultType="int">
         SELECT COUNT(*)
         FROM tb_enrollment
@@ -37,26 +29,65 @@
           AND enrollment_status = 0
     </select>
 
-    <!-- 4) 수강신청 목록 조회 -->
-    <select id="selectEnrollmentList" resultType="com.example.lms.dto.EnrollmentDTO">
-        SELECT enrollment_no enrollmentNo
-             , student_user_no studentUserNo
-             , course_no courseNo
-             , enrollment_status enrollmentStatus
-             , createdate
-             , updatedate
-        FROM tb_enrollment
-        WHERE student_user_no = #{studentUserNo}
-        ORDER BY createdate DESC
+    <!-- 신규 신청 -->
+    <insert id="insertEnrollment">
+        INSERT INTO tb_enrollment
+        (student_user_no, course_no, enrollment_status, createdate)
+        VALUES
+        (#{studentUserNo}, #{courseNo}, #{enrollmentStatus}, NOW())
+    </insert>
+
+    <!-- 수강신청 내역 조회 (페이징) -->
+    <select id="selectEnrollmentListPaged"
+            resultType="com.example.lms.dto.EnrollmentListDTO">
+
+        SELECT
+              e.enrollment_no enrollmentNo
+            , e.enrollment_status AS enrollmentStatus
+            , e.createdate
+
+            , c.course_no courseNo
+            , c.course_name courseName
+            , c.course_score courseScore
+            , c.course_capacity courseCapacity
+
+            , u.user_name professorName
+
+            , CASE t.course_time_yoil
+                WHEN 1 THEN '월'
+                WHEN 2 THEN '화'
+                WHEN 3 THEN '수'
+                WHEN 4 THEN '목'
+                WHEN 5 THEN '금'
+              END courseTimeYoil
+
+            , t.course_time_start courseTimeStart
+            , t.course_time_end courseTimeEnd
+
+        FROM tb_enrollment e
+        INNER JOIN tb_course c ON c.course_no = e.course_no
+        INNER JOIN tb_sysuser u ON u.user_no = c.professor_user_no
+        INNER JOIN tb_course_time t ON t.course_no = c.course_no
+
+        WHERE e.student_user_no = #{studentUserNo}
+        ORDER BY e.enrollment_no DESC
+        LIMIT #{startRow}, #{rowPerPage}
     </select>
 
-    <!-- 5) 수강취소 -->
+    <!-- 전체 row -->
+    <select id="countEnrollmentList" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_enrollment
+        WHERE student_user_no = #{studentUserNo}
+    </select>
+
+    <!-- 수강 취소 -->
     <update id="cancelEnrollment">
         UPDATE tb_enrollment
-        SET enrollment_status = 1
-          , updatedate = NOW()
+        SET enrollment_status = 1,
+            updatedate = NOW()
         WHERE student_user_no = #{studentUserNo}
-          AND course_no = #{courseNo}
+          AND enrollment_no = #{enrollmentNo}
           AND enrollment_status = 0
     </update>
 

@@ -20,13 +20,17 @@ public class StudentCourseDTO {
     private Integer courseCapacity;      // 정원
     private Integer courseScore;         // 학점
 
-
+    // 강의 시간
+    private String courseTimeYoil;
+    private String courseTimeStart;
+    private String courseTimeEnd;
+    
     // 수강 현황
     private Integer currentCount;        // 현재 신청 인원
     private Boolean isFull;              // 정원 초과 여부
-
-    // 강의 시간
-    private Integer courseTimeYoil;
-    private Integer courseTimeStart;
-    private Integer courseTimeEnd;
+    
+	 // null  → 한번도 신청하지 않음
+	 // 0     → 현재 신청중
+	 // 1     → 신청했다가 취소함
+	 private Integer myStatus; // 학생 개인 수강 상태
 }
