@@ -120,7 +120,7 @@
 		LEFT OUTER JOIN tb_sysuser_grade f
 		ON a.user_grade = f.grade_code
 		ORDER BY a.user_no DESC
-		LIMIT #{startRow}, #{limit};
+		LIMIT #{startRow}, #{limit}
 		
 	</select>
 	
@@ -163,7 +163,7 @@
 			  #{userLoginFailCnt},
 			  NOW(),
 			  NOW()
-		  );
+		  )
 	
 	</insert>
 	
@@ -192,7 +192,7 @@
 			user_updatedate = NOW()
 		WHERE
 			user_no = #{userNo}
-			AND user_id = #{userId};
+			AND user_id = #{userId}
 	
 	</update>
 	

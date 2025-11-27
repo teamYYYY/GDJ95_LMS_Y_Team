@@ -117,7 +117,7 @@ public class UserManagementController {
 
         try {
             // SysAuthService에 있는 메서드를 호출하고 authCode를 파라미터로 전달
-            List<SysAuthDTO> detailList = sysAuthService.seletcAuthCodesysAuthDetailList(authCode); 
+            List<SysAuthDTO> detailList = sysAuthService.selectAuthCodesysAuthDetailList(authCode); 
             
             response.put("status", "success");
             response.put("detailList", detailList);

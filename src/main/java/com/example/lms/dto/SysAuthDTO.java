@@ -19,9 +19,18 @@ public class SysAuthDTO {
 	  private String authCode; //사용자 권한코드
 	  private String authName; //권한명
 	  private LocalDateTime authCreatedate; //생성일자
+	  private LocalDateTime authUpdatedate; //업데이트일자
 	  
 	  // TB_SYSAUTH_DETAIL
 	  private String authDetailCode; //사용자 세부 권한코드
 	  private String authDetailName; //세부 권한명
 	  private LocalDateTime authDetailCreatedate; //생성일자
+	  private LocalDateTime authDetailUpdatedate; //업데이트일자
+	  
+	  // 업데이트시에 새로 받아올 코드 담는 변수...
+	  private String newAuthCode; // 업데이트 사용자 권한코드
+	  private String newAuthDetailCode; // 업데이트 사용자 세부권한코드
+	  
+	  // 리스트 조회할때 필요해서 추가함...
+	  private Integer rownum;
 }

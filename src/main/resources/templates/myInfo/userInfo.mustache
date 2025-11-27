@@ -30,21 +30,26 @@
 <body class="text-gray-800">
 
     <header class="bg-white border-b border-gray-200">
-        <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
-                    <i class="fa-solid fa-graduation-cap text-lg"></i>
-                </div>
-                <h1 class="text-lg font-bold text-gray-800">학사관리시스템 <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span></h1>
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
             </div>
-            <div class="text-sm text-gray-600 flex items-center gap-4">
-                <p>{{userInfo.userName}}님 로그인 중입니다</p> 
-                <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
-                    <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
-                </a>
-            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a> 
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
         </div>
-    </header>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p> 
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
 
     <div class="admin-hero-bg h-40 p-8 text-white">
         <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
@@ -64,7 +69,7 @@
                 <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                     <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                     <i class="fa-solid fa-user-lock w-5"></i> 사용자권한관리
                 </a>
                 <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
