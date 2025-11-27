@@ -72,15 +72,26 @@ public class UserService {
 	}
 	
 	// 시스템사용자 관리 - 시스템 사용자 검색 조회 ( 학번이나 사용자명으로 검색 // 같은 이름의 사용자 가능성 있음)
-	public List<Map<String, Object>> searchUserInfoMapList(String searchUserCondition) {
+	public List<Map<String, Object>> searchUserInfoMapList(String searchUserCondition, Integer startRow, Integer limit) {
 		
-		return userMapper.searchUserInfoMapList(searchUserCondition);
+		return userMapper.searchUserInfoMapList(searchUserCondition, startRow, limit );
+	}
+	
+	// 시스템사용자 관리 - 시스템 사용자 검색 조회 카운트 ( 페이징 시 사용 )
+	public Integer searchUserInfoMapListCnt(String searchUserCondition) {
+		
+		return userMapper.searchUserInfoMapListCnt(searchUserCondition);
 	}
 	
 	// 시스템사용자 관리 - 시스템 전체 사용자 수 ( 페이징 시 사용 )
 	public Integer selectSysUserCnt() {
 		
 		return userMapper.selectSysUserCnt();
+	}
+	
+	public List<Map<String, Object>> userInfoDetailMapList(String userId) {
+		
+		return userMapper.userInfoDetailMapList(userId);
 	}
 	
 	// 시스템사용자 관리 - 다수 사용자 계정 폐지 처리 기능

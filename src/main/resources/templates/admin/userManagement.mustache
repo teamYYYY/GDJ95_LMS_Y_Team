@@ -87,7 +87,7 @@
                 </a>
             </nav>
         </aside>
-
+		<!--  여기부터 동적 -->
         <main class="flex-grow p-8 max-w-screen-2xl mx-auto">
             <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">시스템 사용자 관리</h2>
@@ -105,7 +105,7 @@
                 </div>
                 
                 <div class="flex justify-between items-center mb-4">
-                    <p class="text-gray-700 font-medium">사용자 목록 <span class="text-sm text-gray-500 ml-1">총 5명의 사용자</span></p>
+                    <p class="text-gray-700 font-medium">사용자 목록 <span class="text-sm text-gray-500 ml-1" id="totalCountDisplay">총 {{totalCount}}명의 사용자</span></p>
                     <div class="flex gap-2">
                         <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
                             <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
@@ -138,33 +138,25 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200" id="userListBody">
+                            {{#userList}}
                             <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="1"></td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">1</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="{{userNo}}"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{userNo}}</td>
                                 <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                    <a href="#" onclick="openUserDetailModal('20240001')" class="text-blue-600 hover:underline">20240001</a>
+                                    <a href="#" onclick="openUserDetailModal('{{userId}}')" class="text-blue-600 hover:underline">{{userId}}</a>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">김철수</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">kim@university.ac.kr</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">컴퓨터공학과</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">학생</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-green-600">활성</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">2024-03-01</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{userName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{userEmail}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{deptName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">{{authName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm 
+                                    {{#isRetire}}text-red-600{{/isRetire}}
+                                    {{^isRetire}}{{#isActive}}text-green-600{{/isActive}}{{^isActive}}text-red-600{{/isActive}}{{/isRetire}}
+                                ">{{statusName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{createDate}}</td>
                             </tr>
-                            <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="2"></td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">2</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                    <a href="#" onclick="openUserDetailModal('20240002')" class="text-blue-600 hover:underline">20240002</a>
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">이영희</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">lee@university.ac.kr</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">전자공학과</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">학생</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-red-600">비활성</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">2024-03-02</td>
-                            </tr>
-                             </tbody>
+                            {{/userList}}
+                        </tbody>
                     </table>
                 </div>
 
@@ -173,431 +165,762 @@
                         <i class="fa-solid fa-user-slash mr-1"></i> 계정 폐지
                     </button>
                     <div class="flex items-center space-x-1" id="pagination">
-                        <button class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">이전</button>
-                        <button class="px-3 py-1 border rounded-lg bg-blue-600 text-white">1</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">2</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">3</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">4</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">5</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">6</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">7</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">8</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">9</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-700 hover:bg-gray-100">10</button>
-                        <button class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">다음</button>
+                        {{#showPrev}}
+                        <a href="/admin/userManagement?page={{prevPage}}&limit=10" class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">이전</a>
+                        {{/showPrev}}
+                        {{^showPrev}}
+                        <span class="px-3 py-1 border rounded-lg text-gray-300 cursor-not-allowed">이전</span>
+                        {{/showPrev}}
+
+                        {{#pageNumbers}}
+                        <a href="/admin/userManagement?page={{number}}&limit=10" 
+                           class="px-3 py-1 border rounded-lg {{#isActive}}bg-blue-600 text-white{{/isActive}}{{^isActive}}text-gray-700 hover:bg-gray-100{{/isActive}}">{{number}}</a>
+                        {{/pageNumbers}}
+
+                        {{#showNext}}
+                        <a href="/admin/userManagement?page={{nextPage}}&limit=10" class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">다음</a>
+                        {{/showNext}}
+                        {{^showNext}}
+                        <span class="px-3 py-1 border rounded-lg text-gray-300 cursor-not-allowed">다음</span>
+                        {{/showNext}}
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
     <div id="batchUploadModal" class="modal-container hidden">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative">
-            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeBatchUploadModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h3 class="text-lg font-bold mb-4 border-b pb-2">사용자 일괄 업로드</h3>
-            <p class="text-sm text-gray-500 mb-6">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
-            
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center mb-6">
-                <i class="fa-solid fa-cloud-upload-alt text-5xl text-blue-400 mb-3"></i>
-                <p class="text-gray-600">파일을 드래그하거나 클릭하여 업로드</p>
-                <p class="text-xs text-gray-400">.xlsx, .xls 파일만 지원됩니다</p>
-                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                    파일 선택
-                </button>
-            </div>
-            
-            <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded-lg mb-6">
-                <p class="font-semibold mb-2">⚠ 첨부파일 업로드 시 주의사항</p>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                    <li>엑셀 파일 형식(.xlsx/.xls)만 업로드 가능합니다.</li>
-                    <li>제공된 양식의 항목 및 순서를 변경하지 마세요.</li>
-                    <li>필수 항목은 반드시 입력되어야 합니다.</li>
-                    <li>최대 1000개까지 한번에 등록할 수 있습니다.</li>
-                    <li>데이터 형식 불일치 오류 발생 시 등록이 실패할 수 있습니다.</li>
-                    <li>등록된 데이터는 자동으로 **활성** 처리됩니다.</li>
-                </ul>
-            </div>
-            
-            <div class="pt-3 flex justify-end gap-3">
-                <button type="button" onclick="closeBatchUploadModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">취소</button>
-                <button type="button" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
-                    <i class="fa-solid fa-upload mr-1"></i> 업로드
-                </button>
-            </div>
         </div>
-    </div>
-
+    
     <div id="userCrudModal" class="modal-container hidden">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">
-            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeUserCrudModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h3 id="modalTitle" class="text-xl font-bold mb-4 border-b pb-2">사용자 등록</h3>
-            <p id="modalSubtitle" class="text-sm text-gray-500 mb-4">* 표시는 필수 항목입니다</p>
-            
-            <form id="userForm" class="space-y-4">
-                <input type="hidden" id="userNo" name="userNo" /> 
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">
+        <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeUserCrudModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="modalTitle" class="text-xl font-bold mb-4 border-b pb-2">사용자 등록</h3>
+        <p id="modalSubtitle" class="text-sm text-gray-500 mb-4">* 표시는 필수 항목입니다</p>
+        
+        <form id="userForm" class="space-y-4">
+            <input type="hidden" id="userNo" name="userNo" />
+            <input type="hidden" id="userLastLogin" name="userLastLogin" />
+            <input type="hidden" id="userLoginFailCnt" name="userLoginFailCnt" />
+            <input type="hidden" id="createDate" name="createDate" />
+            <input type="hidden" id="updateDate" name="updateDate" />
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="userId" class="block text-sm font-medium text-gray-700 mb-1">사용자 학번 *</label>
-                        <input type="text" id="userId" name="userId" placeholder="학번을 입력하세요" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                    <div>
-                        <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">사용자 이름 *</label>
-                        <input type="text" id="userName" name="userName" placeholder="이름을 입력하세요" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label for="userAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 권한 *</label>
-                        <select id="userAuth" name="userAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
-                            <option value="">권한을 선택하세요</option>
-                            <option value="S">학생</option>
-                            <option value="P">교수</option>
-                            <option value="A">관리자</option>
-                            <option value="G">일반직원</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="userDetailAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 세부 권한 *</label>
-                        <select id="userDetailAuth" name="userDetailAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
-                            <option value="">세부 권한을 선택하세요</option>
-                            <option value="sub_admin">팀장</option>
-                            <option value="staff">일반</option>
-                            <option value="TA">조교</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="userStatus" class="block text-sm font-medium text-gray-700 mb-1">사용자 계정 상태 *</label>
-                        <select id="userStatus" name="userStatus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
-                            <option value="">상태를 선택하세요</option>
-                            <option value="1">활성</option>
-                            <option value="2">비활성</option>
-                            <option value="3">폐지</option>
-                            </select>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div id="passwordField">
-                        <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-1">사용자 비밀번호 *</label>
-                        <input type="password" id="userPassword" name="userPassword" placeholder="비밀번호를 입력하세요 (수정 시 미입력 시 변경 없음)" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                    <div>
-                        <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">사용자 이메일</label>
-                        <input type="email" id="userEmail" name="userEmail" placeholder="example@university.ac.kr" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="userPhone" class="block text-sm font-medium text-gray-700 mb-1">사용자 연락처</label>
-                        <input type="tel" id="userPhone" name="userPhone" placeholder="010-0000-0000" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                    <div>
-                        <label for="userBirth" class="block text-sm font-medium text-gray-700 mb-1">사용자 생년월일</label>
-                        <input type="date" id="userBirth" name="userBirth" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label for="deptCode" class="block text-sm font-medium text-gray-700 mb-1">학과</label>
-                        <select id="deptCode" name="deptCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
-                            <option value="">학과를 선택하세요</option>
-                             </select>
-                    </div>
-                    <div>
-                        <label for="userGrade" class="block text-sm font-medium text-gray-700 mb-1">학년</label>
-                        <select id="userGrade" name="userGrade" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
-                            <option value="">학년을 선택하세요</option>
-                             </select>
-                    </div>
-                    <div>
-                        <label for="userPosition" class="block text-sm font-medium text-gray-700 mb-1">직급</label>
-                        <input type="text" id="userPosition" name="userPosition" placeholder="직급을 입력하세요" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="userZipcode" class="block text-sm font-medium text-gray-700 mb-1">우편번호</label>
-                        <input type="text" id="userZipcode" name="userZipcode" placeholder="12345" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                    <div>
-                        <label for="userAddr" class="block text-sm font-medium text-gray-700 mb-1">주소</label>
-                        <input type="text" id="userAddr" name="userAddr" placeholder="주소를 입력하세요" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
-                    </div>
-                </div>
-                
+            <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label for="userAddrDetail" class="block text-sm font-medium text-gray-700 mb-1">상세 주소</label>
-                    <input type="text" id="userAddrDetail" name="userAddrDetail" placeholder="상세 주소를 입력하세요" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field" />
+                    <label for="userId" class="block text-sm font-medium text-gray-700 mb-1">사용자 ID (학번) *</label>
+                    <input type="text" id="userId" name="userId" required placeholder="ID를 입력하세요" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
                 </div>
+                <div>
+                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">이름 *</label>
+                    <input type="text" id="userName" name="userName" required placeholder="이름을 입력하세요" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div id="passwordField">
+                    <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-1">비밀번호 *</label>
+                    <input type="password" id="userPassword" name="userPassword" required placeholder="********" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+                    <input type="email" id="userEmail" name="userEmail" placeholder="email@example.com" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div>
+                    <label for="userPhone" class="block text-sm font-medium text-gray-700 mb-1">휴대폰 번호</label>
+                    <input type="text" id="userPhone" name="userPhone" placeholder="010-0000-0000" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div>
+                    <label for="userBirth" class="block text-sm font-medium text-gray-700 mb-1">생년월일</label>
+                    <input type="date" id="userBirth" name="userBirth" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+            </div>
 
-                <div id="registerButtons" class="pt-3 flex justify-end gap-3">
-                    <button type="button" onclick="closeUserCrudModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">취소</button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">등록</button>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="userAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 권한 *</label>
+                    <select id="userAuth" name="userAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">권한을 선택하세요</option>
+                        {{#metaData.authList}}
+                            <option value="{{authCode}}">{{authName}}</option>
+                        {{/metaData.authList}}
+                    </select>
+                </div>
+				<div>
+		            <label for="userDetailAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 세부 권한 *</label>
+		            <select id="userDetailAuth" name="userDetailAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+		                <option value="">세부 권한을 선택하세요</option>
+	                </select>
+      		  	</div>
+                <div>
+                    <label for="userStatus" class="block text-sm font-medium text-gray-700 mb-1">사용자 계정 상태 *</label>
+                    <select id="userStatus" name="userStatus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">상태를 선택하세요</option>
+                        {{#metaData.statusList}}
+                            <option value="{{statusCode}}">{{statusName}}</option>
+                        {{/metaData.statusList}}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="deptCode" class="block text-sm font-medium text-gray-700 mb-1">학과</label>
+                    <select id="deptCode" name="deptCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">학과를 선택하세요</option>
+                        {{#metaData.deptList}}
+                            <option value="{{deptCode}}">{{deptName}}</option>
+                        {{/metaData.deptList}}
+                    </select>
+                </div>
+                <div>
+                    <label for="userGrade" class="block text-sm font-medium text-gray-700 mb-1">학년</label>
+                    <select id="userGrade" name="userGrade" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">학년을 선택하세요</option>
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                        <option value="4">4학년</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div>
+                <label for="userZipcode" class="block text-sm font-medium text-gray-700 mb-1">우편번호</label>
+                <input type="text" id="userZipcode" name="userZipcode" placeholder="우편번호"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+            <div>
+                <label for="userAddr" class="block text-sm font-medium text-gray-700 mb-1">기본 주소</label>
+                <input type="text" id="userAddr" name="userAddr" placeholder="기본 주소"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+            <div>
+                <label for="userAddrDetail" class="block text-sm font-medium text-gray-700 mb-1">상세 주소</label>
+                <input type="text" id="userAddrDetail" name="userAddrDetail" placeholder="상세 주소"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+
+            <div class="pt-4 border-t flex justify-end gap-2">
+                <button type="submit" id="registerButtons" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> 등록
+                </button>
+                
+                <div id="detailButtons" class="hidden">
+                    <button type="button" onclick="enterDetailEditMode()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> 변경
+                    </button>
                 </div>
                 
-                <div id="detailButtons" class="pt-3 flex justify-end gap-3 hidden">
-                    <button type="button" onclick="enterDetailEditMode()" class="px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">변경</button>
-                    <button type="button" onclick="closeUserCrudModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">닫기</button>
-                </div>
-
-                <div id="editButtons" class="pt-3 flex justify-end gap-3 hidden">
-                    <button type="button" onclick="cancelDetailEditMode()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">취소</button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">수정</button>
+                <div id="editBtns" class="hidden">
+                    <button type="button" onclick="cancelDetailEditMode()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                        <i class="fa-solid fa-xmark mr-1"></i> 취소
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> 저장
+                    </button>
                 </div>
                 
-            </form>
-        </div>
+                <button type="button" onclick="closeUserCrudModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <i class="fa-solid fa-times mr-1"></i> 닫기
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
-        const batchModal = document.getElementById('batchUploadModal');
-        const userCrudModal = document.getElementById('userCrudModal');
-        const userForm = document.getElementById('userForm');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalSubtitle = document.getElementById('modalSubtitle');
-        
-        const registerBtns = document.getElementById('registerButtons');
-        const detailBtns = document.getElementById('detailButtons');
-        const editBtns = document.getElementById('editButtons');
-        
-        const passwordFieldDiv = document.getElementById('passwordField'); // 비밀번호 input을 감싸는 div
-        const passwordInput = document.getElementById('userPassword');
-        const userIdInput = document.getElementById('userId');
-        
-        // input-field 클래스를 가진 모든 입력/선택 필드 (숨김 필드 제외)
-        const inputFields = document.querySelectorAll('#userCrudModal .input-field');
-        
-        // 상세 정보/수정 모드에서 읽기 전용 토글
-        function toggleInputReadOnly(isReadOnly, isDetailMode) {
-            inputFields.forEach(input => {
-                // 비밀번호, ID, 권한, 상태 필드는 별도로 처리
-                if (input.id === 'userPassword' || input.id === 'userId' || input.id === 'userStatus' || input.id === 'userAuth' || input.id === 'userDetailAuth') {
-                    // continue; // 별도 처리
-                }
+<script>
+    // 전역 변수 설정
+    const batchModal = document.getElementById('batchUploadModal');
+    const userCrudModal = document.getElementById('userCrudModal');
+    const userForm = document.getElementById('userForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    
+    const registerBtns = document.getElementById('registerButtons');
+    const detailBtns = document.getElementById('detailButtons');
+    const editBtns = document.getElementById('editBtns');
+    
+    const passwordFieldDiv = document.getElementById('passwordField');
+    const passwordInput = document.getElementById('userPassword');
+    const userIdInput = document.getElementById('userId');
+    
+    // [AJAX 통신 및 목록 갱신을 위한 변수]
+    const userListBody = document.getElementById('userListBody');
+    const searchConditionInput = document.getElementById('searchCondition');
+    const searchBtn = document.getElementById('searchBtn');
+    const retireSelectedBtn = document.getElementById('retireSelectedBtn');
+    const totalCountDisplay = document.getElementById('totalCountDisplay');
+    const paginationDiv = document.getElementById('pagination'); 
+    
+    let originalDetailData = {}; 
+    
+    // input-field 클래스를 가진 모든 입력/선택 필드 (숨김 필드 제외)
+    const inputFields = document.querySelectorAll('#userCrudModal .input-field');
+
+    // 🚀 검색 상태 유지를 위한 전역 변수 추가 🚀
+    let currentSearchCondition = ''; // 현재 검색어
+    let currentPageNo = 1;         // 현재 페이지 번호
+
+    // 🚀 권한 선택 요소 전역 변수 추가 🚀
+    const userAuthSelect = document.getElementById('userAuth');
+    const userDetailAuthSelect = document.getElementById('userDetailAuth');
+
+
+	 // ------------------------
+	 // 유틸리티 함수: 폼에 데이터 바인딩
+	 // ------------------------
+	 function bindFormData(data) {
+	     for (const key in data) {
+	         const input = document.getElementById(key);
+	         
+	         if (input) { 
+	             // 🚀 수정 후: 해당 조건 없이 모든 필드를 바인딩하도록 합니다.
+	             input.value = (data[key] === null || data[key] === undefined) ? '' : data[key].toString(); 
+	         }
+	     }
+	     
+	     const userNoInput = document.getElementById('userNo');
+	     if (userNoInput) {
+	         userNoInput.value = data.userNo || ''; 
+	     }
+	     
+	     if (passwordInput) {
+	         passwordInput.value = '********'; 
+	         passwordInput.setAttribute('type', 'text');
+	     }
+	 }
+
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 입력 필드 읽기 전용 상태 토글 (userId 예외 처리 제거)
+    // ------------------------
+    function toggleInputReadOnly(isReadOnly, preservePassword) {
+        inputFields.forEach(input => {
+            // 🟢 수정: userId 예외 처리 제거. userNo만 예외 처리 🟢
+            if (input.id !== 'userNo') {
+                input.readOnly = isReadOnly;
+                input.disabled = isReadOnly;
                 
                 if (isReadOnly) {
-                    input.setAttribute('readonly', true);
                     input.classList.add('input-readonly');
-                    if (input.tagName === 'SELECT') {
-                         input.style.pointerEvents = 'none'; // Select 요소도 비활성화
-                    }
                 } else {
-                    input.removeAttribute('readonly');
                     input.classList.remove('input-readonly');
-                    if (input.tagName === 'SELECT') {
-                        input.style.pointerEvents = 'auto';
-                    }
                 }
-            });
-            
-            // 등록/상세/수정 모드에 따른 비밀번호, ID 필드 처리
-            if (isDetailMode) {
-                 // 상세 보기에서는 ID는 항상 읽기 전용
-                 userIdInput.setAttribute('readonly', true);
-                 userIdInput.classList.add('input-readonly');
+            }
+        });
+
+        // 비밀번호 필드 처리
+        if (!preservePassword) {
+            passwordInput.readOnly = isReadOnly;
+            passwordInput.disabled = isReadOnly;
+            if (isReadOnly) {
+                passwordInput.classList.add('input-readonly');
             } else {
-                 // 등록 모드에서는 ID 편집 가능
-                 userIdInput.removeAttribute('readonly');
-                 userIdInput.classList.remove('input-readonly');
+                passwordInput.classList.remove('input-readonly');
             }
-            
-             // 비밀번호 필드는 이제 항상 표시됨.
-             passwordFieldDiv.style.display = 'block'; 
-             passwordInput.placeholder = isReadOnly ? '***' : '비밀번호를 입력하세요 (수정 시 미입력 시 변경 없음)';
-             passwordInput.required = !isReadOnly && !isDetailMode; // 등록 시에만 필수
-             passwordInput.disabled = isReadOnly; // 상세 보기 모드에서는 비활성화
-             passwordInput.value = ''; // 필드 보안을 위해 값 비움
-             if (isReadOnly) {
-                 // 상세 보기 모드에서 권한, 상태 필드도 읽기 전용 스타일 적용
-                document.getElementById('userAuth').style.pointerEvents = 'none';
-                document.getElementById('userDetailAuth').style.pointerEvents = 'none';
-                document.getElementById('userStatus').style.pointerEvents = 'none';
-                document.getElementById('userAuth').classList.add('input-readonly');
-                document.getElementById('userDetailAuth').classList.add('input-readonly');
-                document.getElementById('userStatus').classList.add('input-readonly');
-             } else {
-                 // 수정/등록 모드에서 권한, 상태 필드 읽기 전용 스타일 해제
-                document.getElementById('userAuth').style.pointerEvents = 'auto';
-                document.getElementById('userDetailAuth').style.pointerEvents = 'auto';
-                document.getElementById('userStatus').style.pointerEvents = 'auto';
-                document.getElementById('userAuth').classList.remove('input-readonly');
-                document.getElementById('userDetailAuth').classList.remove('input-readonly');
-                document.getElementById('userStatus').classList.remove('input-readonly');
-             }
         }
         
-        // ------------------------
-        // 일괄 업로드 모달
-        // ------------------------
-        function openBatchUploadModal() {
-            batchModal.classList.remove('hidden');
-            batchModal.classList.add('flex');
-        }
+        // 🚀 추가: 동적으로 로드되는 Select 박스의 disabled 처리
+        if (userAuthSelect) userAuthSelect.disabled = isReadOnly;
+        if (userDetailAuthSelect) userDetailAuthSelect.disabled = isReadOnly;
+    }
 
-        function closeBatchUploadModal() {
-            batchModal.classList.add('hidden');
-            batchModal.classList.remove('flex');
-        }
+    // ------------------------
+    // 🚀 추가: 세부 권한 동적 로딩 및 렌더링 함수
+    // ------------------------
+    function loadAndRenderAuthDetails(authCode, selectedDetailCode) {
         
-        // ------------------------
-        // 사용자 등록/상세/수정 모달
-        // ------------------------
-        function closeUserCrudModal() {
-            userCrudModal.classList.add('hidden');
-            userCrudModal.classList.remove('flex');
-            // 폼 초기화 및 상태 복구
-            userForm.reset();
-            // ID 읽기 전용 해제 (다음 등록을 위해)
-            userIdInput.removeAttribute('readonly');
-            userIdInput.classList.remove('input-readonly');
+        // 1. 초기화
+        userDetailAuthSelect.innerHTML = '<option value="">세부 권한을 선택하세요</option>';
+        if (!authCode) {
+            return; 
         }
 
-        function openRegisterModal() {
-            modalTitle.textContent = "사용자 등록";
-            modalSubtitle.textContent = "* 표시는 필수 항목입니다";
-            
-            // 모든 필드 편집 가능. 비밀번호 필수.
-            toggleInputReadOnly(false, false); 
-            
-            registerBtns.classList.remove('hidden');
-            detailBtns.classList.add('hidden');
-            editBtns.classList.add('hidden');
-            
-            passwordInput.required = true; // 등록 시에는 비밀번호 필수
-            userIdInput.removeAttribute('readonly'); // ID 편집 가능
-            
-            userCrudModal.classList.remove('hidden');
-            userCrudModal.classList.add('flex');
-        }
-
-        function openUserDetailModal(userId) {
-            modalTitle.textContent = "사용자 상세 정보 (" + userId + ")";
-            modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
-            
-            // 🚨 가상의 데이터 로딩 (실제 구현 시 AJAX 호출로 대체)
-            // loadUserData(userId); 
-            
-            // 상세 정보 모드는 읽기 전용, 비밀번호 필드는 보이지만 비활성화.
-            toggleInputReadOnly(true, true); 
-            
-            detailBtns.classList.remove('hidden');
-            registerBtns.classList.add('hidden');
-            editBtns.classList.add('hidden');
-            
-            // 비밀번호는 상세 보기 시 필수 아님
-            passwordInput.required = false; 
-            passwordInput.setAttribute('type', 'text'); // 상세에서는 숨김 없이 **표시
-            passwordInput.value = '********'; // 임시로 마스킹 처리
-            passwordInput.setAttribute('readonly', true); // 비밀번호 필드도 읽기 전용
-            passwordInput.classList.add('input-readonly');
-
-
-            userCrudModal.classList.remove('hidden');
-            userCrudModal.classList.add('flex');
-        }
-
-        // 상세 정보 -> 변경 (편집 모드 진입)
-        function enterDetailEditMode() {
-            modalTitle.textContent = "사용자 정보 수정";
-            modalSubtitle.textContent = "정보를 수정 후 저장해주세요.";
-            
-            // 비밀번호와 ID를 제외한 필드 편집 가능.
-            toggleInputReadOnly(false, true); 
-            
-            editBtns.classList.remove('hidden');
-            detailBtns.classList.add('hidden');
-            registerBtns.classList.add('hidden');
-            
-            // ID는 수정 시에도 변경 불가
-            userIdInput.setAttribute('readonly', true);
-            userIdInput.classList.add('input-readonly');
-            
-            // 비밀번호는 수정 시 다시 보이게 하고 필수는 아니게 설정 (변경을 원하면 입력)
-            passwordInput.setAttribute('type', 'password'); // 다시 password 타입으로
-            passwordInput.removeAttribute('readonly');
-            passwordInput.classList.remove('input-readonly');
-            passwordInput.disabled = false;
-            passwordInput.required = false; 
-            passwordInput.value = ''; // 수정 모드 진입 시 기존 비밀번호는 비움
-        }
-
-        // 편집 모드 -> 취소 (상세 정보 보기 모드로 복귀)
-        function cancelDetailEditMode() {
-            // 🚨 실제로는 여기서 로드된 원본 데이터를 다시 폼에 채워야 합니다.
-            // 현재는 임시로 상세 모드로 다시 전환
-            // openUserDetailModal(document.getElementById('userId').value); 
-            
-            // 임시로 그냥 상세 모드로 전환 (데이터 복구 로직 필요)
-            modalTitle.textContent = "사용자 상세 정보 (" + userIdInput.value + ")";
-            modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
-            
-            toggleInputReadOnly(true, true); 
-            
-            detailBtns.classList.remove('hidden');
-            editBtns.classList.add('hidden');
-        }
-
-        // 키보드 ESC로 모달 닫기
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeBatchUploadModal();
-                closeUserCrudModal();
+        // 2. AJAX 호출
+        $.ajax({
+            url: '/admin/getAuthDetailListByAuthCode',
+            type: 'GET',
+            data: { authCode: authCode },
+            success: function(response) {
+                if (response.status === 'success' && response.detailList) {
+                    let html = '<option value="">세부 권한을 선택하세요</option>';
+                    
+                    response.detailList.forEach(item => {
+                        // 선택된 detailCode가 있으면 selected 속성 추가
+                        const isSelected = (item.authDetailCode === selectedDetailCode) ? 'selected' : '';
+                        html += `<option value="${item.authDetailCode}" ${isSelected}>${item.authDetailName}</option>`;
+                    });
+                    
+                    userDetailAuthSelect.innerHTML = html;
+                } else {
+                    console.error("세부 권한 데이터를 불러오는 데 실패했습니다.");
+                }
+            },
+            error: function() {
+                console.error("세부 권한 조회 서버 통신 오류");
             }
         });
+    }
+    
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 사용자 목록 테이블 렌더링
+    // ------------------------
+    function renderUserTable(userList) {
+        // ... (기존 로직 동일) ...
+        let html = '';
         
-        // 체크박스 전체 선택/해제 및 폐지 버튼 활성화
-        document.addEventListener('DOMContentLoaded', () => {
-            const selectAll = document.getElementById('selectAll');
-            const userCheckboxes = document.querySelectorAll('input[name="selectedUser"]');
-            // ID 변경: deleteSelectedBtn -> retireSelectedBtn
-            const retireBtn = document.getElementById('retireSelectedBtn'); 
-
-            selectAll.addEventListener('change', (e) => {
-                userCheckboxes.forEach(checkbox => checkbox.checked = e.target.checked);
-                updateRetireButtonState();
+        const statusMap = {
+            '0': { name: '사용대기', class: 'text-blue-600' }, 
+            '1': { name: '사용중', class: 'text-green-600' }, 
+            '2': { name: '미사용', class: 'text-orange-600' }, 
+            '3': { name: '폐지', class: 'text-gray-600' } 
+        };
+        
+        if (userList && userList.length > 0) {
+            userList.forEach((user) => {
+            	// 🚀 수정: userStatus를 문자열로 변환하여 Map에 접근합니다.
+                const statusKey = user.userStatus !== null && user.userStatus !== undefined
+                                  ? user.userStatus.toString() 
+                                  : ''; // null/undefined 대비
+                                  
+                const statusInfo = statusMap[statusKey] || { name: '알 수 없음', class: 'text-gray-500' };
+                
+                const statusClass = statusInfo.class;
+                const statusName = statusInfo.name;
+                
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="${user.userNo}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.userNo}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                            <a href="#" onclick="openUserDetailModal('${user.userId}')" class="text-blue-600 hover:underline">${user.userId}</a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userEmail || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.deptName || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">${user.authName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm ${statusClass}">${statusName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.createDate}</td>
+                    </tr>
+                `;
             });
+        } else {
+             html += `
+                <tr>
+                    <td colspan="9" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 사용자 정보가 없습니다.</td>
+                </tr>
+            `;
+        }
+        
+        userListBody.innerHTML = html;
+        // 체크박스 상태 초기화 및 버튼 갱신
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) selectAll.checked = false;
+        updateRetireButtonState();
+    }
 
-            userCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateRetireButtonState);
-            });
 
-            function updateRetireButtonState() {
-                const checkedCount = document.querySelectorAll('input[name="selectedUser"]:checked').length;
-                retireBtn.disabled = checkedCount === 0;
-            }
-            
-            // 🚨 계정 폐지 버튼 클릭 이벤트 (예시)
-            retireBtn.addEventListener('click', () => {
-                if(confirm("선택된 사용자를 정말 계정 폐지(상태 변경) 처리하시겠습니까?")) {
-                    const selectedUserNos = Array.from(document.querySelectorAll('input[name="selectedUser"]:checked'))
-                        .map(cb => cb.getAttribute('data-user-no')); // user_no를 가져오도록 수정
+    // ------------------------
+    // 💡 최종 통합된 함수: renderPagination
+    // ------------------------
+    function renderPagination(totalCount, currentPage, pageSize = 10) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        
+        // ... (기존 로직 동일) ...
+        
+        // 총 개수 표시 갱신
+        totalCountDisplay.textContent = `총 ${totalCount}명의 사용자`;
+        
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            paginationDiv.style.display = 'none';
+            return;
+        }
 
-                    alert("다음 사용자 No가 계정 폐지 처리되었습니다: " + selectedUserNos.join(', '));
-                    // 실제 AJAX 호출로 폐지 로직 구현 필요 (modifySysUserStatusRetire)
-                    selectAll.checked = false;
-                    updateRetireButtonState(); 
+        let html = '';
+        html += '<nav class="flex items-center space-x-1">';
+        
+        // --- 1. 페이지 블록 계산 (10개) ---
+        const pagesPerBlock = 10;
+        const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
+        const blockStart = currentBlock * pagesPerBlock + 1;
+        const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
+        
+        
+        // --- 2. 이전 페이지 버튼 (◀) ---
+        const prevPage = currentPage - 1;
+        const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
+
+
+        // --- 3. 페이지 번호 링크 (블록 내) ---
+        for (let i = blockStart; i <= blockEnd; i++) {
+            const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
+            html += `<a href="#" data-page="${i}" 
+                       class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
+        }
+
+        // --- 4. 다음 페이지 버튼 (▶) ---
+        const nextPage = currentPage + 1;
+        const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
+        
+        
+        html += '</nav>';
+        
+        paginationDiv.innerHTML = html;
+        paginationDiv.style.display = 'flex';
+        
+        // --- 5. 이벤트 위임 (클릭 이벤트 처리) ---
+        paginationDiv.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const clickedLink = e.target.closest('a.page-link');
+                if (!clickedLink) return;
+
+                const targetPage = parseInt(clickedLink.dataset.page);
+                
+                if (clickedLink.classList.contains('cursor-not-allowed') || targetPage < 1 || targetPage > totalPages) return;
+
+                if (typeof searchAndRenderUser === 'function') {
+                    searchAndRenderUser(targetPage); 
+                } else {
+                     console.error("searchAndRenderUser 함수를 찾을 수 없습니다.");
                 }
             });
+        });
+    }
+
+    // ------------------------
+    // 핵심 함수: 검색 및 페이지 이동 AJAX 요청 (상태 저장 로직 추가)
+    // ------------------------
+    function searchAndRenderUser(pageNo) {
+        // ... (기존 로직 동일) ...
+        const condition = searchConditionInput.value.trim();
+        
+        // 🚀 상태 갱신
+        currentSearchCondition = condition; 
+        currentPageNo = pageNo;
+        // -------------------
+
+        $.ajax({
+            url: '/admin/searchUserInfo',
+            type: 'GET',
+            data: { 
+                searchCondition: condition,
+                currentPage: pageNo 
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    renderUserTable(response.userList);
+                    renderPagination(response.totalCount, response.currentPage);
+                    // 💡 검색 조건 input 필드에 현재 검색어를 다시 설정
+                    searchConditionInput.value = currentSearchCondition;
+                } else {
+                    alert('사용자 검색에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
+    // ------------------------
+    // 모달 제어 함수
+    // ------------------------
+    function openBatchUploadModal() {
+        batchModal.classList.remove('hidden');
+        batchModal.classList.add('flex');
+    }
+
+    function closeBatchUploadModal() {
+        batchModal.classList.add('hidden');
+        batchModal.classList.remove('flex');
+    }
+    
+    function closeUserCrudModal() {
+        userCrudModal.classList.add('hidden');
+        userCrudModal.classList.remove('flex');
+        userForm.reset();
+        
+        // 등록 모드 대비: userIdInput의 readonly/스타일 제거
+        userIdInput.removeAttribute('readonly');
+        userIdInput.classList.remove('input-readonly');
+        
+        // 🚀 수정된 로직: location.reload() 대신 현재 상태를 유지하며 목록 갱신
+        searchConditionInput.value = currentSearchCondition; 
+        searchAndRenderUser(currentPageNo); 
+    }
+
+    function openRegisterModal() {
+        userForm.reset();
+        modalTitle.textContent = "사용자 등록";
+        modalSubtitle.textContent = "* 표시는 필수 항목입니다";
+        toggleInputReadOnly(false, false); 
+        registerBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        editBtns.classList.add('hidden');
+        passwordInput.required = true; 
+        userIdInput.removeAttribute('readonly'); 
+        userCrudModal.classList.remove('hidden');
+        userCrudModal.classList.add('flex');
+        
+        // 🚀 추가: 등록 모드 시 세부 권한 초기화
+        loadAndRenderAuthDetails(userAuthSelect.value, null); 
+    }
+
+    function openUserDetailModal(userId) {
+        $.ajax({
+            url: '/admin/getUserDetail',
+            type: 'GET',
+            data: { userId: userId },
+            success: function(response) {
+                if (response.status === 'success') {
+                    const data = response.data;
+                    originalDetailData = data; 
+                    
+                    // 1. 일반 필드 바인딩 
+                    bindFormData(data); 
+                    
+                	// ❌ 상세 정보 조회 시 userId를 readonly 처리하는 로직 제거.
+                    //    toggleInputReadOnly(true, true)가 모든 필드를 readonly로 만듭니다.
+
+                    // 2. 🚀 세부 권한 동적 로딩 및 기존 값 선택
+                    const authCode = data.userAuth; 
+                    const detailCode = data.userDetailAuth; 
+                    
+                    if (authCode) {
+                        loadAndRenderAuthDetails(authCode, detailCode); 
+                    } else {
+                        // userAuth가 없는 경우 세부 권한 초기화
+                         loadAndRenderAuthDetails(null, null); 
+                    }
+                    // ------------------------------------
+
+                    modalTitle.textContent = "사용자 상세 정보 (" + userId + ")";
+                    modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+                    
+                    // 🟢 여기서 userId를 포함한 모든 필드를 readonly로 만듭니다.
+                    toggleInputReadOnly(true, true); 
+                    
+                    detailBtns.classList.remove('hidden');
+                    registerBtns.classList.add('hidden');
+                    editBtns.classList.add('hidden');
+                    userCrudModal.classList.remove('hidden');
+                    userCrudModal.classList.add('flex');
+                } else {
+                    alert('사용자 정보를 불러오는 데 실패했습니다: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function enterDetailEditMode() {
+        modalTitle.textContent = "사용자 정보 수정";
+        modalSubtitle.textContent = "정보를 수정 후 저장해주세요. (비밀번호 미입력 시 변경 없음)";
+        
+        // 🟢 여기서 userId를 포함한 모든 필드의 readonly를 해제합니다.
+        toggleInputReadOnly(false, true); 
+        
+        editBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        registerBtns.classList.add('hidden');
+        
+        // ❌ userIdInput을 readonly로 유지하는 로직을 제거합니다. 
+        //    이제 userIdInput은 수정 가능합니다.
+        
+        passwordInput.setAttribute('type', 'password'); 
+        passwordInput.removeAttribute('readonly');
+        passwordInput.classList.remove('input-readonly');
+        passwordInput.disabled = false;
+        passwordInput.required = false; 
+        passwordInput.value = ''; 
+    }
+
+    function cancelDetailEditMode() {
+        bindFormData(originalDetailData); 
+        
+        // 🚀 추가: 수정 취소 시 세부 권한도 원본 데이터로 복원
+        const authCode = originalDetailData.userAuth; 
+        const detailCode = originalDetailData.userDetailAuth; 
+        loadAndRenderAuthDetails(authCode, detailCode);
+        
+        modalTitle.textContent = "사용자 상세 정보 (" + userIdInput.value + ")";
+        modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+        
+        // 🟢 여기서 userId를 포함한 모든 필드를 다시 readonly로 만듭니다.
+        toggleInputReadOnly(true, true); 
+        
+        detailBtns.classList.remove('hidden');
+        editBtns.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBatchUploadModal();
+            closeUserCrudModal();
+        }
+    });
+    
+    // 유틸리티 함수 (체크박스 상태) - DOMContentLoaded 밖으로 이동하여 전역에서 사용 가능하도록 함
+    function updateRetireButtonState() {
+        const checkedCount = document.querySelectorAll('input[name="selectedUser"]:checked').length;
+        retireSelectedBtn.disabled = checkedCount === 0;
+    }
+
+
+    // ------------------------
+    // DOMContentLoaded 이벤트 및 AJAX 요청 (상태 초기화 로직 추가)
+    // ------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAll = document.getElementById('selectAll');
+        const retireBtn = document.getElementById('retireSelectedBtn'); 
+        
+        // ... (기존 초기화 로직 동일) ...
+        const initialTotalCount = {{totalCount}}; 
+        const initialCurrentPage = {{currentPage}}; 
+        
+        currentPageNo = initialCurrentPage;
+        currentSearchCondition = searchConditionInput.value.trim() || ''; 
+
+
+        if (initialTotalCount > 0) {
+            renderPagination(initialTotalCount, initialCurrentPage);
+        }
+        
+        // 🚀 핵심: userAuth 변경 시 세부 권한 동적 로딩 리스너 추가
+        if (userAuthSelect && userDetailAuthSelect) {
+            userAuthSelect.addEventListener('change', function() {
+                // 선택된 authCode로 세부 권한 로드 (기존 선택된 세부 권한 값은 null)
+                loadAndRenderAuthDetails(this.value, null); 
+            });
+        }
+        
+        // 체크박스 이벤트 리스너 설정
+        selectAll.addEventListener('change', (e) => {
+            // 전체 체크/체크 해제 로직
+            const isChecked = e.target.checked;
+            document.querySelectorAll('input[name="selectedUser"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            updateRetireButtonState();
+        });
+
+        document.addEventListener('change', (e) => {
+             // 개별 체크박스 변경 시 전체 선택 상태 및 버튼 상태 업데이트
+            if (e.target.name === 'selectedUser') {
+                updateRetireButtonState();
+                const allChecked = Array.from(document.querySelectorAll('input[name="selectedUser"]')).every(cb => cb.checked);
+                selectAll.checked = allChecked;
+            }
+        });
+        
+        // 1. 폼 제출 이벤트 핸들링 (등록/수정)
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // 폼 제출 이벤트 핸들링 (등록/수정)
-            userForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formMode = editBtns.classList.contains('hidden') ? '등록' : '수정';
-                alert(formMode + " 요청: 실제로는 AJAX를 통해 서버로 데이터를 전송해야 합니다.");
-                closeUserCrudModal();
+            const isRegisterMode = registerBtns.classList.contains('hidden') === false;
+            const url = isRegisterMode ? '/admin/insertUserInfo' : '/admin/updateUserInfoByAdmin';
+
+            let formData = $(this).serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+            
+            // ⭐️ 수정된 로직: userAuth 외래 키 오류 해결을 위해 userAuth에 userDetailAuth 값을 할당합니다.
+            // 데이터베이스 설계상 user_auth 필드가 tb_sysauth_detail의 auth_detail_code를 참조하는 것으로 가정합니다.
+            if (formData.userDetailAuth) {
+                formData.userAuth = formData.userDetailAuth;
+            } else if (formData.userAuth === '') {
+                 // 만약 세부 권한을 선택하지 않았고, 주 권한도 선택하지 않았다면,
+                 // DB에서 user_auth가 NOT NULL 제약 조건이 걸려있을 경우를 대비해 여기서 처리할 수도 있습니다.
+            }
+            // ----------------------------------------------------
+            
+            if (!isRegisterMode && formData.userPassword === '') {
+                delete formData.userPassword;
+            }
+
+            if (isRegisterMode) {
+                 delete formData.userNo;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeUserCrudModal(); 
+                    }
+                },
+                error: function() {
+                    alert(isRegisterMode ? '사용자 등록 중 서버 통신 오류가 발생했습니다.' : '사용자 수정 중 서버 통신 오류가 발생했습니다.');
+                }
             });
         });
-    </script>
+        
+        // 2. 검색 버튼 클릭 이벤트 처리
+        searchBtn.addEventListener('click', function() {
+             searchAndRenderUser(1);
+        });
+
+        // 3. 계정 폐지 버튼 클릭 이벤트 처리
+        retireBtn.addEventListener('click', () => {
+            const selectedUserNos = Array.from(document.querySelectorAll('input[name="selectedUser"]:checked'))
+                .map(cb => parseInt(cb.getAttribute('data-user-no'))); 
+
+            if(selectedUserNos.length === 0) {
+                alert("폐지할 사용자를 선택해주세요.");
+                return;
+            }
+
+            if(confirm(`선택된 ${selectedUserNos.length}명의 사용자를 정말 계정 폐지(상태 변경) 처리하시겠습니까?`)) {
+                
+                $.ajax({
+                    url: '/admin/modifySysUserStatusRetire',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ userNoList: selectedUserNos }), 
+                    success: function(response) {
+                        alert(response.message);
+                        if (response.status === 'success') {
+                            searchAndRenderUser(currentPageNo); 
+                        }
+                    },
+                    error: function() {
+                        alert('계정 폐지 처리 중 서버 통신 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+
+        // 🟢 초기 목록 색상 오류 해결을 위한 AJAX 재렌더링 로직 추가 🟢
+        // 페이지 로드 시 AJAX 호출을 한 번 실행하여 renderUserTable을 통해 색상을 정상화합니다.
+        // 현재 페이지 상태(currentPageNo, currentSearchCondition)를 사용하여 다시 로드
+        if (typeof searchAndRenderUser === 'function') {
+            // 서버 템플릿의 초기 렌더링을 덮어쓰기 위해 호출
+            searchAndRenderUser(currentPageNo); 
+        }
+    });
+</script>
  
 </body>
 </html>

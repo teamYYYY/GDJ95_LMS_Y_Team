@@ -15,6 +15,15 @@ import com.example.lms.dto.SysAuthDTO;
 @Mapper
 public interface SysAuthMapper {
 
+	// 사용자 권한 전체 리스트 조회
+	List<SysAuthDTO> sysAuthAllList();
+	
 	// 사용자 권한 리스트 조회
 	List<SysAuthDTO> sysAuthList();
+	
+	// 사용자 세부권한 리스트 조회
+	List<SysAuthDTO> sysAuthDetailList();
+	
+	//특정 사용자 권한의 세부권한 리스트 조회 
+	List<SysAuthDTO> seletcAuthCodesysAuthDetailList(String authCode);
 }

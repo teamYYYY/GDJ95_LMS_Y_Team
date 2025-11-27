@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.lms.dto.SysAuthDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.admin.AdminCommonMetaDataService;
+import com.example.lms.service.admin.SysAuthService;
 import com.example.lms.service.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,10 @@ public class UserManagementController {
     
     @Autowired
     private AdminCommonMetaDataService adminCommonMetaDataService;
+    
+    // 사용자 세부권한 셀렉박스 기능관련 때문에 주입처리..
+    @Autowired
+    private SysAuthService sysAuthService;
     
     // ================================================================================
     // 1. 시스템 사용자 전체 조회 (페이지 진입 시 최초 로딩 + 페이징)
@@ -102,6 +108,28 @@ public class UserManagementController {
     }
     
     // ================================================================================
+    // 2. 1 특정 권한 코드에 해당하는 세부 권한 리스트 조회 (AJAX 전용)
+    // ================================================================================
+    @GetMapping("/getAuthDetailListByAuthCode")
+    @ResponseBody
+    public Map<String, Object> getAuthDetailListByAuthCode(@RequestParam("authCode") String authCode) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // SysAuthService에 있는 메서드를 호출하고 authCode를 파라미터로 전달
+            List<SysAuthDTO> detailList = sysAuthService.seletcAuthCodesysAuthDetailList(authCode); 
+            
+            response.put("status", "success");
+            response.put("detailList", detailList);
+        } catch (Exception e) {
+            log.error("세부 권한 조회 중 오류 발생", e);
+            response.put("status", "error");
+            response.put("message", "세부 권한 정보를 불러오는 데 실패했습니다.");
+        }
+        return response;
+    }
+    
+    // ================================================================================
     // 3. 시스템 사용자 상세 정보 조회 (AJAX - 수정 화면 데이터 바인딩용)
     // ================================================================================
     @GetMapping("/getUserDetail")
@@ -111,13 +139,40 @@ public class UserManagementController {
         // 단일 사용자 조회 서비스가 없다면 searchUserInfoMapList를 활용하거나 
         // userService.getUserById(userId) 같은 메서드를 추가하는 것이 좋습니다.
         
-        // 여기서는 기존 searchUserInfoMapList를 활용한다고 가정 (List의 첫 번째 요소 반환)
-        List<Map<String, Object>> searchResult = userService.searchUserInfoMapList(userId);
+        List<Map<String, Object>> searchResult = userService.userInfoDetailMapList(userId);
         
         Map<String, Object> response = new HashMap<>();
         if (searchResult != null && !searchResult.isEmpty()) {
+        	
+        	Map<String, Object> originalData = searchResult.get(0);
+            
+            // 🚀 데이터 매핑 (Mapper 쿼리 이름을 JS/HTML 이름에 맞게 수정) 🚀
+            
+        	// 🚀 1. 세부 권한 코드 (Mapper의 'userAuth' -> JS/HTML의 'userDetailAuth') 🚀
+            // 요청하신 변수명 관례에 따라 'authDetailCode'로 사용합니다.
+            Object authDetailCode = originalData.get("userAuth"); 
+            
+            if (authDetailCode != null) {
+                originalData.put("userDetailAuth", authDetailCode); 
+                // 원래 키는 제거
+                originalData.remove("userAuth"); 
+            }
+            
+            // 🚀 2. 상위 권한 코드 (Mapper의 'authCode' -> JS/HTML의 'userAuth') 🚀
+            Object userAuthCode = originalData.get("authCode"); // 명확성을 위해 'userAuthCode' 사용
+            if (userAuthCode != null) {
+                originalData.put("userAuth", userAuthCode); 
+                // 원래 키는 제거
+                originalData.remove("authCode"); 
+            }
+            
+            // 3. (옵션) 기타 불필요하거나 중복되는 이름 제거
+            originalData.remove("authDetailName");
+            originalData.remove("authName");
+            
+            // -------------------------------------------------------------
             response.put("status", "success");
-            response.put("data", searchResult.get(0));
+            response.put("data", originalData);
         } else {
             response.put("status", "fail");
             response.put("message", "사용자 정보를 찾을 수 없습니다.");
@@ -157,13 +212,24 @@ public class UserManagementController {
     // ================================================================================
     @GetMapping("/searchUserInfo")
     @ResponseBody
-    public Map<String, Object> searchUserInfo(@RequestParam String searchCondition) {
+    public Map<String, Object> searchUserInfo(@RequestParam String searchCondition,
+    		@RequestParam(value = "currentPage", defaultValue = "1") int pageNo) {
         Map<String, Object> response = new HashMap<>();
         
-        List<Map<String, Object>> searchList = userService.searchUserInfoMapList(searchCondition);
+        int limit = 10;      // 페이지당 사용자 수
+        // 💡 시작 행 계산: (현재 페이지 - 1) * 페이지당 개수
+        int startRow = (pageNo - 1) * limit;
+        
+        List<Map<String, Object>> searchList = userService.searchUserInfoMapList(searchCondition, startRow, limit);
+        
+     // 2. 전체 개수 카운트
+        int totalCount = userService.searchUserInfoMapListCnt(searchCondition);
         
         response.put("status", "success");
         response.put("userList", searchList);
+     // 💡 응답에 페이징 정보 포함
+        response.put("totalCount", totalCount); 
+        response.put("currentPage", pageNo);
         
         return response;
     }

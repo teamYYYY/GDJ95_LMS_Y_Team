@@ -128,7 +128,7 @@
 	<insert id="insertUserInfo" parameterType="com.example.lms.dto.SysUserDTO">
 	
 		INSERT INTO tb_sysuser (
-			  user_no,
+			  user_id,
 			  user_auth,
 			  user_status,
 			  user_name,
@@ -146,7 +146,7 @@
 			  user_createdate,
 			  user_updatedate
 		 ) VALUES (
-			  #{userNo},
+			  #{userId},
 			  #{userAuth},
 			  #{userStatus},
 			  #{userName},
@@ -173,10 +173,13 @@
 		UPDATE
 			tb_sysuser
 		SET
+			user_id = #{userId},
 			user_status = #{userStatus},
 			user_auth = #{userAuth},
 			user_name = #{userName},
-			user_password = #{userPassword},
+			<if test="userPassword != null and userPassword != ''">
+            user_password = #{userPassword},
+        	</if>
 			user_email = #{userEmail},
 			user_phone = #{userPhone},
 			user_birth = #{userBirth},
@@ -233,13 +236,65 @@
 		LEFT OUTER JOIN tb_sysuser_grade f
 		ON a.user_grade = f.grade_code
 		WHERE 1=1
-			<if test="_parameter != null and _parameter != ''">
-		    AND (
-		           a.user_id LIKE CONCAT('%', #{searchUserCondition}, '%')
-		           OR a.user_name LIKE CONCAT('%', #{searchUserCondition}, '%')
-		       )
-		    </if>
+			<if test="searchUserCondition != null and searchUserCondition.trim() != ''">
+	        AND (
+	               a.user_id LIKE CONCAT('%', #{searchUserCondition}, '%')
+	               OR a.user_name LIKE CONCAT('%', #{searchUserCondition}, '%')
+	           )
+	        </if>
+	     ORDER BY a.user_no DESC  
+	     LIMIT #{startRow}, #{limit}
 		
+	</select>
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 시스템 사용자 검색 조회 카운트 -->
+	<select id="searchUserInfoMapListCnt" parameterType="String" resultType="int">
+		
+		SELECT COUNT(*) FROM (
+		SELECT
+		    a.user_no            AS userNo,
+		    a.user_id            AS userId,
+		    a.user_auth          AS userAuth,
+		    b.auth_detail_name	 AS authDetailName,
+		    c.auth_code 		 AS authCode,
+		    c.auth_name			 AS authName,
+		    a.user_status        AS userStatus,
+		    e.status_name		 AS statusName,
+		    a.user_name          AS userName,
+		    a.user_password      AS userPassword,
+		    a.user_email       AS userEmail,
+		    a.user_phone      AS userPhone,
+		    a.user_birth       AS userBirth,
+		    a.dept_code          AS deptCode,
+		    d.dept_name			 AS deptName,
+		    a.user_grade         AS userGrade,
+		    f.grade_name 		 AS gradeName,
+			a.user_addr        AS userAddr,
+			a.user_addr_detail AS userAddrDetail,
+			a.user_zipcode     AS userZipcode,
+		    a.user_last_login    AS userLastLogin,
+		    a.user_login_fail_cnt 	AS userLoginFailCnt,
+		    a.user_createdate         AS createDate,
+		    a.user_updatedate         AS updateDate
+		FROM tb_sysuser a
+		INNER JOIN tb_sysauth_detail b ON
+		a.user_auth = b.auth_detail_code
+		INNER JOIN tb_sysauth c 
+		ON b.auth_code = c.auth_code
+		INNER JOIN tb_dept d 
+		ON a.dept_code = d.dept_code
+		INNER JOIN tb_sysuser_status e
+		ON a.user_status = e.status_code
+		LEFT OUTER JOIN tb_sysuser_grade f
+		ON a.user_grade = f.grade_code
+		WHERE 1=1
+			<if test="searchUserCondition != null and searchUserCondition.trim() != ''">
+	        AND (
+	               a.user_id LIKE CONCAT('%', #{searchUserCondition}, '%')
+	               OR a.user_name LIKE CONCAT('%', #{searchUserCondition}, '%')
+	           )
+	        </if>
+		) t
 	</select>
 	
 	<!-- 2025. 11. 26. JM. 시스템사용자 관리 - 시스템 전체 사용자 수 ( 페이징 시 사용 ) -->
@@ -263,6 +318,50 @@
 			LEFT OUTER JOIN tb_sysuser_grade f
 			ON a.user_grade = f.grade_code ) t
 	
+	</select>
+	
+	
+	<!-- 2025. 11. 25. JM. 시스템사용자 관리 - 사용자 상세정보 조회 -->
+	<select id="userInfoDetailMapList" resultType="java.util.Map">
+		
+		SELECT
+		    a.user_no            AS userNo,
+		    a.user_id            AS userId,
+		    a.user_auth          AS userAuth,
+		    b.auth_detail_name	 AS authDetailName,
+		    c.auth_code 		 AS authCode,
+		    c.auth_name			 AS authName,
+		    a.user_status        AS userStatus,
+		    e.status_name		 AS statusName,
+		    a.user_name          AS userName,
+		    a.user_password      AS userPassword,
+		    a.user_email       AS userEmail,
+		    a.user_phone      AS userPhone,
+		    a.user_birth       AS userBirth,
+		    a.dept_code          AS deptCode,
+		    d.dept_name			 AS deptName,
+		    a.user_grade         AS userGrade,
+		    f.grade_name 		 AS gradeName,
+			a.user_addr        AS userAddr,
+			a.user_addr_detail AS userAddrDetail,
+			a.user_zipcode     AS userZipcode,
+		    a.user_last_login    AS userLastLogin,
+		    a.user_login_fail_cnt 	AS userLoginFailCnt,
+		    a.user_createdate         AS createDate,
+		    a.user_updatedate         AS updateDate
+		FROM tb_sysuser a
+		INNER JOIN tb_sysauth_detail b ON
+		a.user_auth = b.auth_detail_code
+		INNER JOIN tb_sysauth c 
+		ON b.auth_code = c.auth_code
+		INNER JOIN tb_dept d 
+		ON a.dept_code = d.dept_code
+		INNER JOIN tb_sysuser_status e
+		ON a.user_status = e.status_code
+		LEFT OUTER JOIN tb_sysuser_grade f
+		ON a.user_grade = f.grade_code
+		WHERE a.user_id = #{userId}  
+		
 	</select>
 	
 	<!-- 2025. 11. 26. JM. 시스템사용자 관리 - 다수 사용자 계정 폐지 처리 기능 3 폐지-->

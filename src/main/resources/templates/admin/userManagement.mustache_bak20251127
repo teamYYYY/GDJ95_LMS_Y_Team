@@ -1,0 +1,455 @@
+<script>
+    // 전역 변수 설정
+    const batchModal = document.getElementById('batchUploadModal');
+    const userCrudModal = document.getElementById('userCrudModal');
+    const userForm = document.getElementById('userForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    
+    const registerBtns = document.getElementById('registerButtons');
+    const detailBtns = document.getElementById('detailButtons');
+    const editBtns = document.getElementById('editBtns');
+    
+    const passwordFieldDiv = document.getElementById('passwordField');
+    const passwordInput = document.getElementById('userPassword');
+    const userIdInput = document.getElementById('userId');
+    
+    // [AJAX 통신 및 목록 갱신을 위한 변수]
+    const userListBody = document.getElementById('userListBody');
+    const searchConditionInput = document.getElementById('searchCondition');
+    const searchBtn = document.getElementById('searchBtn');
+    const retireSelectedBtn = document.getElementById('retireSelectedBtn');
+    const totalCountDisplay = document.getElementById('totalCountDisplay');
+    const paginationDiv = document.getElementById('pagination'); 
+    
+    let originalDetailData = {}; 
+    
+    // input-field 클래스를 가진 모든 입력/선택 필드 (숨김 필드 제외)
+    const inputFields = document.querySelectorAll('#userCrudModal .input-field');
+
+	 // ------------------------
+	 // 유틸리티 함수: 폼에 데이터 바인딩 (수정된 코드)
+	 // ------------------------
+	 function bindFormData(data) {
+	     for (const key in data) {
+	         const input = document.getElementById(key);
+	         
+	         // 🚨 폼 필드가 존재하지 않으면 (input === null) 건너뜁니다.
+	         if (input) { 
+	             // null 또는 undefined 값은 빈 문자열로 설정하여 오류를 방지합니다.
+	             input.value = (data[key] === null || data[key] === undefined) ? '' : data[key].toString(); 
+	         } 
+	         // 💡 주의: 만약 서버 데이터에 존재하지만 HTML에 없는 필드가 많다면,
+	         // 이 로직은 오류는 해결하지만, 해당 필드의 바인딩은 무시됩니다.
+	         // 이 경우, 서버 데이터 필드와 HTML ID 목록을 대조해야 합니다.
+	     }
+	     
+	     // 🚨 개별 필드 처리에도 안전성 체크를 추가합니다. (userNo)
+	     const userNoInput = document.getElementById('userNo');
+	     if (userNoInput) {
+	         userNoInput.value = data.userNo || ''; 
+	     }
+	     
+	     // 🚨 개별 필드 처리에도 안전성 체크를 추가합니다. (passwordInput)
+	     if (passwordInput) {
+	         passwordInput.value = '********'; 
+	         passwordInput.setAttribute('type', 'text');
+	     }
+	 }
+
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 입력 필드 읽기 전용 상태 토글
+    // ------------------------
+    function toggleInputReadOnly(isReadOnly, preservePassword) {
+        inputFields.forEach(input => {
+            if (input.id !== 'userNo' && input.id !== 'userId') {
+                input.readOnly = isReadOnly;
+                input.disabled = isReadOnly;
+                
+                if (isReadOnly) {
+                    input.classList.add('input-readonly');
+                } else {
+                    input.classList.remove('input-readonly');
+                }
+            }
+        });
+
+        // 비밀번호 필드 처리
+        if (!preservePassword) {
+            passwordInput.readOnly = isReadOnly;
+            passwordInput.disabled = isReadOnly;
+            if (isReadOnly) {
+                passwordInput.classList.add('input-readonly');
+            } else {
+                passwordInput.classList.remove('input-readonly');
+            }
+        }
+    }
+    
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 사용자 목록 테이블 렌더링
+    // ------------------------
+    function renderUserTable(userList) {
+        let html = '';
+        
+        const statusMap = {
+            '0': { name: '사용대기', class: 'text-blue-600' }, 
+            '1': { name: '사용중', class: 'text-green-600' }, 
+            '2': { name: '미사용', class: 'text-orange-600' }, 
+            '3': { name: '폐지', class: 'text-red-600' }, 
+        };
+        
+        if (userList && userList.length > 0) {
+            userList.forEach((user) => {
+                const statusInfo = statusMap[user.userStatus] || { name: '알 수 없음', class: 'text-gray-500' };
+                const statusClass = statusInfo.class;
+                const statusName = statusInfo.name;
+                
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="${user.userNo}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.userNo}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                            <a href="#" onclick="openUserDetailModal('${user.userId}')" class="text-blue-600 hover:underline">${user.userId}</a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userEmail || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.deptName || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">${user.authName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm ${statusClass}">${statusName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.createDate}</td>
+                    </tr>
+                `;
+            });
+        } else {
+             html += `
+                <tr>
+                    <td colspan="9" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 사용자 정보가 없습니다.</td>
+                </tr>
+            `;
+        }
+        
+        userListBody.innerHTML = html;
+        // 체크박스 상태 초기화 및 버튼 갱신
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) selectAll.checked = false;
+        updateRetireButtonState();
+    }
+
+
+    // ------------------------
+    // 💡 최종 통합된 함수: renderPagination (중복 제거 및 버그 해결)
+    // ------------------------
+    function renderPagination(totalCount, currentPage, pageSize = 10) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        
+        // 총 개수 표시 갱신
+        totalCountDisplay.textContent = `총 ${totalCount}명의 사용자`;
+        
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            paginationDiv.style.display = 'none';
+            return;
+        }
+
+        let html = '';
+        html += '<nav class="flex items-center space-x-1">';
+        
+        // --- 1. 페이지 블록 계산 (10개) ---
+        const pagesPerBlock = 10;
+        const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
+        const blockStart = currentBlock * pagesPerBlock + 1;
+        const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
+        
+        
+        // --- 2. 이전 페이지 버튼 (◀) ---
+        const prevPage = currentPage - 1;
+        // 1페이지일 때 버튼 비활성화
+        const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
+
+
+        // --- 3. 페이지 번호 링크 (블록 내) ---
+        for (let i = blockStart; i <= blockEnd; i++) {
+            // 현재 페이지에 활성화 클래스 적용 (파란색)
+            const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
+            html += `<a href="#" data-page="${i}" 
+                       class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
+        }
+
+        // --- 4. 다음 페이지 버튼 (▶) ---
+        const nextPage = currentPage + 1;
+        // 마지막 페이지일 때 버튼 비활성화
+        const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
+        
+        
+        html += '</nav>';
+        
+        paginationDiv.innerHTML = html;
+        paginationDiv.style.display = 'flex';
+        
+        // --- 5. 이벤트 위임 (클릭 이벤트 처리) ---
+        paginationDiv.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 💡 버그 해결 로직: 클릭 대상이 내부 요소일 경우를 대비해 가장 가까운 <a> 태그를 찾습니다.
+                const clickedLink = e.target.closest('a.page-link');
+                if (!clickedLink) return;
+
+                const targetPage = parseInt(clickedLink.dataset.page);
+                
+                // 비활성화된 버튼 클릭 또는 범위를 벗어난 페이지 클릭 무시
+                if (clickedLink.classList.contains('cursor-not-allowed') || targetPage < 1 || targetPage > totalPages) return;
+
+                // searchAndRenderUser 함수 호출
+                if (typeof searchAndRenderUser === 'function') {
+                    searchAndRenderUser(targetPage); 
+                } else {
+                     console.error("searchAndRenderUser 함수를 찾을 수 없습니다.");
+                }
+            });
+        });
+    }
+
+    // ------------------------
+    // 핵심 함수: 검색 및 페이지 이동 AJAX 요청
+    // ------------------------
+    function searchAndRenderUser(pageNo) {
+        const condition = searchConditionInput.value.trim();
+        
+        $.ajax({
+            url: '/admin/searchUserInfo',
+            type: 'GET',
+            data: { 
+                searchCondition: condition,
+                currentPage: pageNo // 현재 페이지 번호 전송
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    renderUserTable(response.userList); // 💡 목록 갱신
+                    // totalCount, currentPage를 사용하여 페이지네이션 UI 갱신
+                    renderPagination(response.totalCount, response.currentPage);
+                } else {
+                    alert('사용자 검색에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
+    // ------------------------
+    // 모달 제어 함수
+    // ------------------------
+    function openBatchUploadModal() {
+        batchModal.classList.remove('hidden');
+        batchModal.classList.add('flex');
+    }
+
+    function closeBatchUploadModal() {
+        batchModal.classList.add('hidden');
+        batchModal.classList.remove('flex');
+    }
+    
+    function closeUserCrudModal() {
+        userCrudModal.classList.add('hidden');
+        userCrudModal.classList.remove('flex');
+        userForm.reset();
+        userIdInput.removeAttribute('readonly');
+        userIdInput.classList.remove('input-readonly');
+        
+        // 💡 갱신: 모달 닫은 후 페이지를 1페이지로 이동하며 목록 갱신 (서버 새로고침 대신)
+        // location.reload(); 대신 searchAndRenderUser(1)을 사용할 수도 있습니다.
+        location.reload(); 
+    }
+
+    function openRegisterModal() {
+        userForm.reset();
+        modalTitle.textContent = "사용자 등록";
+        modalSubtitle.textContent = "* 표시는 필수 항목입니다";
+        toggleInputReadOnly(false, false); 
+        registerBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        editBtns.classList.add('hidden');
+        passwordInput.required = true; 
+        userIdInput.removeAttribute('readonly'); 
+        userCrudModal.classList.remove('hidden');
+        userCrudModal.classList.add('flex');
+    }
+
+    function openUserDetailModal(userId) {
+        $.ajax({
+            url: '/admin/getUserDetail',
+            type: 'GET',
+            data: { userId: userId },
+            success: function(response) {
+                if (response.status === 'success') {
+                    const data = response.data;
+                    originalDetailData = data; 
+                    bindFormData(data); 
+
+                    modalTitle.textContent = "사용자 상세 정보 (" + userId + ")";
+                    modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+                    toggleInputReadOnly(true, true); 
+                    detailBtns.classList.remove('hidden');
+                    registerBtns.classList.add('hidden');
+                    editBtns.classList.add('hidden');
+                    userCrudModal.classList.remove('hidden');
+                    userCrudModal.classList.add('flex');
+                } else {
+                    alert('사용자 정보를 불러오는 데 실패했습니다: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function enterDetailEditMode() {
+        modalTitle.textContent = "사용자 정보 수정";
+        modalSubtitle.textContent = "정보를 수정 후 저장해주세요. (비밀번호 미입력 시 변경 없음)";
+        toggleInputReadOnly(false, true); 
+        editBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        registerBtns.classList.add('hidden');
+        userIdInput.setAttribute('readonly', true);
+        userIdInput.classList.add('input-readonly');
+        passwordInput.setAttribute('type', 'password'); 
+        passwordInput.removeAttribute('readonly');
+        passwordInput.classList.remove('input-readonly');
+        passwordInput.disabled = false;
+        passwordInput.required = false; 
+        passwordInput.value = ''; 
+    }
+
+    function cancelDetailEditMode() {
+        bindFormData(originalDetailData); 
+        modalTitle.textContent = "사용자 상세 정보 (" + userIdInput.value + ")";
+        modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+        toggleInputReadOnly(true, true); 
+        detailBtns.classList.remove('hidden');
+        editBtns.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBatchUploadModal();
+            closeUserCrudModal();
+        }
+    });
+    
+    // 유틸리티 함수 (체크박스 상태) - DOMContentLoaded 밖으로 이동하여 전역에서 사용 가능하도록 함
+    function updateRetireButtonState() {
+        const checkedCount = document.querySelectorAll('input[name="selectedUser"]:checked').length;
+        retireSelectedBtn.disabled = checkedCount === 0;
+    }
+
+
+    // ------------------------
+    // DOMContentLoaded 이벤트 및 AJAX 요청
+    // ------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAll = document.getElementById('selectAll');
+        const retireBtn = document.getElementById('retireSelectedBtn'); 
+        
+        // 4. 페이지 최초 로딩 시 페이징 초기화
+        const initialTotalCount = {{totalCount}}; 
+        const initialCurrentPage = {{currentPage}}; 
+
+        if (initialTotalCount > 0) {
+            renderPagination(initialTotalCount, initialCurrentPage);
+        }
+        
+        // 체크박스 이벤트 리스너 설정
+        selectAll.addEventListener('change', (e) => {
+            document.querySelectorAll('input[name="selectedUser"]').forEach(checkbox => checkbox.checked = e.target.checked);
+            updateRetireButtonState();
+        });
+
+        document.addEventListener('change', (e) => {
+             if (e.target.name === 'selectedUser') {
+                updateRetireButtonState();
+             }
+        });
+        
+        // 1. 폼 제출 이벤트 핸들링 (등록/수정)
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isRegisterMode = registerBtns.classList.contains('hidden') === false;
+            const url = isRegisterMode ? '/admin/insertUserInfo' : '/admin/updateUserInfoByAdmin';
+
+            const formData = $(this).serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+            
+            if (!isRegisterMode && formData.userPassword === '') {
+                delete formData.userPassword;
+            }
+
+            if (isRegisterMode) {
+                 delete formData.userNo;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeUserCrudModal(); 
+                    }
+                },
+                error: function() {
+                    alert(isRegisterMode ? '사용자 등록 중 서버 통신 오류가 발생했습니다.' : '사용자 수정 중 서버 통신 오류가 발생했습니다.');
+                }
+            });
+        });
+        
+        // 2. 검색 버튼 클릭 이벤트 처리
+        searchBtn.addEventListener('click', function() {
+             // 검색 버튼 클릭은 무조건 1페이지를 조회합니다.
+             searchAndRenderUser(1);
+        });
+
+        // 3. 계정 폐지 버튼 클릭 이벤트 처리
+        retireBtn.addEventListener('click', () => {
+            const selectedUserNos = Array.from(document.querySelectorAll('input[name="selectedUser"]:checked'))
+                .map(cb => parseInt(cb.getAttribute('data-user-no'))); 
+
+            if(selectedUserNos.length === 0) {
+                alert("폐지할 사용자를 선택해주세요.");
+                return;
+            }
+
+            if(confirm(`선택된 ${selectedUserNos.length}명의 사용자를 정말 계정 폐지(상태 변경) 처리하시겠습니까?`)) {
+                
+                $.ajax({
+                    url: '/admin/modifySysUserStatusRetire',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ userNoList: selectedUserNos }), 
+                    success: function(response) {
+                        alert(response.message);
+                        if (response.status === 'success') {
+                            location.reload(); 
+                        }
+                    },
+                    error: function() {
+                        alert('계정 폐지 처리 중 서버 통신 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>

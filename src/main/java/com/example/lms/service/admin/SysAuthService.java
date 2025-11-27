@@ -25,9 +25,27 @@ public class SysAuthService {
 	@Autowired
 	private SysAuthMapper sysAuthMapper;
 	
-	// 학과 관리 - 학과 정보 조회
+	// 사용자 권한 전체 리스트 조회
+	public List<SysAuthDTO> sysAuthAllList() {
+		
+		return sysAuthMapper.sysAuthAllList();
+	}
+	
+	// 사용자 권한 리스트 조회
 	public List<SysAuthDTO> sysAuthList() {
 		
 		return sysAuthMapper.sysAuthList();
+	}
+	
+	// 사용자 세부권한 리스트 조회
+	public List<SysAuthDTO> sysAuthDetailList() {
+		
+		return sysAuthMapper.sysAuthDetailList();
+	}
+	
+	//특정 사용자 권한의 세부권한 리스트 조회 
+	public List<SysAuthDTO> seletcAuthCodesysAuthDetailList(String authCode) {
+		
+		return sysAuthMapper.seletcAuthCodesysAuthDetailList(authCode);
 	}
 }

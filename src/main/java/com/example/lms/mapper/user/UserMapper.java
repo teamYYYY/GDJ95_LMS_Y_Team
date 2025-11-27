@@ -36,10 +36,18 @@ public interface UserMapper {
 	Integer updateUserInfoByAdmin(SysUserDTO sysUserDTO);
 	
 	// 시스템사용자 관리 - 시스템 사용자 검색 조회 ( 학번이나 사용자명으로 검색 // 같은 이름의 사용자 가능성 있음)
-	List<Map<String, Object>> searchUserInfoMapList(@Param("searchUserCondition") String searchUserCondition);
+	List<Map<String, Object>> searchUserInfoMapList(@Param("searchUserCondition") String searchUserCondition, 
+													@Param("startRow") int startRow,
+													@Param("limit") int limit );
+
+	// 시스템사용자 관리 - 시스템 사용자 검색 조회 카운트 ( 페이징 시 사용 )	
+	Integer searchUserInfoMapListCnt(@Param("searchUserCondition") String searchUserCondition);
 	
 	// 시스템사용자 관리 - 시스템 전체 사용자 수 ( 페이징 시 사용 )
 	Integer selectSysUserCnt();
+	
+	// 시스템사용자 관리 - 사용자 상세정보 조회
+	List<Map<String, Object>> userInfoDetailMapList(String userId);
 	
 	// 시스템사용자 관리 - 다수 사용자 계정 폐지 처리 기능 
 	Integer modifySysUserStatusRetire(List<Integer> retireUserNoList);

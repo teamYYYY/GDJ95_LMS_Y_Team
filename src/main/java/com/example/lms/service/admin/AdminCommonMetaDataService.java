@@ -52,11 +52,35 @@ public class AdminCommonMetaDataService {
     }
     
     /**
+     * @return 모든 시스템 권한 및 세부권한 정보 리스트를 반환합니다.
+     */
+    public List<SysAuthDTO> getSysAuthAllList() {
+    	
+        return sysAuthService.sysAuthAllList(); 
+    }
+    
+    /**
      * @return 모든 시스템 권한 정보 리스트를 반환합니다.
      */
     public List<SysAuthDTO> getSysAuthList() {
     	
         return sysAuthService.sysAuthList(); 
+    }
+    
+    /**
+     * @return 모든 시스템 권한 세부 정보 리스트를 반환합니다.
+     */
+    public List<SysAuthDTO> getsysAuthDetailList() {
+    	
+        return sysAuthService.sysAuthDetailList(); 
+    }
+    
+    /**
+     * @return 특정 사용자 권한의 세부권한 리스트를 반환합니다.
+     */
+    public List<SysAuthDTO> getSeletcAuthCodesysAuthDetailList(String authCode) {
+    	
+        return sysAuthService.seletcAuthCodesysAuthDetailList(authCode); 
     }
     
     /**
@@ -81,7 +105,10 @@ public class AdminCommonMetaDataService {
         
     	Map<String, Object> metadata = new HashMap<String, Object>();
         metadata.put("deptList", getDeptList());
+        metadata.put("authAllList", getSysAuthAllList());
         metadata.put("authList", getSysAuthList());
+        metadata.put("authDetailList", getsysAuthDetailList());
+        //metadata.put("selectAuthCdAuthDetailList", getSeletcAuthCodesysAuthDetailList(authCode));
         metadata.put("gradeList", getSysUserGradeList());
         metadata.put("statusList", getSysUserStatusList());
         return metadata;
