@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강의 수정</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+        input, select, textarea {
+            border: 1px solid #D1D5DB;
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+{{> profLayout/profHeader }}
+
+<main class="max-w-4xl mx-auto px-4 py-10">
+
+<div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">강의 수정</h2>
+
+    {{#course}}
+    <form action="/modifyCourse" method="post" class="space-y-6">
+
+        <input type="hidden" name="courseNo" value="{{courseNo}}">
+
+        <table class="min-w-full divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200">
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">강의명</th>
+                    <td class="px-4 py-3">
+                        <input type="text" name="courseName" value="{{courseName}}" required>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">학과</th>
+                    <td class="px-4 py-3">
+                        <select name="deptCode">
+                            {{#deptList}}
+                                <option value="{{deptCode}}" {{#isSelected}}selected{{/isSelected}}>
+                                    {{deptName}}
+                                </option>
+                            {{/deptList}}
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">개설연도</th>
+                    <td class="px-4 py-3">
+                        <input type="number" name="courseYear" value="{{courseYear}}">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">학기</th>
+                    <td class="px-4 py-3">
+                        <select name="courseSemester">
+                            <option value="1" {{#isSem1}}selected{{/isSem1}}>1학기</option>
+                            <option value="2" {{#isSem2}}selected{{/isSem2}}>2학기</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">정원</th>
+                    <td class="px-4 py-3">
+                        <input type="number" name="courseCapacity" value="{{courseCapacity}}">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">학점</th>
+                    <td class="px-4 py-3">
+                        <input type="number" name="courseScore" value="{{courseScore}}">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">강의실</th>
+                    <td class="px-4 py-3">
+                        <input type="text" name="courseClassroom" value="{{courseClassroom}}">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">강의 상태</th>
+                    <td class="px-4 py-3">
+                        <select name="courseStatus">
+                            <option value="1" {{#isActive}}selected{{/isActive}}>개설</option>
+                            <option value="0" {{#isClosed}}selected{{/isClosed}}>종료</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">강의 설명</th>
+                    <td class="px-4 py-3">
+                        <textarea name="courseDescription" rows="5">{{courseDescription}}</textarea>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <!-- 🔥 강의 시간 수정 -->
+        <h3 class="text-lg font-bold text-gray-800 pt-4">강의 시간</h3>
+
+        <div id="timeContainer" class="space-y-3">
+
+            {{#timeList}}
+            <div class="flex items-center gap-3 time-row">
+
+                <select name="yoil">
+                    <option value="1" {{#yoil1}}selected{{/yoil1}}>월요일</option>
+                    <option value="2" {{#yoil2}}selected{{/yoil2}}>화요일</option>
+                    <option value="3" {{#yoil3}}selected{{/yoil3}}>수요일</option>
+                    <option value="4" {{#yoil4}}selected{{/yoil4}}>목요일</option>
+                    <option value="5" {{#yoil5}}selected{{/yoil5}}>금요일</option>
+                </select>
+
+                <select name="start">
+                    {{#range}}
+                        <option value="{{.}}" {{#isStart}}selected{{/isStart}}>{{.}}교시</option>
+                    {{/range}}
+                </select>
+
+                <select name="end">
+                    {{#range}}
+                        <option value="{{.}}" {{#isEnd}}selected{{/isEnd}}>{{.}}교시</option>
+                    {{/range}}
+                </select>
+
+                <button type="button" class="remove-time text-red-600 hover:text-red-800">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+            </div>
+            {{/timeList}}
+
+        </div>
+
+        <!-- 시간 추가 버튼 -->
+        <button type="button" id="addTime"
+            class="mt-4 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+            <i class="fa-solid fa-plus mr-1"></i> 시간 추가
+        </button>
+
+        <!-- 버튼 -->
+        <div class="pt-6 flex justify-end gap-3">
+            <button type="submit"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-md">
+                <i class="fa-solid fa-check mr-2"></i> 수정하기
+            </button>
+
+            <a href="/courseDashboard?courseNo={{courseNo}}"
+               class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-400">
+                <i class="fa-solid fa-arrow-left mr-2"></i> 뒤로가기
+            </a>
+        </div>
+
+    </form>
+    {{/course}}
+
+</div>
+
+</main>
+
+{{> profLayout/profFooter }}
+
+<script>
+    const periods = Array.from({ length: 10 }, (_, i) => i + 1);
+
+    document.getElementById('addTime').addEventListener('click', () => {
+        const row = document.querySelector('.time-row').cloneNode(true);
+        document.getElementById('timeContainer').appendChild(row);
+    });
+
+    document.getElementById('timeContainer').addEventListener('click', (e) => {
+        if (e.target.closest('.remove-time')) {
+            const rows = document.querySelectorAll('.time-row');
+            if (rows.length > 1) {
+                e.target.closest('.time-row').remove();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
