@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>과제 목록</h2>
+
+	<table border="1" cellspacing="0" cellpadding="8">
+	    <thead>
+	        <tr>
+	            <th>과제번호</th>
+	            <th>제목</th>
+	            <th>상태</th>
+	            <th>등록일</th>
+	        </tr>
+	    </thead>
+	
+	    <tbody>
+	    {{#list}}
+	        <tr>
+	            <td>{{assignmentNo}}</td>
+	            <td>
+	                <a href="/assignmentDetail?assignmentNo={{assignmentNo}}&courseNo={{courseNo}}">
+	                    {{assignmentTitle}}
+	                </a>
+	            </td>
+	            <td>{{assignmentStatus}}</td>
+	            <td>{{createdate}}</td>
+	        </tr>
+	    {{/list}}
+	
+	    {{^list}}
+	        <tr>
+	            <td colspan="4">등록된 과제가 없습니다.</td>
+	        </tr>
+	    {{/list}}
+	    </tbody>
+	</table>
+	
+	<br>
+	
+	<!-- 과제 추가 버튼 -->
+	<a href="/addAssignment?courseNo={{courseNo}}">과제 등록</a>
+	
+	<hr>
+	
+	<!-- 페이징 -->
+	<div>
+	
+	    <!-- 처음 -->
+	    <a href="/assignmentListByProf?courseNo={{courseNo}}&currentPage={{startPage}}">
+	        처음
+	    </a>
+	
+	    <!-- 이전 -->
+	    <a href="/assignmentListByProf?courseNo={{courseNo}}&currentPage={{prePage}}">
+	        이전
+	    </a>
+	
+	    <!-- 페이지 번호들 -->
+	    {{#pages}}
+	        <a href="/assignmentListByProf?courseNo={{courseNo}}&currentPage={{.}}">
+	            {{.}}
+	        </a>
+	    {{/pages}}
+	
+	    <!-- 다음 -->
+	    <a href="/assignmentListByProf?courseNo={{courseNo}}&currentPage={{nextPage}}">
+	        다음
+	    </a>
+	
+	    <!-- 끝 -->
+	    <a href="/assignmentListByProf?courseNo={{courseNo}}&currentPage={{endPage}}">
+	        끝
+	    </a>
+	</div>
+</body>
+</html>
