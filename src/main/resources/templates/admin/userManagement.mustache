@@ -81,7 +81,7 @@
                     <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
                     <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                     <i class="fa-solid fa-user-lock w-5"></i> 사용자권한관리
                 </a>
                 <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
@@ -194,8 +194,49 @@
         </main>
     </div>
 
+    <!-- 엑셀 기능 -->
+
     <div id="batchUploadModal" class="modal-container hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
+                    <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
+                    <div class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <p>파일을 드래그하거나 클릭하여 업로드</p>
+                        <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
+                        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                            파일 선택
+                        </button>
+                    </div>
+                    
+                    <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
+                        <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
+                            <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
+                            <li>필수 항목은 반드시 입력되어야 합니다.</li>
+                            <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
+                            <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
+                            <li>중복된 데이터는 자동으로 제외됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
+                    <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">업로드</button>
+                </div>
+            </div>
         </div>
+    </div>
     
     <div id="userCrudModal" class="modal-container hidden">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">

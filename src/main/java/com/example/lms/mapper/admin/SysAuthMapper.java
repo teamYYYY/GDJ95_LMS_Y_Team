@@ -37,15 +37,13 @@ public interface SysAuthMapper {
 	Integer sysAuthAllListCnt();
 	
 	// 사용자 권한 코드 검색 조회
-	List<SysAuthDTO> searchSysAuthInfoList(@Param("searchSysAuthCondition") String searchSysAuthCondition, 
-														@Param("startRow") int startRow,
-														@Param("limit") int limit );
+	List<SysAuthDTO> searchSysAuthInfoList(Map<String, Object> searchParams);
 	
 	// 사용자 권한 코드 검색 조회 카운트
 	Integer searchSysAuthInfoListCnt(@Param("searchSysAuthCondition") String searchSysAuthCondition);
 	
 	// 사용자 권한 코드 상세정보 조회
-	List<SysAuthDTO> selectSysAuthAllDetailList(String authDetailCode);
+	SysAuthDTO selectSysAuthAllDetail(String authDetailCode);
 	
 	//======================================================
 	// 사용자 권한 등록 기능 insert 순서 sysAuth -> sysAuthDetail
@@ -73,6 +71,9 @@ public interface SysAuthMapper {
 	String selectBeforeRemoveAuthCd(String authDetailCode);
 	
 	Integer removeSysAuthDetail(String authDetailCode);
+	
+	// 권한코드 삭제 전에 세부사항에 남아 있으면 삭제 불가
+	Integer selectBeforeRemoveAuthCdValidate(String authCode);
 	
 	Integer removeSysAuth(String authCode);
 }

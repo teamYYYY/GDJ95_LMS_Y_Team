@@ -39,213 +39,228 @@
         }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <header class="bg-white border-b border-gray-200">
-        <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
-                    <i class="fa-solid fa-graduation-cap text-lg"></i>
-                </div>
-                <h1 class="text-lg font-bold text-gray-800">
-                    <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
-                        학사관리시스템
-                    </a> 
-                    <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
-                </h1>
+<!-- 헤더부분 -->
+
+ <header class="bg-white border-b border-gray-200">
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
             </div>
-            <div class="text-sm text-gray-600 flex items-center gap-4">
-                <p>홍길동님 로그인 중입니다</p> 
-                <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
-                    <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
-                </a>
-            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a> 
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
         </div>
-    </header>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p> 
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
 
-    <div class="max-w-screen-2xl mx-auto flex">
+    <div class="admin-hero-bg h-40 p-8 text-white">
+        <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
+            <h2 class="text-3xl font-bold">관리자 대시보드</h2>
+            <p class="text-sm text-gray-200 mt-2">시스템 관리 및 설정</p>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-16rem)]">
         
-        <aside class="w-64 min-h-screen bg-white shadow-xl p-4">
-            <div class="py-4 px-2">
-                <h2 class="text-xl font-semibold text-gray-800 mb-6">관리자 대시보드</h2>
-                <p class="text-sm text-gray-500 mb-8">시스템 관리 및 설정</p>
-                
-                <nav class="space-y-2">
-                    <h3 class="text-xs font-semibold uppercase text-gray-400 mb-2">개인정보관리</h3>
-                    <a href="#" class="flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition duration-150">
-                        <i class="fa-solid fa-user-gear w-5 h-5 mr-3"></i>
-                        <span>개인정보관리</span>
-                    </a>
-                    
-                    <h3 class="text-xs font-semibold uppercase text-gray-400 mt-6 mb-2">시스템사용자관리</h3>
-                    <a href="/admin/sysuser" class="flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition duration-150">
-                        <i class="fa-solid fa-users w-5 h-5 mr-3"></i>
-                        <span>시스템사용자관리</span>
-                    </a>
-                    <a href="/admin/sysauth" class="flex items-center p-3 bg-blue-50 text-blue-700 font-medium rounded-lg transition duration-150">
-                        <i class="fa-solid fa-shield-halved w-5 h-5 mr-3"></i>
-                        <span>사용자권한관리</span>
-                    </a>
-                    
-                    <h3 class="text-xs font-semibold uppercase text-gray-400 mt-6 mb-2">학사관리</h3>
-                    <a href="#" class="flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition duration-150">
-                        <i class="fa-solid fa-book w-5 h-5 mr-3"></i>
-                        <span>학과관리</span>
-                    </a>
-                    
-                    <h3 class="text-xs font-semibold uppercase text-gray-400 mt-6 mb-2">공지사항관리</h3>
-                    <a href="#" class="flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition duration-150">
-                        <i class="fa-solid fa-bullhorn w-5 h-5 mr-3"></i>
-                        <span>공지사항관리</span>
-                    </a>
-                </nav>
-            </div>
+        <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보관리
+                </a>
+                <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
+                </a>
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자권한관리
+                    <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
+                </a>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과관리
+                </a>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항관리
+                </a>
+            </nav>
         </aside>
 
-        <main class="flex-1 p-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">사용자 권한 관리</h2>
-            <p class="text-gray-500 mb-8">시스템 사용자 권한 코드를 조회하고 관리할 수 있습니다.</p>
 
-            <section class="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">사용자 권한 조회</h3>
-                <p class="text-gray-600 mb-4">권한 코드 또는 권한명으로 검색할 수 있습니다.</p>
-                <div class="flex items-center gap-4">
-                    <div class="flex-1">
-                        <input type="text" id="searchCondition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="권한 코드 또는 권한명을 입력하세요" value="{{searchCondition}}">
-                    </div>
-                    <button id="searchBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-150">
-                        <i class="fa-solid fa-magnifying-glass mr-2"></i> 조회
-                    </button>
+<!-- 메인 동적 부분 -->
+
+		<main class="flex-grow p-8 max-w-screen-2xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">사용자 권한 관리</h2>
+        <p class="text-gray-500 mb-6">시스템 사용자 권한 코드를 조회하고 관리할 수 있습니다.</p>
+
+        <section class="mb-8 p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">사용자 권한 조회</h3>
+            <p class="text-sm text-gray-500 mb-3">권한 코드 또는 세부권한명으로 검색할 수 있습니다.</p>
+            <div class="flex items-center gap-2">
+                <div class="flex-grow">
+                    <input type="text" id="searchCondition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="권한 코드 또는 세부권한명을 입력하세요" value="{{searchSysAuthCondition}}">
                 </div>
-            </section>
+                <button id="searchBtn" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-magnifying-glass"></i> 조회
+                </button>
+            </div>
+        </section>
 
-            <section class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-gray-800" id="totalCountDisplay">권한 목록 (총 0개의 권한)</h3>
-                    <div class="flex space-x-3">
-                        <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg flex items-center transition duration-150">
-                            <i class="fa-solid fa-file-excel mr-2"></i> 목록 엑셀 다운로드
-                        </button>
-                        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-150">
-                            <i class="fa-solid fa-file-arrow-down mr-2"></i> 일괄업로드 양식 다운로드
-                        </button>
-                        <button id="openBatchModalBtn" onclick="openBatchUploadModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-150">
-                            <i class="fa-solid fa-upload mr-2"></i> 일괄 업로드
-                        </button>
-                        <button id="openRegisterModalBtn" onclick="openRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-150">
-                            <i class="fa-solid fa-plus mr-2"></i> 등록
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-10"><input type="checkbox" id="selectAll"></th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">No</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">세부권한코드</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">세부권한명</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">권한코드</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">권한명</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">업데이트일자</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">생성일자</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200" id="authListBody">
-                            {{#authList}}
-                            <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedAuth" data-auth-detail-code="{{authDetailCode}}"></td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{rownum}}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">{{authDetailCode}}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{authDetailName}}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
-                                    <a href="#" onclick="openAuthDetailModal('{{authDetailCode}}')" class="text-blue-600 hover:underline">{{authCode}}</a>
-                                </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">{{authName}}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{authDetailUpdatedate}}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{authDetailCreatedate}}</td>
-                            </tr>
-                            {{/authList}}
-                            {{^authList}}
-                            <tr>
-                                <td colspan="8" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 권한 정보가 없습니다.</td>
-                            </tr>
-                            {{/authList}}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex justify-between items-center mt-6">
-                    <button id="removeSelectedBtn" disabled class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-trash-can mr-2"></i> 선택 항목 삭제
-                    </button>
-                    
-                    <div id="pagination" class="flex justify-end">
-                        </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-
-    <div id="authCrudModal" class="modal-container hidden">
-        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
-            <div class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h3 id="modalTitle" class="text-2xl font-bold text-gray-900">권한 등록</h3>
-                    <button onclick="closeAuthCrudModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-xmark text-2xl"></i>
-                    </button>
-                </div>
-
-                <form id="authForm" class="mt-6 space-y-4">
-                    <p id="modalSubtitle" class="text-sm text-red-500">* 표시는 필수 항목입니다</p>
-                    
-                    <input type="hidden" id="originalAuthDetailCode" name="authDetailCode">
-                    <input type="hidden" id="originalAuthCode" name="authCode">
-
-                    <div>
-                        <label for="newAuthDetailCode" class="block text-sm font-medium text-gray-700">세부권한코드 *</label>
-                        <input type="text" id="newAuthDetailCode" name="newAuthDetailCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: ADMIN_STAFF" required>
-                    </div>
-
-                    <div>
-                        <label for="authDetailName" class="block text-sm font-medium text-gray-700">세부권한명 *</label>
-                        <input type="text" id="authDetailName" name="authDetailName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: 시스템 관리자" required>
-                    </div>
-
-                    <div>
-                        <label for="newAuthCode" class="block text-sm font-medium text-gray-700">권한코드 *</label>
-                        <input type="text" id="newAuthCode" name="newAuthCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: ADMIN 또는 STUDENT" required>
-                    </div>
-                    
-                    <div>
-                        <label for="authName" class="block text-sm font-medium text-gray-700">권한명 *</label>
-                        <input type="text" id="authName" name="authName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: 시스템 권한" required>
-                    </div>
-                    
-                    <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
-                        
-                        <div id="registerButtons" class="flex space-x-3">
-                            <button type="button" onclick="closeAuthCrudModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">등록</button>
-                        </div>
-
-                        <div id="detailButtons" class="hidden flex space-x-3">
-                            <button type="button" onclick="closeAuthCrudModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">닫기</button>
-                            <button type="button" onclick="enterDetailEditMode()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">변경</button>
-                        </div>
-                        
-                        <div id="editButtons" class="hidden flex space-x-3">
-                            <button type="button" onclick="cancelDetailEditMode()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">저장</button>
-                        </div>
-                    </div>
-                </form>
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-gray-700 font-medium" id="totalCountDisplay">권한 목록 (총 0개의 권한)</p>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
+                </button>
+                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-file-excel"></i> 양식 다운로드
+                </button>
+                <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
+                            <i class="fa-solid fa-upload"></i> 일괄 업로드
+                </button>
+                <button id="openRegisterModalBtn" onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-plus"></i> 등록
+                </button>
             </div>
         </div>
+
+        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+		    <table class="min-w-full divide-y divide-gray-200">
+		        <thead class="bg-gray-50">
+		            <tr>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-10"><input type="checkbox" id="selectAll"></th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">No</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">세부권한코드</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">세부권한명</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">권한코드</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">권한명</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">업데이트일자</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">생성일자</th>
+		            </tr>
+		        </thead>
+		        <tbody class="bg-white divide-y divide-gray-200" id="authListBody">
+		            {{#authList}}
+		            <tr>
+		                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedAuth" data-auth-detail-code="{{authDetailCode}}"></td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{rownum}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+		                    <a href="#" onclick="openAuthDetailModal('{{authDetailCode}}')" class="text-blue-600 hover:underline">
+		                        {{authDetailCode}}
+		                    </a>
+		                </td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">{{authDetailName}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+		                    {{authCode}}
+		                </td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">{{authName}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{authDetailUpdatedate}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{authDetailCreatedate}}</td>
+		            </tr>
+		            {{/authList}}
+		            {{^authList}}
+		            <tr>
+		                <td colspan="8" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 권한 정보가 없습니다.</td>
+		            </tr>
+		            {{/authList}}
+		        </tbody>
+		    </table>
+		</div>
+
+        <div class="flex justify-between items-center mt-6">
+            <button id="removeSelectedBtn" disabled class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-trash-can mr-2"></i> 선택 항목 삭제
+            </button>
+            
+            <div id="pagination" class="flex justify-end">
+                </div>
+        </div>
     </div>
+</main>
+</div>
+
+
+<div id="authCrudModal" class="modal-container hidden">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+        <div class="p-6">
+            <div class="flex justify-between items-center pb-4 border-b">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-900">권한 등록</h3>
+                <button onclick="closeAuthCrudModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="authForm" class="mt-6 space-y-4">
+                <p id="modalSubtitle" class="text-sm text-red-500">* 표시는 필수 항목입니다</p>
+                
+                <input type="hidden" id="originalAuthDetailCode" name="authDetailCode">
+                <input type="hidden" id="originalAuthCode" name="authCode">
+
+                <div>
+                    <label for="newAuthDetailCode" class="block text-sm font-medium text-gray-700">세부권한코드 *</label>
+                    <input type="text" id="newAuthDetailCode" name="newAuthDetailCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: ADMIN_STAFF" required>
+                </div>
+
+                <div>
+                    <label for="authDetailName" class="block text-sm font-medium text-gray-700">세부권한명 *</label>
+                    <input type="text" id="authDetailName" name="authDetailName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: 시스템 관리자" required>
+                </div>
+
+                <div>
+                    <label for="newAuthCode" class="block text-sm font-medium text-gray-700">권한코드 *</label>
+                    <input type="text" id="newAuthCode" name="newAuthCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: ADMIN 또는 STUDENT" required>
+                </div>
+                
+                <div>
+                    <label for="authName" class="block text-sm font-medium text-gray-700">권한명 *</label>
+                    <input type="text" id="authName" name="authName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: 시스템 권한" required>
+                </div>
+                
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    
+                    <div id="registerButtons" class="flex space-x-3">
+                        <button type="button" onclick="closeAuthCrudModal()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-times mr-1"></i> 취소
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> 등록
+                        </button>
+                    </div>
+
+                    <div id="detailButtons" class="hidden flex space-x-3">
+                        <button type="button" onclick="closeAuthCrudModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                            <i class="fa-solid fa-times mr-1"></i> 닫기
+                        </button>
+                        <button type="button" onclick="enterDetailEditMode()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> 변경
+                        </button>
+                    </div>
+                    
+                    <div id="editButtons" class="hidden flex space-x-3">
+                        <button type="button" onclick="cancelDetailEditMode()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                            <i class="fa-solid fa-xmark mr-1"></i> 취소
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> 저장
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+	<!-- 엑셀 기능 -->
 
     <div id="batchUploadModal" class="modal-container hidden">
         <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
@@ -289,462 +304,485 @@
         </div>
     </div>
     
+    <!-- 스크립트 부분 -->
+    
     <script>
-        // 전역 변수 설정
-        const batchModal = document.getElementById('batchUploadModal');
-        const authCrudModal = document.getElementById('authCrudModal');
-        const authForm = document.getElementById('authForm');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalSubtitle = document.getElementById('modalSubtitle');
-        
-        const registerBtns = document.getElementById('registerButtons');
-        const detailBtns = document.getElementById('detailButtons');
-        const editBtns = document.getElementById('editButtons');
-        
-        const originalAuthDetailCodeInput = document.getElementById('originalAuthDetailCode');
-        const originalAuthCodeInput = document.getElementById('originalAuthCode');
-        const newAuthDetailCodeInput = document.getElementById('newAuthDetailCode');
-        const newAuthCodeInput = document.getElementById('newAuthCode');
-        
-        // [AJAX 통신 및 목록 갱신을 위한 변수]
-        const authListBody = document.getElementById('authListBody');
-        const searchConditionInput = document.getElementById('searchCondition');
-        const searchBtn = document.getElementById('searchBtn');
-        const removeSelectedBtn = document.getElementById('removeSelectedBtn');
-        const totalCountDisplay = document.getElementById('totalCountDisplay');
-        const paginationDiv = document.getElementById('pagination'); 
-        
-        let originalDetailData = {}; 
-        
-        // input-field 클래스를 가진 모든 입력/선택 필드
-        const inputFields = document.querySelectorAll('#authCrudModal .input-field');
+    // 전역 변수 설정
+    const batchModal = document.getElementById('batchUploadModal');
+    const authCrudModal = document.getElementById('authCrudModal');
+    const authForm = document.getElementById('authForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
     
-        // 🚀 검색 상태 유지를 위한 전역 변수 추가 🚀
-        let currentSearchCondition = searchConditionInput.value.trim() || ''; // 현재 검색어
-        let currentPageNo = {{currentPage}} || 1;         // 현재 페이지 번호
+    const registerBtns = document.getElementById('registerButtons');
+    const detailBtns = document.getElementById('detailButtons');
+    const editBtns = document.getElementById('editButtons');
     
-        // ------------------------
-        // 유틸리티 함수: 폼에 데이터 바인딩
-        // ------------------------
-        function bindFormData(data) {
-            // 상세 조회/수정 모드 시 기존/새로운 코드를 Hidden 필드와 Input 필드에 모두 바인딩
+    // Hidden 필드 (수정 시 WHERE 조건에 사용될 원본 값)
+    const originalAuthDetailCodeInput = document.getElementById('originalAuthDetailCode');
+    const originalAuthCodeInput = document.getElementById('originalAuthCode');
+
+    // Input 필드 (조회/수정/등록 시 사용될 값)
+    const newAuthDetailCodeInput = document.getElementById('newAuthDetailCode');
+    const newAuthCodeInput = document.getElementById('newAuthCode');
+    const authDetailNameInput = document.getElementById('authDetailName');
+    const authNameInput = document.getElementById('authName');
+    
+    // [AJAX 통신 및 목록 갱신을 위한 변수]
+    const authListBody = document.getElementById('authListBody');
+    const searchConditionInput = document.getElementById('searchCondition');
+    const searchBtn = document.getElementById('searchBtn');
+    const removeSelectedBtn = document.getElementById('removeSelectedBtn');
+    const totalCountDisplay = document.getElementById('totalCountDisplay');
+    const paginationDiv = document.getElementById('pagination'); 
+    
+    let originalDetailData = {}; 
+    
+    // input-field 클래스를 가진 모든 입력/선택 필드
+    const inputFields = document.querySelectorAll('#authCrudModal .input-field');
+
+    // 🚀 검색 상태 유지를 위한 전역 변수 🚀
+    let currentSearchCondition = searchConditionInput.value.trim() || ''; 
+    let currentPageNo = {{currentPage}} || 1; 
+
+    // ------------------------
+    // 유틸리티 함수: 폼에 데이터 바인딩
+    // ------------------------
+    function bindFormData(data) {
+        // 상세 조회/수정 모드 시 기존/새로운 코드를 Hidden 필드와 Input 필드에 모두 바인딩
+        
+        // 1. Hidden 필드 (WHERE 조건용 원본 값 저장)
+        originalAuthDetailCodeInput.value = data.authDetailCode || '';
+        originalAuthCodeInput.value = data.authCode || '';
+        
+        // 2. Input 필드 (수정/조회용)
+        newAuthDetailCodeInput.value = data.authDetailCode || '';
+        authDetailNameInput.value = data.authDetailName || '';
+        newAuthCodeInput.value = data.authCode || '';
+        authNameInput.value = data.authName || '';
+    }
+
+    // ------------------------
+    // 💡 입력 필드 읽기 전용 상태 토글
+    // ------------------------
+    function toggleInputReadOnly(isReadOnly) {
+        inputFields.forEach(input => {
+            input.readOnly = isReadOnly;
+            // PK, FK 필드는 수정 모드일 때만 활성화하기 위해 disabled를 별도로 제어할 수 있음
+            input.disabled = isReadOnly;
             
-            // 1. Hidden 필드 (WHERE 조건용 원본 값 저장)
-            originalAuthDetailCodeInput.value = data.authDetailCode || '';
-            originalAuthCodeInput.value = data.authCode || '';
-            
-            // 2. Input 필드 (수정/조회용)
-            document.getElementById('newAuthDetailCode').value = data.authDetailCode || '';
-            document.getElementById('authDetailName').value = data.authDetailName || '';
-            document.getElementById('newAuthCode').value = data.authCode || '';
-            document.getElementById('authName').value = data.authName || '';
-        }
-    
-        // ------------------------
-        // 💡 입력 필드 읽기 전용 상태 토글
-        // ------------------------
-        function toggleInputReadOnly(isReadOnly) {
-            inputFields.forEach(input => {
-                input.readOnly = isReadOnly;
-                input.disabled = isReadOnly;
-                
-                if (isReadOnly) {
-                    input.classList.add('input-readonly');
-                } else {
-                    input.classList.remove('input-readonly');
-                }
-            });
-            // PK인 authDetailCode는 수정 모드에서도 변경할 수 있다고 가정하고 disabled/readonly는 제어하지 않음.
-            // newAuthDetailCodeInput.readOnly = isReadOnly; 
-        }
-    
-        // ------------------------
-        // 💡 사용자 권한 목록 테이블 렌더링
-        // ------------------------
-        function renderAuthTable(authList) {
-            let html = '';
-            
-            if (authList && authList.length > 0) {
-                authList.forEach((auth, index) => {
-                    const rownum = auth.rownum !== undefined ? auth.rownum : (index + 1);
-                    
-                    html += `
-                        <tr>
-                            <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedAuth" data-auth-detail-code="${auth.authDetailCode}"></td>
-                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${rownum}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">${auth.authDetailCode}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${auth.authDetailName}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
-                                <a href="#" onclick="openAuthDetailModal('${auth.authDetailCode}')" class="text-blue-600 hover:underline">${auth.authCode}</a>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${auth.authName}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailUpdatedate || '-'}</td>
-                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailCreatedate}</td>
-                        </tr>
-                    `;
-                });
+            if (isReadOnly) {
+                input.classList.add('input-readonly');
             } else {
-                 html += `
+                input.classList.remove('input-readonly');
+            }
+        });
+        
+        // 수정 모드에서도 PK/FK 필드가 변경 가능해야 한다면, 여기서 다시 활성화 로직 추가
+        if (!isReadOnly) {
+            newAuthDetailCodeInput.removeAttribute('disabled');
+            newAuthCodeInput.removeAttribute('disabled');
+        }
+    }
+
+    // ------------------------
+    // 💡 사용자 권한 목록 테이블 렌더링 (수정됨)
+    // ------------------------
+    function renderAuthTable(authList) {
+        let html = '';
+        
+        if (authList && authList.length > 0) {
+            authList.forEach((auth, index) => {
+                // Controller의 쿼리 결과에 'rownum'이 있으므로 이를 사용
+                const rownum = auth.rownum !== undefined ? auth.rownum : (index + 1); 
+                
+                html += `
                     <tr>
-                        <td colspan="8" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 권한 정보가 없습니다.</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedAuth" data-auth-detail-code="${auth.authDetailCode}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${rownum}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+                             <a href="#" onclick="openAuthDetailModal('${auth.authDetailCode}')" class="text-blue-600 hover:underline">
+                                ${auth.authDetailCode}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${auth.authDetailName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+                            ${auth.authCode}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${auth.authName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailUpdatedate || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailCreatedate}</td>
                     </tr>
                 `;
-            }
-            
-            authListBody.innerHTML = html;
-            
-            // 체크박스 상태 초기화 및 버튼 갱신
-            const selectAll = document.getElementById('selectAll');
-            if (selectAll) selectAll.checked = false;
-            updateRemoveButtonState();
-        }
-    
-    
-        // ------------------------
-        // 💡 페이징 렌더링
-        // ------------------------
-        function renderPagination(totalCount, currentPage, pageSize = 10) {
-            const totalPages = Math.ceil(totalCount / pageSize);
-            
-            totalCountDisplay.textContent = `권한 목록 (총 ${totalCount}개의 권한)`;
-            
-            if (totalPages <= 1) {
-                paginationDiv.innerHTML = '';
-                paginationDiv.style.display = 'none';
-                return;
-            }
-    
-            let html = '<nav class="flex items-center space-x-1">';
-            
-            const pagesPerBlock = 10;
-            const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
-            const blockStart = currentBlock * pagesPerBlock + 1;
-            const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
-            
-            
-            // 이전 페이지 버튼 (◀)
-            const prevPage = currentPage - 1;
-            const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
-            html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
-                         class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
-    
-    
-            // 페이지 번호 링크 (블록 내)
-            for (let i = blockStart; i <= blockEnd; i++) {
-                const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
-                html += `<a href="#" data-page="${i}" 
-                           class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
-            }
-    
-            // 다음 페이지 버튼 (▶)
-            const nextPage = currentPage + 1;
-            const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
-            html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
-                         class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
-            
-            
-            html += '</nav>';
-            
-            paginationDiv.innerHTML = html;
-            paginationDiv.style.display = 'flex';
-            
-            // 이벤트 위임 (클릭 이벤트 처리)
-            paginationDiv.querySelectorAll('.page-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    const clickedLink = e.target.closest('a.page-link');
-                    if (!clickedLink) return;
-    
-                    const targetPage = parseInt(clickedLink.dataset.page);
-                    
-                    if (clickedLink.classList.contains('cursor-not-allowed') || targetPage < 1 || targetPage > totalPages) return;
-    
-                    if (typeof searchAndRenderAuth === 'function') {
-                        searchAndRenderAuth(targetPage); 
-                    } else {
-                         console.error("searchAndRenderAuth 함수를 찾을 수 없습니다.");
-                    }
-                });
             });
-        }
-    
-        // ------------------------
-        // 핵심 함수: 검색 및 페이지 이동 AJAX 요청
-        // ------------------------
-        function searchAndRenderAuth(pageNo) {
-            const condition = searchConditionInput.value.trim();
-            
-            // 🚀 상태 갱신
-            currentSearchCondition = condition; 
-            currentPageNo = pageNo;
-    
-            $.ajax({
-                url: '/admin/searchSysAuth', // 실제 서버 경로로 변경 필요
-                type: 'GET',
-                data: { 
-                    searchCondition: condition,
-                    currentPage: pageNo 
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        renderAuthTable(response.authList);
-                        renderPagination(response.totalCount, response.currentPage);
-                        searchConditionInput.value = currentSearchCondition;
-                    } else {
-                        alert('권한 검색에 실패했습니다.');
-                    }
-                },
-                error: function() {
-                    alert('서버 통신 오류가 발생했습니다.');
-                }
-            });
-        }
-    
-    
-        // ------------------------
-        // 모달 제어 함수
-        // ------------------------
-        function openBatchUploadModal() {
-            batchModal.classList.remove('hidden');
-            batchModal.classList.add('flex');
-        }
-    
-        function closeBatchUploadModal() {
-            batchModal.classList.add('hidden');
-            batchModal.classList.remove('flex');
+        } else {
+             html += `
+                <tr>
+                    <td colspan="8" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 권한 정보가 없습니다.</td>
+                </tr>
+            `;
         }
         
-        function closeAuthCrudModal() {
-            authCrudModal.classList.add('hidden');
-            authCrudModal.classList.remove('flex');
-            authForm.reset();
-            
-            // 폼 초기화 시 숨김 필드도 비우기
-            originalAuthDetailCodeInput.value = '';
-            originalAuthCodeInput.value = '';
-            
-            // 목록 갱신 (현재 상태 유지)
-            searchConditionInput.value = currentSearchCondition; 
-            searchAndRenderAuth(currentPageNo); 
-        }
-    
-        function openRegisterModal() {
-            authForm.reset();
-            modalTitle.textContent = "권한 등록";
-            modalSubtitle.textContent = "* 표시는 필수 항목입니다";
-            
-            toggleInputReadOnly(false); 
-            
-            // PK/FK 필드를 활성화 및 이름 통일 (등록 시에는 newXXX만 사용)
-            newAuthDetailCodeInput.removeAttribute('readonly'); 
-            newAuthDetailCodeInput.classList.remove('input-readonly');
-            
-            registerBtns.classList.remove('hidden');
-            detailBtns.classList.add('hidden');
-            editBtns.classList.add('hidden');
-            
-            authCrudModal.classList.remove('hidden');
-            authCrudModal.classList.add('flex');
-        }
-    
-        function openAuthDetailModal(authDetailCode) {
-            $.ajax({
-                url: '/admin/getSysAuthDetail', // 실제 서버 경로로 변경 필요
-                type: 'GET',
-                data: { authDetailCode: authDetailCode },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        const data = response.data;
-                        originalDetailData = data; 
-                        
-                        // 1. 필드 바인딩 (DTO 항목과 일치)
-                        bindFormData(data); 
-                        
-                        // 2. 모달 상태 설정
-                        modalTitle.textContent = "권한 세부 정보 (" + authDetailCode + ")";
-                        modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
-                        
-                        // 모든 필드를 readonly로 만듭니다.
-                        toggleInputReadOnly(true); 
-                        
-                        // PK/FK는 수정되어야 할 대상이므로 readonly 해제하지 않음
-                        
-                        detailBtns.classList.remove('hidden');
-                        registerBtns.classList.add('hidden');
-                        editBtns.classList.add('hidden');
-                        authCrudModal.classList.remove('hidden');
-                        authCrudModal.classList.add('flex');
-                    } else {
-                        alert('권한 정보를 불러오는 데 실패했습니다: ' + response.message);
-                    }
-                },
-                error: function() {
-                    alert('서버 통신 오류가 발생했습니다.');
-                }
-            });
-        }
-    
-        function enterDetailEditMode() {
-            modalTitle.textContent = "권한 정보 수정";
-            modalSubtitle.textContent = "정보를 수정 후 저장해주세요.";
-            
-            // 모든 필드의 readonly를 해제합니다.
-            toggleInputReadOnly(false); 
-            
-            editBtns.classList.remove('hidden');
-            detailBtns.classList.add('hidden');
-            registerBtns.classList.add('hidden');
-            
-            // PK 필드 readonly 해제 (수정 가능하게 함)
-            newAuthDetailCodeInput.removeAttribute('readonly');
-            newAuthDetailCodeInput.classList.remove('input-readonly');
-        }
-    
-        function cancelDetailEditMode() {
-            // 원본 데이터로 복원
-            bindFormData(originalDetailData); 
-            
-            modalTitle.textContent = "권한 세부 정보 (" + originalDetailData.authDetailCode + ")";
-            modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
-            
-            // 모든 필드를 다시 readonly로 만듭니다.
-            toggleInputReadOnly(true); 
-            
-            detailBtns.classList.remove('hidden');
-            editBtns.classList.add('hidden');
-        }
-    
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeBatchUploadModal();
-                if(!authCrudModal.classList.contains('hidden')) {
-                    // 현재 상세/수정 모드인지 확인
-                    if (!detailBtns.classList.contains('hidden') || !editBtns.classList.contains('hidden')) {
-                         // 상세/수정 모드일 때 취소 버튼 누름 효과
-                        cancelDetailEditMode();
-                        // 모달 닫기
-                        closeAuthCrudModal();
-                    } else {
-                        closeAuthCrudModal();
-                    }
-                }
-            }
-        });
+        authListBody.innerHTML = html;
         
-        // 유틸리티 함수 (체크박스 상태)
-        function updateRemoveButtonState() {
-            const checkedCount = document.querySelectorAll('input[name="selectedAuth"]:checked').length;
-            removeSelectedBtn.disabled = checkedCount === 0;
+        // 체크박스 상태 초기화 및 버튼 갱신
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) selectAll.checked = false;
+        updateRemoveButtonState();
+    }
+
+
+    // ------------------------
+    // 💡 페이징 렌더링 (이전과 동일)
+    // ------------------------
+    function renderPagination(totalCount, currentPage, pageSize = 10) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        
+        totalCountDisplay.textContent = `권한 목록 (총 ${totalCount}개의 권한)`;
+        
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            paginationDiv.style.display = 'none';
+            return;
         }
-    
-    
-        // ------------------------
-        // DOMContentLoaded 이벤트 및 AJAX 요청
-        // ------------------------
-        document.addEventListener('DOMContentLoaded', () => {
-            const selectAll = document.getElementById('selectAll');
-            const removeBtn = document.getElementById('removeSelectedBtn'); 
-            
-            // 초기 로드 시 목록 조회
-            if (typeof searchAndRenderAuth === 'function') {
-                searchAndRenderAuth(currentPageNo); 
-            }
-            
-            // 체크박스 이벤트 리스너 설정
-            selectAll.addEventListener('change', (e) => {
-                const isChecked = e.target.checked;
-                document.querySelectorAll('input[name="selectedAuth"]').forEach(cb => {
-                    cb.checked = isChecked;
-                });
-                updateRemoveButtonState();
-            });
-    
-            document.addEventListener('change', (e) => {
-                if (e.target.name === 'selectedAuth') {
-                    updateRemoveButtonState();
-                    const allChecked = Array.from(document.querySelectorAll('input[name="selectedAuth"]')).every(cb => cb.checked);
-                    selectAll.checked = allChecked;
-                }
-            });
-            
-            // 1. 폼 제출 이벤트 핸들링 (등록/수정)
-            authForm.addEventListener('submit', function(e) {
+
+        let html = '<nav class="flex items-center space-x-1">';
+        
+        const pagesPerBlock = 10;
+        const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
+        const blockStart = currentBlock * pagesPerBlock + 1;
+        const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
+        
+        
+        // 이전 페이지 버튼 (◀)
+        const prevPage = currentPage - 1;
+        const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
+
+
+        // 페이지 번호 링크 (블록 내)
+        for (let i = blockStart; i <= blockEnd; i++) {
+            const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
+            html += `<a href="#" data-page="${i}" 
+                       class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
+        }
+
+        // 다음 페이지 버튼 (▶)
+        const nextPage = currentPage + 1;
+        const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
+        
+        
+        html += '</nav>';
+        
+        paginationDiv.innerHTML = html;
+        paginationDiv.style.display = 'flex';
+        
+        // 이벤트 위임 (클릭 이벤트 처리)
+        paginationDiv.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                const isRegisterMode = registerBtns.classList.contains('hidden') === false;
-                const url = isRegisterMode ? '/admin/insertSysAuth' : '/admin/updateSysAuth'; // 실제 서버 경로로 변경 필요
-    
-                let formData = $(this).serializeArray().reduce((obj, item) => {
-                    obj[item.name] = item.value;
-                    return obj;
-                }, {});
+                const clickedLink = e.target.closest('a.page-link');
+                if (!clickedLink) return;
+
+                const targetPage = parseInt(clickedLink.dataset.page);
                 
-                // 등록 시에는 기존 코드(originalAuthDetailCode, originalAuthCode)는 필요 없음
-                if (isRegisterMode) {
-                    delete formData.authDetailCode; // Hidden 필드 삭제
-                    delete formData.authCode;
+                if (clickedLink.classList.contains('cursor-not-allowed') || targetPage < 1 || targetPage > totalPages) return;
+
+                if (typeof searchAndRenderAuth === 'function') {
+                    searchAndRenderAuth(targetPage); 
                 } else {
-                    // 수정 시에는 기존 코드와 새로운 코드를 모두 보냄
-                    formData.authDetailCode = originalAuthDetailCodeInput.value; // 기존 코드 (WHERE 조건용)
-                    formData.authCode = originalAuthCodeInput.value;
-                }
-                
-                // 새 코드를 기존 필드 이름으로 복사하여 서버에서 처리하기 쉽게 할 수도 있음.
-                // 현재 DTO가 newAuthCode, newAuthDetailCode를 포함한다고 가정하고 그대로 전송.
-    
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        alert(response.message);
-                        if (response.status === 'success') {
-                            closeAuthCrudModal(); 
-                        }
-                    },
-                    error: function() {
-                        alert(isRegisterMode ? '권한 등록 중 서버 통신 오류가 발생했습니다.' : '권한 수정 중 서버 통신 오류가 발생했습니다.');
-                    }
-                });
-            });
-            
-            // 2. 검색 버튼 클릭 이벤트 처리
-            searchBtn.addEventListener('click', function() {
-                 searchAndRenderAuth(1);
-            });
-    
-            // 3. 선택 항목 삭제 버튼 클릭 이벤트 처리
-            removeBtn.addEventListener('click', () => {
-                const selectedAuthDetailCodes = Array.from(document.querySelectorAll('input[name="selectedAuth"]:checked'))
-                    .map(cb => cb.getAttribute('data-auth-detail-code')); 
-    
-                if(selectedAuthDetailCodes.length === 0) {
-                    alert("삭제할 권한 코드를 선택해주세요.");
-                    return;
-                }
-    
-                if(confirm(`선택된 ${selectedAuthDetailCodes.length}개의 권한 코드를 정말 삭제 처리하시겠습니까?`)) {
-                    
-                    $.ajax({
-                        url: '/admin/removeSysAuth', // 실제 서버 경로로 변경 필요
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ authDetailCodeList: selectedAuthDetailCodes }), 
-                        success: function(response) {
-                            alert(response.message);
-                            if (response.status === 'success') {
-                                searchAndRenderAuth(currentPageNo); 
-                            }
-                        },
-                        error: function() {
-                            alert('권한 삭제 처리 중 서버 통신 오류가 발생했습니다.');
-                        }
-                    });
+                     console.error("searchAndRenderAuth 함수를 찾을 수 없습니다.");
                 }
             });
         });
-    </script>
+    }
+
+    // ------------------------
+    // 핵심 함수: 검색 및 페이지 이동 AJAX 요청
+    // ------------------------
+    function searchAndRenderAuth(pageNo) {
+        const condition = searchConditionInput.value.trim();
+        
+        // 🚀 상태 갱신
+        currentSearchCondition = condition; 
+        currentPageNo = pageNo;
+
+        $.ajax({
+            url: '/admin/searchSysAuth', // Controller의 5번 매핑과 일치
+            type: 'GET',
+            data: { 
+                // ⭐️ Controller의 @RequestParam 이름과 일치 ⭐️
+                searchSysAuthCondition: condition, 
+                currentPage: pageNo 
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    renderAuthTable(response.authList);
+                    renderPagination(response.totalCount, response.currentPage);
+                    searchConditionInput.value = currentSearchCondition;
+                } else {
+                    alert('권한 검색에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
+    // ------------------------
+    // 모달 제어 함수
+    // ------------------------
+    function openBatchUploadModal() {
+        batchModal.classList.remove('hidden');
+        batchModal.classList.add('flex');
+    }
+
+    function closeBatchUploadModal() {
+        batchModal.classList.add('hidden');
+        batchModal.classList.remove('flex');
+    }
+    
+    function closeAuthCrudModal() {
+        authCrudModal.classList.add('hidden');
+        authCrudModal.classList.remove('flex');
+        authForm.reset();
+        
+        // 폼 초기화 시 숨김 필드도 비우기
+        originalAuthDetailCodeInput.value = '';
+        originalAuthCodeInput.value = '';
+        
+        // 목록 갱신 (현재 상태 유지)
+        searchConditionInput.value = currentSearchCondition; 
+        searchAndRenderAuth(currentPageNo); 
+    }
+
+    function openRegisterModal() {
+        authForm.reset();
+        modalTitle.textContent = "권한 등록";
+        modalSubtitle.textContent = "* 표시는 필수 항목입니다";
+        
+        toggleInputReadOnly(false); 
+        
+        // 등록 시에는 PK/FK 필드를 활성화 및 이름 통일
+        newAuthDetailCodeInput.removeAttribute('readonly'); 
+        newAuthDetailCodeInput.classList.remove('input-readonly');
+        newAuthCodeInput.removeAttribute('readonly'); 
+        newAuthCodeInput.classList.remove('input-readonly');
+        
+        registerBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        editBtns.classList.add('hidden');
+        
+        authCrudModal.classList.remove('hidden');
+        authCrudModal.classList.add('flex');
+    }
+
+    function openAuthDetailModal(authDetailCode) {
+        $.ajax({
+            url: '/admin/getSysAuthDetail', // Controller의 3번 매핑과 일치
+            type: 'GET',
+            data: { authDetailCode: authDetailCode },
+            success: function(response) {
+                if (response.status === 'success') {
+                    const data = response.data;
+                    originalDetailData = data; 
+                    
+                    // 1. 필드 바인딩 (DTO 항목과 일치)
+                    bindFormData(data); 
+                    
+                    // 2. 모달 상태 설정
+                    modalTitle.textContent = "권한 세부 정보 (" + authDetailCode + ")";
+                    modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+                    
+                    // 모든 필드를 readonly로 만듭니다.
+                    toggleInputReadOnly(true); 
+                    
+                    detailBtns.classList.remove('hidden');
+                    registerBtns.classList.add('hidden');
+                    editBtns.classList.add('hidden');
+                    authCrudModal.classList.remove('hidden');
+                    authCrudModal.classList.add('flex');
+                } else {
+                    alert('권한 정보를 불러오는 데 실패했습니다: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function enterDetailEditMode() {
+        modalTitle.textContent = "권한 정보 수정";
+        modalSubtitle.textContent = "정보를 수정 후 저장해주세요.";
+        
+        // 모든 필드의 readonly를 해제합니다.
+        toggleInputReadOnly(false); 
+        
+        editBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        registerBtns.classList.add('hidden');
+        
+        // PK 필드 readonly 해제 (수정 가능하게 함)
+        newAuthDetailCodeInput.removeAttribute('readonly');
+        newAuthDetailCodeInput.classList.remove('input-readonly');
+        newAuthCodeInput.removeAttribute('readonly');
+        newAuthCodeInput.classList.remove('input-readonly');
+    }
+
+    function cancelDetailEditMode() {
+        // 원본 데이터로 복원
+        bindFormData(originalDetailData); 
+        
+        modalTitle.textContent = "권한 세부 정보 (" + originalDetailData.authDetailCode + ")";
+        modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+        
+        // 모든 필드를 다시 readonly로 만듭니다.
+        toggleInputReadOnly(true); 
+        
+        detailBtns.classList.remove('hidden');
+        editBtns.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBatchUploadModal();
+            if(!authCrudModal.classList.contains('hidden')) {
+                // 현재 상세/수정 모드인지 확인
+                if (!detailBtns.classList.contains('hidden') || !editBtns.classList.contains('hidden')) {
+                     // 상세/수정 모드일 때 취소 버튼 누름 효과
+                    cancelDetailEditMode();
+                } 
+                // 모달 닫기
+                closeAuthCrudModal();
+            }
+        }
+    });
+    
+    // 유틸리티 함수 (체크박스 상태)
+    function updateRemoveButtonState() {
+        const checkedCount = document.querySelectorAll('input[name="selectedAuth"]:checked').length;
+        removeSelectedBtn.disabled = checkedCount === 0;
+    }
+
+
+    // ------------------------
+    // DOMContentLoaded 이벤트 및 AJAX 요청
+    // ------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAll = document.getElementById('selectAll');
+        const removeBtn = document.getElementById('removeSelectedBtn'); 
+        
+        // 초기 로드 시 목록 조회
+        if (typeof searchAndRenderAuth === 'function') {
+            // 현재 페이지 번호로 목록 로드 (URL에 의해 이미 로드된 상태일 수 있으나, AJAX 페이지에서는 다시 로드)
+            searchAndRenderAuth(currentPageNo); 
+        }
+        
+        // 체크박스 이벤트 리스너 설정
+        selectAll.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            document.querySelectorAll('input[name="selectedAuth"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            updateRemoveButtonState();
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'selectedAuth') {
+                updateRemoveButtonState();
+                const allChecked = Array.from(document.querySelectorAll('input[name="selectedAuth"]')).every(cb => cb.checked);
+                selectAll.checked = allChecked;
+            }
+        });
+        
+        // 1. 폼 제출 이벤트 핸들링 (등록/수정)
+        authForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isRegisterMode = registerBtns.classList.contains('hidden') === false;
+            const url = isRegisterMode ? '/admin/insertSysAuth' : '/admin/updateSysAuth'; // Controller 2번/4번 매핑과 일치
+
+            // 폼 데이터를 DTO 구조에 맞게 재구성
+            let formData = {};
+
+            if (isRegisterMode) {
+                // 등록: 새로운 값만 DTO 필드명에 맞게 전송
+                formData.authDetailCode = newAuthDetailCodeInput.value.trim();
+                formData.authDetailName = authDetailNameInput.value.trim();
+                formData.authCode = newAuthCodeInput.value.trim();
+                formData.authName = authNameInput.value.trim();
+            } else {
+                // 수정: DTO에 필요한 모든 필드를 담아 전송
+                // Controller 4번 updateSysAuth()는 DTO 전체를 받음
+                formData.authDetailCode = originalAuthDetailCodeInput.value; // WHERE 조건용 기존 코드
+                formData.authCode = originalAuthCodeInput.value;             // WHERE 조건용 기존 코드
+                
+                // 새로운 값 (수정된 값)
+                formData.newAuthDetailCode = newAuthDetailCodeInput.value.trim(); 
+                formData.authDetailName = authDetailNameInput.value.trim();
+                formData.newAuthCode = newAuthCodeInput.value.trim();
+                formData.authName = authNameInput.value.trim();
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeAuthCrudModal(); 
+                    }
+                },
+                error: function() {
+                    alert(isRegisterMode ? '권한 등록 중 서버 통신 오류가 발생했습니다.' : '권한 수정 중 서버 통신 오류가 발생했습니다.');
+                }
+            });
+        });
+        
+        // 2. 검색 버튼 클릭 이벤트 처리
+        searchBtn.addEventListener('click', function() {
+             searchAndRenderAuth(1); // 검색 시 1페이지부터 시작
+        });
+
+        // 3. 선택 항목 삭제 버튼 클릭 이벤트 처리
+        removeBtn.addEventListener('click', () => {
+            const selectedAuthDetailCodes = Array.from(document.querySelectorAll('input[name="selectedAuth"]:checked'))
+                .map(cb => cb.getAttribute('data-auth-detail-code')); 
+
+            if(selectedAuthDetailCodes.length === 0) {
+                alert("삭제할 권한 코드를 선택해주세요.");
+                return;
+            }
+
+            if(confirm(`선택된 ${selectedAuthDetailCodes.length}개의 권한 코드를 정말 삭제 처리하시겠습니까?`)) {
+                
+                $.ajax({
+                    url: '/admin/removeSysAuth', // Controller의 6번 매핑과 일치
+                    type: 'POST',
+                    contentType: 'application/json',
+                    // Controller에서 Map<String, List<String>>을 받으므로 키 이름을 'authDetailCodeList'로 설정
+                    data: JSON.stringify({ authDetailCodeList: selectedAuthDetailCodes }), 
+                    success: function(response) {
+                        alert(response.message);
+                        // 삭제 성공/실패 여부와 관계없이 목록을 갱신하여 최신 상태를 반영
+                        searchAndRenderAuth(currentPageNo); 
+                    },
+                    error: function() {
+                        alert('권한 삭제 처리 중 서버 통신 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

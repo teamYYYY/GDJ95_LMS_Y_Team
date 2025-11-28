@@ -1,6 +1,7 @@
 package com.example.lms.service.admin;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +62,9 @@ public class SysAuthService {
 	}
 	
 	// 사용자 권한 코드 검색 조회
-	public List<SysAuthDTO> searchSysAuthInfoList(String searchSysAuthCondition, 
-													int startRow,
-													int limit ) {
+	public List<SysAuthDTO> searchSysAuthInfoList(Map<String, Object> searchParams) {
 
-		return sysAuthMapper.searchSysAuthInfoList(searchSysAuthCondition, startRow, limit);
+		return sysAuthMapper.searchSysAuthInfoList(searchParams);
 	}
 	
 	// 사용자 권한 코드 검색 조회 카운트
@@ -75,9 +74,9 @@ public class SysAuthService {
 	}
 											
 	// 사용자 권한 상세정보 조회
-	public List<SysAuthDTO> selectSysAuthAllDetailList(String authDetailCode) {
+	public SysAuthDTO selectSysAuthAllDetail(String authDetailCode) {
 		
-		return sysAuthMapper.selectSysAuthAllDetailList(authDetailCode);
+		return sysAuthMapper.selectSysAuthAllDetail(authDetailCode);
 	}
 	
 	//======================================================
@@ -126,6 +125,12 @@ public class SysAuthService {
 	public Integer removeSysAuthDetail(String authDetailCode) {
 		
 		return sysAuthMapper.removeSysAuthDetail(authDetailCode);
+	}
+	
+	// 권한코드 삭제 전에 세부사항에 남아 있으면 삭제 불가
+	public Integer selectBeforeRemoveAuthCdValidate(String authCode) {
+		
+		return sysAuthMapper.selectBeforeRemoveAuthCdValidate(authCode);
 	}
 	
 	public Integer removeSysAuth(String authCode) {
