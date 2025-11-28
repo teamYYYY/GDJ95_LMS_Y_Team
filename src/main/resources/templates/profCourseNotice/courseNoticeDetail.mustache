@@ -1,45 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-	<h2>공지사항 상세정보</h2>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공지사항 상세정보</title>
 
-    <table border="1">
-        <tr>
-        	<th>번호</th>
-        	<td>{{courseNotice.courseNo}}</td>
-        </tr>
-        <tr>
-	        <th>제목</th>
-	        <td>{{courseNotice.courseNoticeTitle}}</td>
-        </tr>
-        <tr>
-	        <th>내용</th>
-	        <td>{{courseNotice.courseNoticeContent}}</td>
-        </tr>
-        <tr>
-	        <th>조회수</th>
-	        <td>{{courseNotice.courseNoticeViewCount}}</td>
-        </tr>
-        <tr>
-	        <th>등록일시</th>
-	        <td>{{courseNotice.createdate}}</td>
-        </tr>
-        <tr>
-	        <th>수정일시</th>
-	        <td>{{courseNotice.updatedate}}</td>
-        </tr>
-        
-    </table>
+<link rel="stylesheet" as="style" crossorigin 
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <a href="/modifyCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}">수정</a>
-    <a href="/removeCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}">
-    	삭제
-	</a>
+ <style>
+    body {
+        font-family: Pretendard, sans-serif;
+    }
+</style>
+</head>
+<body class="text-gray-800">
 
-    <a class="back-btn" href="/courseNoticeList?courseNo={{courseNotice.courseNo}}">← 목록으로</a>
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+
+        <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-100 space-y-6">
+
+            <div class="pb-4 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800">공지사항 상세정보</h2>
+            </div>
+            
+            <div class="divide-y divide-gray-100 border border-gray-200 rounded-lg overflow-hidden">
+                
+                <div class="flex">
+                    <div class="w-24 px-4 py-3 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                        제목
+                    </div>
+                    <div class="flex-1 px-4 py-3 text-sm font-semibold text-gray-900">
+                        {{courseNotice.courseNoticeTitle}}
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="w-24 px-4 py-3 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                        내용
+                    </div>
+                    <div class="flex-1 px-4 py-3 text-sm text-gray-700 whitespace-pre-wrap">
+                        {{courseNotice.courseNoticeContent}}
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 divide-x divide-gray-200">
+                    <div class="flex">
+                        <div class="w-24 px-4 py-2 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                            번호
+                        </div>
+                        <div class="flex-1 px-4 py-2 text-sm text-gray-700">
+                            {{courseNotice.courseNo}}
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-24 px-4 py-2 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                            조회수
+                        </div>
+                        <div class="flex-1 px-4 py-2 text-sm text-gray-700">
+                            {{courseNotice.courseNoticeViewCount}}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 divide-x divide-gray-200">
+                    <div class="flex">
+                        <div class="w-24 px-4 py-2 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                            등록일시
+                        </div>
+                        <div class="flex-1 px-4 py-2 text-sm text-gray-700">
+                            {{courseNotice.createdate}}
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-24 px-4 py-2 bg-gray-50 text-sm font-medium text-gray-500 border-r border-gray-200">
+                            수정일시
+                        </div>
+                        <div class="flex-1 px-4 py-2 text-sm text-gray-700">
+                            {{courseNotice.updatedate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                
+                <a href="/modifyCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}"
+                   class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium 
+                          hover:bg-indigo-700 transition shadow-md">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> 수정
+                </a>
+                
+                <a href="/removeCourseNotice?courseNoticeNo={{courseNotice.courseNoticeNo}}"
+                   onclick="return confirm('정말 삭제하시겠습니까?');"
+                   class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium 
+                          hover:bg-red-700 transition shadow-md">
+                    <i class="fa-solid fa-trash-can mr-1"></i> 삭제
+                </a>
+
+                <a href="/courseNoticeList?courseNo={{courseNotice.courseNo}}"
+                   class="px-4 py-2 bg-gray-400 text-white rounded-lg text-sm font-medium 
+                          hover:bg-gray-500 transition shadow-md">
+                    <i class="fa-solid fa-list mr-1"></i> 목록으로
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    {{> profLayout/profFooter }}
+
 </body>
 </html>
