@@ -14,27 +14,31 @@
     <style>
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: #EEF2FF; /* 부드러운 연한 파란색 배경 */
+            background-color: #EEF2FF;
         }
-        /* 좌측 이미지 배경 설정 */
         .login-bg-image {
             background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
             background-size: cover;
             background-position: center;
         }
-        /* 이미지 위 오버레이 그라데이션 */
         .overlay-gradient {
             background: linear-gradient(to bottom, rgba(30, 58, 138, 0.4), rgba(23, 37, 84, 0.8));
+        }
+        /* 모달 애니메이션 */
+        .modal-enter {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden flex w-full max-w-5xl h-[650px]">
-        
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden flex w-full max-w-5xl h-[650px] relative z-0">
         <div class="hidden lg:block lg:w-1/2 relative login-bg-image">
             <div class="absolute inset-0 overlay-gradient"></div>
-            
             <div class="absolute bottom-10 left-10 text-white z-10">
                 <h1 class="text-3xl font-bold mb-2">학사관리시스템</h1>
                 <p class="text-gray-200 font-light tracking-wide opacity-80">Academic Management System</p>
@@ -51,18 +55,20 @@
                 <p class="text-gray-500 mt-1 text-sm">로그인하여 시작하세요</p>
             </div>
 
+            <div id="loginErrorMsg" class="mb-4 hidden">
+                <p class="text-sm text-center text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 font-medium"></p>
+            </div>
             <form action="/loginForm" method="POST" class="space-y-5">
-                
                 <div>
                     <label for="userId" class="block text-xs font-bold text-gray-700 mb-1.5 ml-1">학번</label>
-                    <input type="text" id="userId" name="userId" placeholder="학번을 입력하세요" 
+                    <input type="text" id="userId" name="userId" placeholder="학번을 입력하세요" value = "admin"
                            class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                            required>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-gray-700 mb-1.5 ml-1">비밀번호</label>
-                    <input type="password" id="userPassword" name="userPassword" placeholder="비밀번호를 입력하세요" 
+                    <label for="userPassword" class="block text-xs font-bold text-gray-700 mb-1.5 ml-1">비밀번호</label>
+                    <input type="password" id="userPassword" name="userPassword" placeholder="비밀번호를 입력하세요" value = "1234"
                            class="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                            required>
                 </div>
@@ -73,7 +79,9 @@
                 </button>
 
                 <div class="text-center mt-4">
-                    <a href="#" class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">비밀번호 찾기</a>
+                    <button type="button" onclick="openResetModal()" class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">
+                        비밀번호 초기화
+                    </button>
                 </div>
             </form>
 
@@ -84,9 +92,275 @@
                 </div>
                 <p class="text-[10px] text-gray-300">© 2025 학사관리시스템. All rights reserved.</p>
             </div>
-
         </div>
     </div>
+
+    <div id="resetModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeResetModal()"></div>
+
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <form id="resetForm" action="/resetUserPasswordForm" method="POST" 
+                  class="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 modal-enter transform transition-all"
+                  onsubmit="return validateAndSubmitReset(event)">
+                
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">비밀번호 초기화</h3>
+                            <p class="text-xs text-gray-500">초기화에 필요한 정보를 입력해주세요</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeResetModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="resetUserId" class="block text-xs font-bold text-gray-700 mb-1 ml-1">사용자 학번 <span class="text-red-500">*</span></label>
+                        <input type="text" id="resetUserId" name="userId" placeholder="학번을 입력하세요" required
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="resetUserName" class="block text-xs font-bold text-gray-700 mb-1 ml-1">사용자명 <span class="text-red-500">*</span></label>
+                        <input type="text" id="resetUserName" name="userName" placeholder="이름을 입력하세요" required
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="resetUserEmail" class="block text-xs font-bold text-gray-700 mb-1 ml-1">사용자 이메일 <span class="text-red-500">*</span></label>
+                        <input type="email" id="resetUserEmail" name="userEmail" placeholder="이메일을 입력하세요" required
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="resetUserPhone" class="block text-xs font-bold text-gray-700 mb-1 ml-1">사용자 핸드폰 <span class="text-red-500">*</span></label>
+                        <input type="tel" id="resetUserPhone" name="userPhone" placeholder="핸드폰 번호를 입력하세요 (예: 01012341234)" required
+                               pattern="[0-9]{11}" title="하이픈 없이 11자리 숫자를 입력해주세요 (예: 01012341234)"
+                               maxlength="11"
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p id="phoneError" class="text-red-500 text-xs mt-1 hidden">하이픈 없이 11자리 숫자를 입력해야 합니다 (예: 01012341234).</p>
+                    </div>
+                </div>
+
+                <p id="formError" class="text-red-500 text-sm mt-4 hidden font-bold"></p>
+
+                <div class="mt-6 bg-blue-50 rounded-lg p-4 text-xs text-blue-800 leading-relaxed border border-blue-100">
+                    입력하신 정보가 등록된 정보와 일치하면 비밀번호가 초기화됩니다.
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeResetModal()" class="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 text-sm font-bold hover:bg-gray-50 transition">
+                        취소
+                    </button>
+                    <button type="submit" class="flex-1 py-3 px-4 bg-blue-600 rounded-lg text-white text-sm font-bold hover:bg-blue-700 shadow-md shadow-blue-200 transition">
+                        확인
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 modal-enter transform transition-all text-center">
+                
+                <button type="button" onclick="closeSuccessModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <div class="mb-5 flex justify-center">
+                    <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center border-4 border-green-100">
+                        <i class="fa-solid fa-check text-2xl text-green-500"></i>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-gray-900 mb-2">비밀번호 초기화 완료</h3>
+                <p class="text-sm text-gray-500 mb-8">초기 비밀번호가 <span class="text-blue-600 font-bold">1234</span>로<br>초기화되었습니다.</p>
+
+                <button type="button" onclick="closeSuccessModal()" class="w-full py-3 px-4 bg-blue-600 rounded-lg text-white text-sm font-bold hover:bg-blue-700 shadow-md shadow-blue-200 transition">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="lockedAccountModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeLockedAccountModal()"></div>
+
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 modal-enter transform transition-all text-center">
+                
+                <button type="button" onclick="closeLockedAccountModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <div class="mb-5 flex justify-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center border-4 border-red-200">
+                        <i class="fa-solid fa-lock text-2xl text-red-600"></i>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-gray-900 mb-2">계정 잠금 안내</h3>
+                <p id="lockedAccountMsg" class="text-sm text-gray-500 mb-6 font-medium">
+                    계정 비밀번호 5회 오류로 계정이 잠금되었습니다.<br>
+                    비밀번호를 초기화하여주세요.
+                </p>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeLockedAccountModal(); openResetModal();" class="flex-1 py-3 px-4 bg-blue-600 rounded-lg text-white text-sm font-bold hover:bg-blue-700 shadow-md shadow-blue-200 transition">
+                        비밀번호 초기화
+                    </button>
+                    <button type="button" onclick="closeLockedAccountModal()" class="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 text-sm font-bold hover:bg-gray-50 transition">
+                        닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const resetModal = document.getElementById('resetModal');
+        const successModal = document.getElementById('successModal');
+        const lockedAccountModal = document.getElementById('lockedAccountModal'); // 👈 추가
+        const resetForm = document.getElementById('resetForm');
+        const formError = document.getElementById('formError');
+        const phoneError = document.getElementById('phoneError');
+        
+        const resetUserId = document.getElementById('resetUserId');
+        const resetUserName = document.getElementById('resetUserName');
+        const resetUserEmail = document.getElementById('resetUserEmail');
+        const resetUserPhone = document.getElementById('resetUserPhone');
+
+        const loginErrorMsg = document.getElementById('loginErrorMsg');
+        const loginErrorText = loginErrorMsg.querySelector('p');
+
+        /**
+         * 0. 서버에서 전달된 플래시 메시지 (RedirectAttributes) 처리
+         * Spring Boot/Mustache 템플릿 환경에서 동작합니다.
+         */
+         const serverError = '{{#error}}{{error}}{{/error}}'; 
+         const serverUserId = '{{#userId}}{{userId}}{{/userId}}';
+         const serverLockError = '{{#lockError}}{{lockError}}{{/lockError}}';
+
+        // 락 에러가 있을 경우, 잠금 모달을 띄운다.
+        if (serverLockError && serverLockError.trim() !== '') {
+            lockedAccountModal.classList.remove('hidden');
+        } 
+        // 락 에러가 없고, 일반 로그인 에러가 있을 경우
+        else if (serverError && serverError.trim() !== '') {
+            loginErrorText.textContent = serverError;
+            loginErrorMsg.classList.remove('hidden');
+        }
+
+        // 아이디가 남아있다면 입력 필드에 채워넣기
+        if (serverUserId && serverUserId.trim() !== '' && document.getElementById('userId')) {
+            document.getElementById('userId').value = serverUserId;
+        }
+        // 👆 서버 메시지 처리 로직 끝
+
+
+        // 1. 초기화 모달 열기
+        function openResetModal() {
+        	
+            resetModal.classList.remove('hidden');
+            formError.classList.add('hidden'); // 에러 메시지 초기화
+            phoneError.classList.add('hidden'); // 핸드폰 에러 초기화
+            resetForm.reset(); // 폼 내용 초기화
+        }
+
+        // 2. 초기화 모달 닫기 (취소)
+        function closeResetModal() {
+        	
+            resetModal.classList.add('hidden');
+        }
+
+        // 3. 완료 모달 닫기 -> 로그인 화면으로 복귀
+        function closeSuccessModal() {
+        	
+            successModal.classList.add('hidden');
+        }
+        
+        // 5. 계정 잠금 모달 닫기
+        function closeLockedAccountModal() { // 👈 추가
+        	
+            lockedAccountModal.classList.add('hidden');
+        }
+
+
+     	// 4. 유효성 검사 및 서버 전송 (AJAX 방식으로 변경)
+        function validateAndSubmitReset(event) {
+    	 
+            event.preventDefault(); // 기본 폼 제출 동작 (새로고침) 방지
+            
+            formError.classList.add('hidden');
+            phoneError.classList.add('hidden');
+
+            const userId = resetUserId.value.trim();
+            const userName = resetUserName.value.trim();
+            const userEmail = resetUserEmail.value.trim();
+            const userPhone = resetUserPhone.value.trim();
+
+            // A. 빈칸 및 형식 검사 (이전과 동일)
+            if (!userId || !userName || !userEmail || !userPhone) {
+                formError.textContent = "모든 필수 정보를 입력해주세요.";
+                formError.classList.remove('hidden');
+                return false;
+            }
+
+            const phoneRegex = /^[0-9]{11}$/;
+            if (!phoneRegex.test(userPhone)) {
+                phoneError.classList.remove('hidden');
+                formError.classList.remove('hidden');
+                formError.textContent = "핸드폰 번호 형식이 올바르지 않습니다.";
+                return false;
+            }
+            
+            // B. 유효성 검사 통과 후, AJAX (Fetch API) 통신 시작
+            
+            // 폼 데이터를 가져와서 서버 전송에 적합한 형태로 변환 (URLSearchParams)
+            const formData = new FormData(resetForm);
+
+            fetch('/resetUserPasswordForm', {
+                method: 'POST',
+                headers: {
+                    // Spring Boot Controller가 요청을 일반 폼 데이터로 받도록 설정
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                body: new URLSearchParams(formData)
+            })
+            .then(response => {
+                // HTTP 응답이 200 OK가 아니면 에러 처리
+                if (!response.ok) {
+                    throw new Error('서버에서 오류가 발생했습니다.');
+                }
+                return response.json(); // 서버가 보낸 JSON 응답을 파싱
+            })
+            .then(data => {
+                // C. JSON 응답 결과에 따라 모달 제어
+                if (data.success) {
+                    // **성공:** 입력 모달 닫고, 완료 모달 띄우기
+                    closeResetModal();
+                    successModal.classList.remove('hidden'); 
+                } else {
+                    // **실패:** 에러 메시지 표시 (서버에서 받은 메시지 사용)
+                    formError.textContent = data.message || "비밀번호 초기화에 실패했습니다.";
+                    formError.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                // D. 네트워크 또는 통신 오류 발생
+                console.error('Fetch Error:', error);
+                formError.textContent = "통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+                formError.classList.remove('hidden');
+            });
+
+            return false; // 기본 폼 제출 방지
+        }
+        
+    </script>
 
 </body>
 </html>

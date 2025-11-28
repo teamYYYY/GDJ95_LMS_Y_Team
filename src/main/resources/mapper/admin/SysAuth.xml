@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.SysAuthMapper">
+
+	<!-- 2025. 11. 26. JM. 권한관리 - 사용자 권한 코드 전체 리스트 조회 -->
+	<select id="sysAuthAllList" parameterType="int" resultType="com.example.lms.dto.SysAuthDTO">
+	SELECT * FROM (
+		SELECT
+			ROW_NUMBER() OVER (
+			ORDER BY a.auth_detail_updatedate ASC) AS rownum,
+			a.auth_detail_code AS authDetailCode,
+			a.auth_detail_name AS authDetailName,
+			a.auth_code AS authCode,
+			b.auth_name AS authName,
+			a.auth_detail_updatedate AS authDetailUpdatedate,
+			a.auth_detail_createdate AS authDetailCreatedate,
+			b.auth_updatedate AS authUpdatedate,
+			b.auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth_detail a
+		INNER JOIN tb_sysauth b
+		  ON
+			a.auth_code = b.auth_code
+		) t
+		ORDER BY rownum desc
+		LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 리스트 조회 -->
+	<select id="sysAuthList" resultType="com.example.lms.dto.SysAuthDTO">
+	
+		SELECT
+			auth_code AS authCode,
+			auth_name AS authName,
+			auth_updatedate AS authUpdatedate,
+			auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부권한 리스트 조회 -->
+	<select id="sysAuthDetailList" resultType="com.example.lms.dto.SysAuthDTO">
+	
+		SELECT
+			auth_detail_code AS authDetailCode,
+			auth_detail_name AS authDetailName,
+			auth_code AS authCode,
+			auth_detail_updatedate AS authDetailUpdatedate,
+			auth_detail_createdate AS authDetailCreatedate
+		FROM
+			tb_sysauth_detail
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 특정 사용자 권한의 세부권한 리스트 조회 -->
+	<select id="selectAuthCodesysAuthDetailList" resultType="com.example.lms.dto.SysAuthDTO">
+	
+		SELECT
+			auth_detail_code AS authDetailCode,
+			auth_detail_name AS authDetailName,
+			auth_code AS authCode,
+			auth_detail_updatedate AS authDetailUpdatedate,
+			auth_detail_createdate AS authDetailCreatedate
+		FROM
+			tb_sysauth_detail
+		WHERE auth_code = #{authCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 전체 리스트 페이징 -->
+	<select id="sysAuthAllListCnt" resultType="int">
+	
+		SELECT
+			count(*)
+		FROM
+			(
+			SELECT
+				a.auth_detail_code AS authDetailCode,
+				a.auth_detail_name AS authDetailName,
+				a.auth_code AS authCode,
+				b.auth_name AS authName,
+				a.auth_detail_updatedate AS authDetailUpdatedate,
+				a.auth_detail_createdate AS authDetailCreatedate,
+				b.auth_updatedate AS authUpdatedate,
+				b.auth_createdate AS authCreatedate
+			FROM
+					tb_sysauth_detail a
+			INNER JOIN tb_sysauth b ON
+					a.auth_code = b.auth_code) t
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 검색 조회 -->
+	<select id="searchSysAuthInfoList" parameterType="java.util.Map" resultType="com.example.lms.dto.SysAuthDTO">
+	SELECT * FROM (		
+		SELECT
+			ROW_NUMBER() OVER (
+			ORDER BY a.auth_detail_updatedate ASC) AS rownum,
+			a.auth_detail_code AS authDetailCode,
+			a.auth_detail_name AS authDetailName,
+			a.auth_code AS authCode,
+			b.auth_name AS authName,
+			a.auth_detail_updatedate AS authDetailUpdatedate,
+			a.auth_detail_createdate AS authDetailCreatedate,
+			b.auth_updatedate AS authUpdatedate,
+			b.auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth_detail a
+		INNER JOIN tb_sysauth b
+		  ON
+			a.auth_code = b.auth_code
+		WHERE 1=1
+			<if test="searchSysAuthCondition != null and searchSysAuthCondition.trim() != ''">
+	        AND (
+	               a.auth_detail_name LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+	               OR a.auth_code LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+	           )
+	        </if>
+	    ) t
+	    ORDER BY rownum desc 
+	    LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 검색 조회 카운트 -->
+	<select id="searchSysAuthInfoListCnt" parameterType="String" resultType="int">
+		
+		SELECT COUNT(*) FROM (
+		SELECT
+			a.auth_detail_code AS authDetailCode,
+			a.auth_detail_name AS authDetailName,
+			a.auth_code AS authCode,
+			b.auth_name AS authName,
+			a.auth_detail_updatedate AS authDetailUpdatedate,
+			a.auth_detail_createdate AS authDetailCreatedate,
+			b.auth_updatedate AS authUpdatedate,
+			b.auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth_detail a
+		INNER JOIN tb_sysauth b ON
+			a.auth_code = b.auth_code
+		WHERE 1=1
+			<if test="searchSysAuthCondition != null and searchSysAuthCondition.trim() != ''">
+	        AND (
+	               a.auth_detail_name LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+	               OR a.auth_code LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+	           )
+	        </if>
+	      ) t
+	
+	</select>
+	
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 상세정보 조회 -->
+	<select id="selectSysAuthAllDetail" parameterType="String" resultType="com.example.lms.dto.SysAuthDTO" >
+	
+		SELECT
+			a.auth_detail_code AS authDetailCode,
+			a.auth_detail_name AS authDetailName,
+			a.auth_code AS authCode,
+			b.auth_name AS authName,
+			a.auth_detail_updatedate AS authDetailUpdatedate,
+			a.auth_detail_createdate AS authDetailCreatedate,
+			b.auth_updatedate AS authUpdatedate,
+			b.auth_createdate AS authCreatedate
+		FROM
+			tb_sysauth_detail a
+		INNER JOIN tb_sysauth b ON
+			a.auth_code = b.auth_code
+	    WHERE a.auth_detail_code = #{authDetailCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 등록 기능 -->
+	<insert id="insertSysAuth" parameterType="com.example.lms.dto.SysAuthDTO">
+		
+		INSERT INTO tb_sysauth 
+			(auth_code, 
+			auth_name, 
+			auth_updatedate,
+			auth_createdate) 
+		VALUES 
+			(#{authCode}, 
+			#{authName}, 
+			NOW(),
+			NOW())
+		
+	</insert>
+	
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
+	<insert id="insertSysAuthDetail" parameterType="com.example.lms.dto.SysAuthDTO">
+	
+		INSERT INTO tb_sysauth_detail 
+			(auth_detail_code, 
+			auth_detail_name, 
+			auth_code, 
+			auth_detail_updatedate,
+			auth_detail_createdate) 
+		VALUES 
+			(#{authDetailCode}, 
+			#{authDetailName}, 
+			#{authCode}, 
+			NOW(),
+			NOW())
+	
+	</insert>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 수정 및 삭제 기능 사용시 검증기능 -->
+	<select id="updateRemoveSysAuthDetailValidate" parameterType="String" resultType="int">
+	
+		SELECT
+			count(a.user_auth)
+		FROM
+			tb_sysuser a
+		WHERE a.user_auth = #{authDetailCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 수정 기능 -->
+	<update id="updateSysAuthDetail" parameterType="com.example.lms.dto.SysAuthDTO">
+	
+		UPDATE 
+			tb_sysauth_detail
+		SET
+			auth_detail_code = #{newAuthDetailCode},
+			auth_detail_name = #{authDetailName},
+			auth_code = #{newAuthCode},
+			auth_detail_updatedate = NOW()
+		WHERE auth_detail_code = #{authDetailCode}
+	
+	</update>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 수정 기능 -->
+	<update id="updateSysAuth" parameterType="com.example.lms.dto.SysAuthDTO">
+	
+		UPDATE
+			tb_sysauth
+		SET
+			auth_code = #{newAuthCode},
+			auth_name = #{authName},
+			auth_updatedate = NOW()
+		WHERE auth_code = #{authCode}
+	
+	</update>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 삭제 전에 auth_code 가져오기 -->
+	<select id="selectBeforeRemoveAuthCd" parameterType="String">
+		
+		SELECT
+			auth_code
+		FROM
+			tb_sysauth_detail
+		WHERE
+			auth_detail_code = #{authDetailCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 삭제  -->
+	<delete id="removeSysAuthDetail" parameterType="String">
+	
+		DELETE FROM tb_sysauth_detail WHERE auth_detail_code = #{authDetailCode}
+	
+	</delete>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 삭제 전에 세부권한 테이블에 사용여부 확인 -->
+	<select id="selectBeforeRemoveAuthCdValidate" parameterType="String" resultType="int">
+		
+		SELECT
+			count(auth_code)
+		FROM
+			tb_sysauth_detail
+		WHERE
+			auth_code = #{authCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 삭제 -->
+	<delete id="removeSysAuth" parameterType="String">
+	
+		DELETE FROM tb_sysauth WHERE auth_code = #{authCode}
+	
+	</delete>
+	
+</mapper>

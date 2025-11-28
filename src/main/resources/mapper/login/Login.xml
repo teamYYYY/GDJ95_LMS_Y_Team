@@ -1,39 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.lms.mapper.login.LoginMapper">
-
-	<!-- 사용자 로그인 검증-->
+	
+	<!-- 2025. 11. 24. JM. 사용자 로그인 검증 user_status 값이 1 사용중이여야함 -->
 	<select id="userLoginValidate" parameterType="com.example.lms.dto.SysUserDTO" resultType="int">
 		
-		select
+		SELECT
 			count(user_id)
-		from
+		FROM
 			tb_sysuser
-		where user_id = #{userId} 
-		and user_password = #{userPassword} 
-		and user_status != '4'
+		WHERE user_id = #{userId} 
+		AND user_password = #{userPassword} 
+		AND user_status = '1'
 	
 	</select>
 	
+	<!-- 2025. 11. 24. JM. 계정 잠금 사용자 검증 -->
+	<select id="userStatusLockValidate" parameterType="com.example.lms.dto.SysUserDTO" resultType="int">
+	
+	<![CDATA[
+	    SELECT
+	        COUNT(user_id)
+	    FROM
+	        tb_sysuser
+	    WHERE
+	        user_id = #{userId}
+	        AND user_password = #{userPassword}
+	        AND user_status != '1'
+	        AND user_login_fail_cnt >= '5'
+    ]]>
+	
+	</select>
+	
+	<!-- 2025. 11. 24. JM. 사용자 로그인 실패 시 카운트 이력 증가 (5회이상 실패시 계정잠금) -->
+	<update id="incrementUserLoginFailCnt" parameterType="string">
+	
+		UPDATE
+			tb_sysuser
+		SET
+			user_login_fail_cnt = user_login_fail_cnt + 1,
+			user_updatedate = NOW()
+		WHERE
+			user_id = #{userId}
+	
+	</update>
+	
+	<!-- 2025. 11. 25. JM. 사용자 로그인 계정 잠금 처리 user_status = 0 은 사용대기 -->
+	<update id="userStatusLock" parameterType="String">
+	
+	<![CDATA[
+	    UPDATE
+	        tb_sysuser
+	    SET
+	        user_status = '0',
+	        user_updatedate = NOW()
+	    WHERE
+	        user_id = #{user_id}
+	        AND user_login_fail_cnt >= '5'
+    ]]>
+			
+	</update>
+	
+	
+	<!-- 2025. 11. 24. JM. 사용자 로그인 세션 정보 -->
 	<select id="loginUserSession" parameterType="com.example.lms.dto.SysUserDTO" resultType="com.example.lms.dto.SysUserDTO">
 		
-		select
-			user_no AS userNo,
-			user_id AS userId,
-			user_auth AS userAuth,
-			user_status AS userStatus,
-			dept_code AS deptCode,
-			user_grade AS userGrade,
-			user_position AS userPosition
-		from
-			tb_sysuser
-		where user_id = #{userId} 
-		and user_password = #{userPassword} 
-		and user_status != '4'
+		SELECT
+			a.user_no AS userNo,
+			a.user_id AS userId,
+			a.user_name AS userName,
+			a.user_auth AS userAuth,
+			b.auth_detail_name	 AS authDetailName,
+		    c.auth_code 		 AS authCode,
+		    c.auth_name			 AS authName,
+			a.user_status AS userStatus,
+			a.dept_code AS deptCode,
+			a.user_grade AS userGrade,
+			b.auth_code AS dAuthCode
+		FROM
+			tb_sysuser a
+		INNER JOIN tb_sysauth_detail b ON
+			a.user_auth = b.auth_detail_code
+		INNER JOIN tb_sysauth c ON
+			b.auth_code = c.auth_code
+		WHERE a.user_id = #{userId} 
+		AND a.user_password = #{userPassword} 
 		
-	
 	</select>
 	
+	<!-- 2025. 11. 24. JM. 사용자 비밀번호 초기화 처리 -->
+	<update id="resetUserPassword" parameterType="com.example.lms.dto.SysUserDTO">
 	
+		UPDATE
+			tb_sysuser
+		SET
+		    user_password = '1234',
+		    user_updatedate = NOW(),
+		    user_status = '1'
+		WHERE user_id = #{userId} 
+			AND user_name = #{userName}
+			AND user_email = #{userEmail}
+			AND user_phone = #{userPhone}
+			AND user_status = 0
+	
+	</update>
+	
+	<!-- 2025. 11. 24. JM. 로그인 실패 카운트 이력 초기화 -->
+	<update id="resetUserLoginFailCnt" parameterType="string">
+
+		UPDATE
+			tb_sysuser
+		SET
+			user_login_fail_cnt = 0,
+			user_updatedate = NOW()
+		WHERE
+			user_id = #{userId}	
+	
+	</update>
 
 </mapper>

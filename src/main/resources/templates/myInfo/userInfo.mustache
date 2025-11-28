@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인정보관리 | 학사관리시스템</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .admin-hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .input-readonly {
+            background-color: #F8F9FA;
+            border-color: #E5E7EB;
+            color: #6B7280;
+            cursor: default;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white border-b border-gray-200">
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a> 
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
+        </div>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p> 
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
+
+    <div class="admin-hero-bg h-40 p-8 text-white">
+        <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
+            <h2 class="text-3xl font-bold">개인정보관리</h2>
+            <p class="text-sm text-gray-200 mt-2">개인 정보 조회 및 수정</p>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-16rem)]">
+        
+        <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보관리
+                    <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
+                </a>
+                <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
+                </a>
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자권한관리
+                </a>
+                <a href="/admin/deptManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과관리
+                </a>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항관리
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow p-8">
+            <div class="max-w-4xl bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">개인정보관리</h2>
+                <p class="text-gray-500 mb-6">개인 정보를 조회하고 수정할 수 있습니다.</p>
+
+                <form action="/updateInfo" method="POST" class="space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">기본 정보</h3>
+                    <p class="text-sm text-gray-500 -mt-2">회원 기본 정보를 관리합니다.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">학번/교번/사번 (ID)</label>
+                            <input type="text" value="{{userInfo.userId}}" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">성명</label>
+                            <input type="text" value="{{userInfo.userName}}" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">권한</label>
+                            <input type="text" value="{{userInfo.authName}}" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">비밀번호</label>
+                            <div class="flex items-center gap-2" id="passwordChangeContainer">
+                                <input type="password" value="********" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                                <button type="button" id="passwordChangeBtn" class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm rounded-lg transition flex-shrink-0 border border-blue-200">
+                                    <i class="fa-solid fa-key mr-1"></i> 비밀번호 변경
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">소속(학과)</label>
+                            <input type="text" value="{{userInfo.deptName}}" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">소속상태</label>
+                            <input type="text" value="{{userInfo.statusName}}" readonly class="w-full px-4 py-2 border rounded-lg input-readonly">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label for="userEmail" class="block text-sm font-medium text-gray-700">이메일</label>
+                            <input type="email" id="userEmail" name="userEmail" value="{{userInfo.userEmail}}" maxlength="50" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 input-readonly modify-field" readonly>
+                        </div>
+                        <div class="space-y-1">
+                            <label for="userPhone" class="block text-sm font-medium text-gray-700">연락처</label>
+                            <input type="tel" id="userPhone" name="userPhone" value="{{userInfo.userPhone}}" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 input-readonly modify-field" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <label class="block text-sm font-medium text-gray-700">우편번호</label>
+                        <input type="text" id="userZipcode" name="userZipcode" value="{{userInfo.userZipcode}}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 input-readonly modify-field" readonly>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="userAddress" class="block text-sm font-medium text-gray-700">주소</label>
+                        <input type="text" id="userAddress" name="userAddr" value="{{userInfo.userAddr}}" maxlength="100" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 input-readonly modify-field" readonly>
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <label for="userAddressDetail" class="block text-sm font-medium text-gray-700">상세 주소</label>
+                        <input type="text" id="userAddressDetail" name="userAddrDetail" value="{{userInfo.userAddrDetail}}" maxlength="100" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 input-readonly modify-field" readonly>
+                    </div>
+                    
+                    <div id="modeToggleBtn" class="pt-4 flex justify-end gap-3">
+                        <button type="button" onclick="enterEditMode()" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square"></i> 개인정보 변경
+                        </button>
+                    </div>
+                    
+                    <div id="actionButtons" class="pt-4 flex justify-end gap-3 hidden">
+                        <button type="button" onclick="cancelEditMode()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">취소</button>
+                        <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+                            <i class="fa-solid fa-floppy-disk"></i> 저장
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <div id="passwordModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 relative">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold mb-4 border-b pb-2">비밀번호 변경</h3>
+            <p class="text-sm text-gray-500 mb-4">보안을 위해 현재 비밀번호를 입력하고 새 비밀번호를 설정해주세요.</p>
+            
+            <form id="passwordChangeForm" class="space-y-4">
+                <div>
+                    <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder="현재 비밀번호를 입력하세요" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label for="userNewPassword" class="block text-sm font-medium text-gray-700 mb-1">새 비밀번호</label>
+                    <input type="password" id="userNewPassword" name="userNewPassword" placeholder="새 비밀번호를 입력하세요" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label for="confirmNewPassword" class="block text-sm font-medium text-gray-700 mb-1">새 비밀번호 확인</label>
+                    <input type="password" id="confirmNewPassword" placeholder="새 비밀번호를 다시 입력하세요" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div class="pt-3 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition">취소</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">저장</button>
+                </div>
+                <p id="passwordError" class="text-red-500 text-sm hidden mt-2"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Flash Attribute로 전달된 메시지 변수
+        const FLASH_MESSAGE = '{{#message}}{{message}}{{/message}}';
+        const FLASH_ERROR = '{{#error}}{{error}}{{/error}}';
+
+        // === DOM 요소 ===
+        const modal = document.getElementById('passwordModal');
+        const changeBtn = document.getElementById('passwordChangeBtn');
+        const passwordChangeForm = document.getElementById('passwordChangeForm');
+        const passwordError = document.getElementById('passwordError');
+        const toggleBtn = document.getElementById('modeToggleBtn');
+        const actionBtns = document.getElementById('actionButtons');
+        const editableFields = document.querySelectorAll('.modify-field'); 
+        const passwordChangeContainer = document.getElementById('passwordChangeContainer');
+        
+        // 취소 시 원래 값 복원을 위한 저장소
+        const originalValues = {};
+        editableFields.forEach(field => {
+            originalValues[field.id] = field.value;
+        });
+
+        // === 비밀번호 모달 함수 ===
+        changeBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            passwordError.classList.add('hidden');
+        });
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            passwordChangeForm.reset();
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // === 편집 모드 전환 함수 ===
+        function enterEditMode() {
+            editableFields.forEach(field => {
+                field.removeAttribute('readonly'); 
+                field.classList.remove('input-readonly');
+                field.classList.add('bg-white');
+            });
+
+            toggleBtn.classList.add('hidden');
+            actionBtns.classList.remove('hidden');
+            passwordChangeContainer.classList.add('hidden');
+        }
+
+        function cancelEditMode() {
+            editableFields.forEach(field => {
+                field.setAttribute('readonly', true);
+                field.classList.add('input-readonly');
+                field.classList.remove('bg-white');
+                
+                field.value = originalValues[field.id]; 
+            });
+
+            actionBtns.classList.add('hidden');
+            toggleBtn.classList.remove('hidden');
+            passwordChangeContainer.classList.remove('hidden');
+            
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('edit');
+                window.history.replaceState({path: url.href}, '', url.href);
+            }
+        }
+        
+        // === 페이지 로드 시 Flash Message 및 편집 모드 처리 ===
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            if (FLASH_MESSAGE && FLASH_MESSAGE !== '') {
+                alert(FLASH_MESSAGE);
+            } 
+            
+            if (FLASH_ERROR && FLASH_ERROR !== '') {
+                alert(FLASH_ERROR);
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const isEditMode = urlParams.get('edit') === 'true';
+
+            if (isEditMode || (FLASH_ERROR && FLASH_ERROR !== '')) {
+                enterEditMode();
+            }
+        });
+
+
+        // === 비밀번호 변경 AJAX 제출 처리 ===
+        passwordChangeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('userNewPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (newPassword !== confirmNewPassword) {
+                passwordError.textContent = "새 비밀번호가 일치하지 않습니다.";
+                passwordError.classList.remove('hidden');
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                passwordError.textContent = "현재 비밀번호와 새 비밀번호가 동일합니다.";
+                passwordError.classList.remove('hidden');
+                return;
+            }
+
+            passwordError.classList.add('hidden');
+            
+            const data = {
+                userPassword: currentPassword, 
+                userNewPassword: newPassword
+            };
+
+            try {
+                const response = await fetch('/modifyPassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message); 
+                    closeModal();
+                } else {
+                    passwordError.textContent = result.message; 
+                    passwordError.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                passwordError.textContent = "서버 통신 중 오류가 발생했습니다.";
+                passwordError.classList.remove('hidden');
+            }
+        });
+        
+        // === 🚨 개인정보 변경 폼 유효성 검사 로직 (새로 추가/수정된 부분) ===
+        const infoUpdateForm = document.querySelector('form[action="/updateInfo"]');
+        
+        infoUpdateForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('userEmail');
+            const phone = document.getElementById('userPhone');
+            const zip = document.getElementById('userZipcode');
+            const addr = document.getElementById('userAddress');
+            const detail = document.getElementById('userAddressDetail');
+
+            // 1. 빈 값 체크 (DB Not Null 방지)
+            if (!email.value.trim() || !phone.value.trim() || !zip.value.trim() || !addr.value.trim() || !detail.value.trim()) {
+                alert("모든 정보는 필수 입력값입니다. 빈 칸을 채워주세요.");
+                e.preventDefault(); // 전송 막기
+                return;
+            }
+
+            // 2. 이메일 형식 체크
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email.value)) {
+                alert("올바른 이메일 형식이 아닙니다.");
+                email.focus();
+                e.preventDefault();
+                return;
+            }
+
+            // 3. 전화번호 길이 체크 (최소 9자리 이상은 되어야 정상 번호로 간주)
+            if (phone.value.length < 9) {
+                 alert("전화번호를 정확히 입력해주세요. (최소 9자리)");
+                 phone.focus();
+                 e.preventDefault();
+                 return;
+            }
+            
+            // 4. 우편번호 길이 체크 (최소 5자 이상 - 대한민국 우편번호 기준)
+            if (zip.value.length < 5) {
+                 alert("우편번호를 정확히 입력해주세요. (최소 5자리)");
+                 zip.focus();
+                 e.preventDefault();
+                 return;
+            }
+            
+        });
+        // =======================================================
+    </script>
+</body>
+</html>

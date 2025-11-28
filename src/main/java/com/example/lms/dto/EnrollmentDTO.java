@@ -11,10 +11,11 @@ import lombok.Data;
 @Data
 public class EnrollmentDTO {
 
-    private int enrollmentNo;        // 수강신청번호 PK
-    private int studentUserNo;       // 학생번호 (FK)
-    private int courseNo;            // 강의번호 (FK)
-    private int enrollmentStatus;    // 0=신청, 1=취소
+    private Integer enrollmentNo;    // 수강신청번호 PK
+    private Integer studentUserNo;       // 학생번호 (FK)
+    private Integer  courseNo;            // 강의번호 (FK)
+    private Integer enrollmentStatus; // 0=신청, 1=취소
+    
     private String createdate;       // 신청일시
     private String updatedate;       // 수정일시
 }
