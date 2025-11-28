@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>수강신청 | 학사관리시스템</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-[#F5F7FA] text-gray-800">
+
+{{> studentLayout/studentHeader }}
+
+<main class="max-w-6xl mx-auto px-4 py-10">
+
+    <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-blue-600"></i>
+            수강신청 가능 강의
+        </h2>
+
+        {{#message}}
+        <div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 text-sm shadow">
+            {{message}}
+        </div>
+        {{/message}}
+	
+		<form method="get" class="mb-6 flex gap-4 items-end">
+		
+		    <!-- 요일 -->
+		    <div>
+		        <label class="text-sm text-gray-700">요일</label>
+		        <select name="yoil" class="border rounded px-2 py-1 text-sm">
+		            <option value="">전체</option>
+		            <option value="1">월</option>
+		            <option value="2">화</option>
+		            <option value="3">수</option>
+		            <option value="4">목</option>
+		            <option value="5">금</option>
+		        </select>
+		    </div>
+		
+		    <!-- 교수명 -->
+		    <div>
+		        <label class="text-sm text-gray-700">교수명</label>
+		        <input type="text" name="professor"
+		               value="{{professor}}"
+		               class="border rounded px-2 py-1 text-sm"
+		               placeholder="교수명 검색">
+		    </div>
+		
+		    <!-- 학과 -->
+		    <div>
+		        <label class="text-sm text-gray-700">학과</label>
+		        <select name="deptCode" class="border rounded px-2 py-1 text-sm">
+		            <option value="">전체</option>
+		            {{#deptList}}
+		            <option value="{{deptCode}}">{{deptName}}</option>
+		            {{/deptList}}
+		        </select>
+		    </div>
+		
+		    <!-- 검색 버튼 -->
+		    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+		        검색
+		    </button>
+		
+		</form>
+				
+        <table class="w-full border-collapse shadow rounded-lg overflow-hidden">
+            <thead class="bg-blue-50 border-b text-sm text-gray-700">
+            <tr>
+                <th class="py-3 px-4">강의명</th>
+                <th class="py-3 px-4">교수명</th>
+                <th class="py-3 px-4">학점</th>
+                <th class="py-3 px-4">요일</th>
+                <th class="py-3 px-4">교시</th>
+                <th class="py-3 px-4">정원</th>
+                <th class="py-3 px-4">신청</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {{#courseList}}
+			<tr class="border-b hover:bg-blue-50 cursor-pointer"
+			    onclick="location.href='/studentCourseDetail?courseNo={{courseNo}}'">
+                <td class="py-3 px-4">{{courseName}}</td>
+                <td class="py-3 px-4">{{professorName}}</td>
+                <td class="py-3 px-4">{{courseScore}}</td>
+
+                <td class="py-3 px-4">{{yoilName}}</td>
+                <td class="py-3 px-4">{{courseTimeStart}} ~ {{courseTimeEnd}}</td>
+
+                <td class="py-3 px-4">{{courseCapacity}}</td>
+
+                <td class="py-3 px-4 text-center">
+
+                    {{#isFull}}
+                    <span class="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs">
+                        정원초과
+                    </span>
+                    {{/isFull}}
+
+                    {{^isFull}}
+                    <form action="/addEnrollment" method="post">
+                        <input type="hidden" name="courseNo" value="{{courseNo}}">
+                        <input type="hidden" name="currentPage" value="{{currentPage}}">
+                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+						        onclick="event.stopPropagation();">
+						    신청
+						</button>
+                    </form>
+                    {{/isFull}}
+
+                </td>
+            </tr>
+            {{/courseList}}
+
+            {{^courseList}}
+            <tr>
+                <td colspan="7" class="py-6 text-center text-gray-500 text-sm">
+                    수강신청 가능한 강의가 없습니다.
+                </td>
+            </tr>
+            {{/courseList}}
+
+            </tbody>
+        </table>
+
+        <!-- 페이징 -->
+        <div class="flex justify-center mt-8 gap-1">
+
+            {{#hasPrev}}
+            <a href="?currentPage=1"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">« 첫 페이지</a>
+
+            <a href="?currentPage={{prevPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">‹ 이전</a>
+            {{/hasPrev}}
+
+            {{#pageList}}
+            <a href="?currentPage={{page}}"
+               class="px-4 py-2 border rounded text-sm
+               {{#current}}bg-blue-600 text-white font-bold{{/current}}">
+                {{page}}
+            </a>
+            {{/pageList}}
+
+            {{#hasNext}}
+            <a href="?currentPage={{nextPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">다음 ›</a>
+
+            <a href="?currentPage={{lastPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">마지막 »</a>
+            {{/hasNext}}
+
+        </div>
+
+    </div>
+
+</main>
+
+{{> studentLayout/studentFooter }}
+
+</body>
+</html>

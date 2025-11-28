@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.course.CourseMapper">
+	<select id="selectCourseListByPage" resultType="com.example.lms.dto.CourseDTO">
+		select 
+			course_no courseNo
+			, course_year courseYear
+			, course_semester courseSemester
+			, course_name courseName
+			, course_status courseStatus
+		from course
+		order by course_no desc
+		limit #{startRow}, #{rowPerPage}
+	</select>
+	
+	<select id="selectCourseDetail"  parameterType="int" resultType="com.example.lms.dto.CourseDTO">
+		select 
+			course_no courseNo
+			, course_year courseYear
+			, course_semester courseSemester
+			, course_name courseName
+			, course_description courseDescription
+			, course_capacity courseCapacity
+			, course_score courseScore
+			, course_classroom courseClassroom
+			, course_Status courseStatus
+			, createdate
+		from course
+		where course_no = #{courseNo}
+	</select>
+
+</mapper>

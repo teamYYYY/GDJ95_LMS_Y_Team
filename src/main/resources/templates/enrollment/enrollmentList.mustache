@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>수강신청 내역 | 학사관리시스템</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-[#F5F7FA] text-gray-800">
+
+{{> studentLayout/studentHeader }}
+
+<main class="max-w-6xl mx-auto px-4 py-10">
+
+    <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-blue-600"></i>
+            수강신청 내역
+        </h2>
+
+        {{#message}}
+        <div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 text-sm shadow">
+            {{message}}
+        </div>
+        {{/message}}
+
+        <table class="w-full border-collapse shadow rounded-lg overflow-hidden">
+            <thead class="bg-blue-50 border-b">
+            <tr class="text-left text-sm text-gray-700">
+                <th class="py-3 px-4">강의명</th>
+                <th class="py-3 px-4">교수명</th>
+                <th class="py-3 px-4">학점</th>
+                <th class="py-3 px-4">요일</th>
+                <th class="py-3 px-4">교시</th>
+                <th class="py-3 px-4">신청일</th>
+                <th class="py-3 px-4 text-center">취소</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {{#list}}
+            <tr class="border-b hover:bg-gray-50 text-sm">
+                <td class="py-3 px-4">{{courseName}}</td>
+                <td class="py-3 px-4">{{professorName}}</td>
+                <td class="py-3 px-4">{{courseScore}}</td>
+                <td class="py-3 px-4">{{yoilName}}</td>
+                <td class="py-3 px-4">{{courseTimeStart}} ~ {{courseTimeEnd}}</td>
+                <td class="py-3 px-4">{{createdate}}</td>
+
+                <td class="py-3 px-4 text-center">
+				    <!-- 활성 상태 → 취소 가능 -->
+				    <form method="post" action="/cancelEnrollment">
+				        <input type="hidden" name="enrollmentNo" value="{{enrollmentNo}}">
+				        <button class="px-3 py-1 bg-red-500 text-white rounded">
+				            취소
+				        </button>
+				    </form>
+				</td>
+            </tr>
+            {{/list}}
+
+            {{^list}}
+            <tr>
+                <td colspan="7" class="py-6 text-center text-gray-500 text-sm">
+                    수강신청 내역이 없습니다.
+                </td>
+            </tr>
+            {{/list}}
+
+            </tbody>
+        </table>
+
+        <!-- 페이징 -->
+        <div class="flex justify-center mt-8 gap-1">
+
+            {{#hasPrev}}
+            <a href="?currentPage=1"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">« 첫 페이지</a>
+
+            <a href="?currentPage={{prevPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">‹ 이전</a>
+            {{/hasPrev}}
+
+            {{#pageList}}
+            <a href="?currentPage={{page}}"
+               class="px-4 py-2 border rounded text-sm
+               {{#current}}bg-blue-600 text-white font-bold{{/current}}">
+                {{page}}
+            </a>
+            {{/pageList}}
+
+            {{#hasNext}}
+            <a href="?currentPage={{nextPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">다음 ›</a>
+
+            <a href="?currentPage={{lastPage}}"
+               class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">마지막 »</a>
+            {{/hasNext}}
+        </div>
+		
+		<!-- 뒤로가기 -->
+        <div class="mt-10 flex justify-end">
+		    <a href="/courseListForEnrollment"
+		       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 
+		              bg-white text-gray-700 shadow-sm hover:bg-gray-50 transition text-sm">
+		        <i class="fa-solid fa-arrow-left text-gray-500"></i>
+		        목록으로
+		    </a>
+		</div>
+		
+    </div>
+
+</main>
+
+{{> studentLayout/studentFooter }}
+
+</body>
+</html>
