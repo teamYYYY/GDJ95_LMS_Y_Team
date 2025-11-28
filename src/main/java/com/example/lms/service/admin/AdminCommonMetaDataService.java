@@ -47,8 +47,8 @@ public class AdminCommonMetaDataService {
     /**
      * @return 모든 학과 정보 리스트를 반환합니다.
      */
-    public List<DeptDTO> getDeptList() {
-        return deptService.deptList();
+    public List<DeptDTO> getUseMangementDeptList() {
+        return deptService.useMangementDeptList();
     }
     
     /**
@@ -104,7 +104,7 @@ public class AdminCommonMetaDataService {
     public Map<String, Object> getAllSystemMetadata() {
         
     	Map<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("deptList", getDeptList());
+        metadata.put("deptList", getUseMangementDeptList());
 //        metadata.put("authAllList", getSysAuthAllList());
         metadata.put("authList", getSysAuthList());
         metadata.put("authDetailList", getsysAuthDetailList());

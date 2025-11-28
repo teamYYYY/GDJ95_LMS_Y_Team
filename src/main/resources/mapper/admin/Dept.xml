@@ -2,16 +2,160 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.lms.mapper.admin.DeptMapper">
 
-	<!-- 2025. 11. 26. JM. 학과 관리 - 학과 정보 조회 -->
-	<select id="deptList" resultType="com.example.lms.dto.DeptDTO">
-	
+	<!-- 2025. 11. 28. JM. 시스템 사용자 관리 - 학과 코드 조회 -->
+	<select id = "useMangementDeptList" resultType="com.example.lms.dto.DeptDTO">
+		
 		SELECT
+			dept_code as deptCode,
+			dept_name as deptName
+		FROM tb_dept
+	
+	</select>
+
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 전체 리스트 조회 -->
+	<select id="deptList" parameterType="int" resultType="com.example.lms.dto.DeptDTO">
+
+		SELECT * FROM
+			(
+				SELECT
+					ROW_NUMBER() OVER (
+					ORDER BY dept_updatedate ASC) AS rownum,
+					dept_code AS deptCode,
+					dept_name AS deptName,
+					dept_updatedate AS deptUpdatedate,
+					dept_createdate AS deptCreatedate
+				FROM
+					tb_dept) t
+		ORDER BY rownum DESC
+		LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 전체 리스트 페이징 -->
+	<select id="deptListCnt" resultType="int">
+	
+		SELECT COUNT(*) FROM tb_dept
+	
+	</select>
+	
+	<!-- 2025. 11. 27. JM. 학과관리 - 학과 코드 검색 조회 -->
+	<select id="searchDeptInfoList" parameterType="java.util.Map" resultType="com.example.lms.dto.DeptDTO">
+	SELECT * FROM (		
+		SELECT
+			ROW_NUMBER() OVER (
+			ORDER BY dept_updatedate ASC) AS rownum,
 			dept_code AS deptCode,
 			dept_name AS deptName,
+			dept_updatedate AS deptUpdatedate,
 			dept_createdate AS deptCreatedate
 		FROM
 			tb_dept
+		WHERE 1=1
+			<if test="searchDeptCondition != null and searchDeptCondition.trim() != ''">
+	        AND (
+	               dept_code LIKE CONCAT('%', #{searchDeptCondition}, '%')
+	               OR dept_name LIKE CONCAT('%', #{searchDeptCondition}, '%')
+	           )
+	        </if>
+	    ) t
+	    ORDER BY rownum desc 
+	    LIMIT #{startRow}, #{limit}
 	
 	</select>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 검색 조회 카운트 -->
+	<select id="searchDeptInfoListCnt" parameterType="String" resultType="int">
+		
+		SELECT COUNT(*) FROM (		
+		SELECT
+			ROW_NUMBER() OVER (
+			ORDER BY dept_updatedate ASC) AS rownum,
+			dept_code AS deptCode,
+			dept_name AS deptName,
+			dept_updatedate AS deptUpdatedate,
+			dept_createdate AS deptCreatedate
+		FROM
+			tb_dept
+		WHERE 1=1
+			<if test="searchDeptCondition != null and searchDeptCondition.trim() != ''">
+	        AND (
+	               dept_code LIKE CONCAT('%', #{searchDeptCondition}, '%')
+	               OR dept_name LIKE CONCAT('%', #{searchDeptCondition}, '%')
+	           )
+	        </if>
+	    ) t
+	
+	</select>
+	
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 상세정보 조회 -->
+	<select id="selectDeptDetail" parameterType="String" resultType="com.example.lms.dto.DeptDTO" >
+	
+		SELECT 
+			dept_code AS deptCode,
+			dept_name AS deptName,
+			dept_updatedate AS deptUpdatedate,
+			dept_createdate AS deptCreatedate
+		FROM
+			tb_dept
+		WHERE dept_code = #{deptCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 등록, 수정, 삭제 전에 한번 검증 하기 -->
+	<select id="insertUpdRemvDeptValidate" parameterType="String" resultType="int">
+
+		SELECT COUNT(dept_code) from tb_dept where dept_code = #{deptCode}
+	
+	</select>
+	
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 등록 기능 -->
+	<insert id="insertDept" parameterType="com.example.lms.dto.DeptDTO">
+		
+		INSERT INTO tb_dept (
+			dept_code,
+			dept_name,
+			dept_updatedate,
+			dept_createdate
+		) VALUES (
+			#{deptCode},
+			#{deptName},
+			NOW(),
+			NOW()
+		)
+		
+	</insert>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 수정 및 삭제 기능 사용시 검증기능 -->
+	<select id="updateRemoveDeptValidate" parameterType="String" resultType="int">
+	
+		SELECT
+			count(dept_code)
+		FROM
+			tb_sysuser
+		WHERE dept_code = #{deptCode}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 수정 기능 -->
+	<update id="updateDept" parameterType="com.example.lms.dto.DeptDTO">
+	
+		UPDATE 
+			tb_dept
+		SET
+			dept_code = #{deptNewCode},
+			dept_name = #{deptName},
+			dept_updatedate = NOW()
+		WHERE dept_code = #{deptCode}
+	
+	</update>
+		
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 삭제  -->
+	<delete id="removeDept" parameterType="String">
+	
+		DELETE FROM tb_dept WHERE dept_code = #{deptCode}
+	
+	</delete>
 
 </mapper>
