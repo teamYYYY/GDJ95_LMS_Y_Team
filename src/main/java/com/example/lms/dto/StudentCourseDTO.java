@@ -20,7 +20,7 @@ public class StudentCourseDTO {
     private Integer courseCapacity;      // 정원
     private Integer courseScore;         // 학점
 
-    // 강의 시간  ← ★ int 로 변경
+    // 강의 시간
     private Integer courseTimeYoil;      // 요일 코드
     private Integer courseTimeStart;     // 시작 교시
     private Integer courseTimeEnd;       // 종료 교시

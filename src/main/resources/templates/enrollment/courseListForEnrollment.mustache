@@ -33,7 +33,49 @@
             {{message}}
         </div>
         {{/message}}
-
+	
+		<form method="get" class="mb-6 flex gap-4 items-end">
+		
+		    <!-- 요일 -->
+		    <div>
+		        <label class="text-sm text-gray-700">요일</label>
+		        <select name="yoil" class="border rounded px-2 py-1 text-sm">
+		            <option value="">전체</option>
+		            <option value="1">월</option>
+		            <option value="2">화</option>
+		            <option value="3">수</option>
+		            <option value="4">목</option>
+		            <option value="5">금</option>
+		        </select>
+		    </div>
+		
+		    <!-- 교수명 -->
+		    <div>
+		        <label class="text-sm text-gray-700">교수명</label>
+		        <input type="text" name="professor"
+		               value="{{professor}}"
+		               class="border rounded px-2 py-1 text-sm"
+		               placeholder="교수명 검색">
+		    </div>
+		
+		    <!-- 학과 -->
+		    <div>
+		        <label class="text-sm text-gray-700">학과</label>
+		        <select name="deptCode" class="border rounded px-2 py-1 text-sm">
+		            <option value="">전체</option>
+		            {{#deptList}}
+		            <option value="{{deptCode}}">{{deptName}}</option>
+		            {{/deptList}}
+		        </select>
+		    </div>
+		
+		    <!-- 검색 버튼 -->
+		    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+		        검색
+		    </button>
+		
+		</form>
+				
         <table class="w-full border-collapse shadow rounded-lg overflow-hidden">
             <thead class="bg-blue-50 border-b text-sm text-gray-700">
             <tr>
