@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수강생 관리</title>
+
+    <link rel="stylesheet" as="style" crossorigin 
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Pretendard, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-6">
+
+            <!-- 제목 -->
+            <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800">수강생 관리</h2>
+
+                <a href="/courseDashboard?courseNo={{courseNo}}"
+                   class="text-sm text-indigo-600 hover:text-indigo-800">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> 돌아가기
+                </a>
+            </div>
+
+            <!-- 테이블 -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이름</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학번</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학과</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학년</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">연락처</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">출석률</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">성적</th>
+                          </tr>
+                    </thead>
+
+                    <tbody class="bg-white divide-y divide-gray-200">
+
+                        {{#list}}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentName}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentId}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{deptName}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentGrade}}학년</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentPhone}}</td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                {{attendanceRate}}%
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                {{gradeValue}}
+                            </td>
+
+                        </tr>
+                        {{/list}}
+
+                        {{^list}}
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
+                                등록된 학생이 없습니다.
+                            </td>
+                        </tr>
+                        {{/list}}
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            <!-- 페이징 -->
+            <div class="flex justify-center mt-6 gap-2">
+
+                <a href="?courseNo={{courseNo}}&currentPage={{prePage}}"
+                   class="px-3 py-1 bg-gray-200 rounded">이전</a>
+
+                {{#pages}}
+                    <a href="?courseNo={{courseNo}}&currentPage={{.}}"
+                       class="px-3 py-1 bg-gray-200 rounded">{{.}}</a>
+                {{/pages}}
+
+                <a href="?courseNo={{courseNo}}&currentPage={{nextPage}}"
+                   class="px-3 py-1 bg-gray-200 rounded">다음</a>
+
+            </div>
+
+        </div>
+    </main>
+
+    {{> profLayout/profFooter }}
+
+</body>
+</html>
