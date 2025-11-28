@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.UniversityNoticeMapper">
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학교 공지사항 전체 리스트 조회 -->
+	<select id="universityNoticeList" parameterType="int" resultType="com.example.lms.dto.UniversityNoticeDTO">
+
+		SELECT
+			a.university_notice_no AS universityNoticeNo,
+			a.university_notice_title AS universityNoticeTitle,
+			a.university_notice_content AS universityNoticeContent,
+			a.university_writer_user_no AS universityWriterUserNo,
+			a.university_notice_priority_code AS universityNoticePriorityCode,
+			b.university_notice_priority_name AS universityNoticePriorityName,
+			a.university_notice_view_cnt AS universityNoticeViewCnt,
+			a.university_notice_updatedate AS universityNoticeUpdatedate,
+			a.university_notice_createdate AS universityNoticeCreatedate
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code 
+		ORDER BY a.university_notice_priority_code ASC, a.university_notice_updatedate DESC
+		LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 전체 리스트 페이징 -->
+	<select id="universityNoticeListCnt" resultType="int">
+	
+		SELECT 
+			COUNT(*) 
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 검색 조회 -->
+	<select id="searchUniversityNoticeInfoList" parameterType="java.util.Map" resultType="com.example.lms.dto.UniversityNoticeDTO">
+		
+		SELECT
+			a.university_notice_no AS universityNoticeNo,
+			a.university_notice_title AS universityNoticeTitle,
+			a.university_notice_content AS universityNoticeContent,
+			a.university_writer_user_no AS universityWriterUserNo,
+			a.university_notice_priority_code AS universityNoticePriorityCode,
+			b.university_notice_priority_name AS universityNoticePriorityName,
+			a.university_notice_view_cnt AS universityNoticeViewCnt,
+			a.university_notice_updatedate AS universityNoticeUpdatedate,
+			a.university_notice_createdate AS universityNoticeCreatedate
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code 
+		WHERE 1=1
+			<if test="searchUniversityNoticeCondition != null and searchUniversityNoticeCondition.trim() != ''">
+	        AND (
+	               university_notice_title LIKE CONCAT('%', #{searchUniversityNoticeCondition}, '%')
+	               OR university_notice_content LIKE CONCAT('%', #{searchUniversityNoticeCondition}, '%')
+	           )
+	        </if>
+		ORDER BY a.university_notice_priority_code ASC, a.university_notice_updatedate DESC
+	    LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 검색 조회 카운트 -->
+	<select id="searchUniversityNoticeInfoListCnt" parameterType="String" resultType="int">
+		
+		SELECT COUNT(*) FROM (		
+		SELECT
+			a.university_notice_no AS universityNoticeNo,
+			a.university_notice_title AS universityNoticeTitle,
+			a.university_notice_content AS universityNoticeContent,
+			a.university_writer_user_no AS universityWriterUserNo,
+			a.university_notice_priority_code AS universityNoticePriorityCode,
+			b.university_notice_priority_name AS universityNoticePriorityName,
+			a.university_notice_view_cnt AS universityNoticeViewCnt,
+			a.university_notice_updatedate AS universityNoticeUpdatedate,
+			a.university_notice_createdate AS universityNoticeCreatedate
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code 
+		WHERE 1=1
+			<if test="searchUniversityNoticeCondition != null and searchUniversityNoticeCondition.trim() != ''">
+	        AND (
+	               university_notice_title LIKE CONCAT('%', #{searchUniversityNoticeCondition}, '%')
+	               OR university_notice_content LIKE CONCAT('%', #{searchUniversityNoticeCondition}, '%')
+	           )
+	        </if>
+	    ) t
+	
+	</select>
+	
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 상세정보 조회 -->
+	<select id="selectUniversityNoticeDetail" parameterType="int" resultType="com.example.lms.dto.UniversityNoticeDTO" >
+	
+		SELECT
+			a.university_notice_no AS universityNoticeNo,
+			a.university_notice_title AS universityNoticeTitle,
+			a.university_notice_content AS universityNoticeContent,
+			a.university_writer_user_no AS universityWriterUserNo,
+			a.university_notice_priority_code AS universityNoticePriorityCode,
+			b.university_notice_priority_name AS universityNoticePriorityName,
+			a.university_notice_view_cnt AS universityNoticeViewCnt,
+			a.university_notice_updatedate AS universityNoticeUpdatedate,
+			a.university_notice_createdate AS universityNoticeCreatedate
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code 
+		WHERE a.university_notice_no = #{universityNoticeNo}
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 수정 및 삭제 기능 사용시 검증기능 (직접 작성한 사용자인가?) -->
+	<!-- 세션에서 userNo를 가져와서 비교해야함 -->
+	<select id="updateRemoveUniversityNoticeValidate" parameterType="java.util.Map" resultType="int">
+	
+		SELECT COUNT(*) FROM (
+			SELECT
+				c.university_notice_no AS universityNo,
+				c.university_writer_user_no AS universityWriterUserNo,
+				a.user_id AS userId,
+				b.auth_code AS authCode
+			FROM
+				tb_sysuser a
+			INNER JOIN tb_sysauth_detail b
+			ON a.user_auth = b.auth_detail_code
+			INNER JOIN tb_notice c
+			ON a.user_no = c.university_writer_user_no
+			WHERE c.university_writer_user_no = #{userNo}
+			AND a.user_id = #{userId}
+			AND c.university_notice_no = #{universityNo}
+		)
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 학과관리 - 학교 공지사항 수정 및 삭제 기능 사용시 검증기능2 (접속한 사람이 혹시 관리자인가?)-->
+	<!-- 세션에서 userNo를 가져와서 비교해야함 -->
+	<select id="updateRemoveUniversityNoticeValidate2" parameterType="java.util.Map" resultType="int">
+	
+		SELECT COUNT(*) FROM (
+			SELECT
+				b.auth_code AS authCode
+			FROM
+				tb_sysuser a
+			INNER JOIN tb_sysauth_detail b
+			ON a.user_auth = b.auth_detail_code
+			INNER JOIN tb_notice c
+			ON a.user_no = c.university_writer_user_no
+			WHERE c.university_writer_user_no = #{userNo}
+			AND a.user_id = #{userId}
+			AND c.university_notice_no = #{universityNo}
+			AND b.auth_code = 'a001'
+		)
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항 관리 - 학교 공지사항 입력 시 입력정보 우선순위 셀렉박스리스트 -->
+	<select id = "selectUniversityNoticePriorityList" resultType="com.example.lms.dto.UniversityNoticeDTO">
+		
+		SELECT
+			university_notice_priority_code AS universityNoticePriorityCode,
+			university_notice_priority_name AS universityNoticePriorityName
+		FROM
+			tb_university_notice_priority
+	
+	</select>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 등록 기능 -->
+	<insert id="insertUniversityNotice" parameterType="com.example.lms.dto.UniversityNoticeDTO">
+		
+		INSERT INTO tb_notice (
+			university_notice_no,
+			university_notice_title,
+			university_notice_content,
+			university_writer_user_no,
+			university_notice_priority_code,
+			university_notice_view_cnt,
+			university_notice_updatedate,
+			university_notice_createdate
+			)
+		VALUES (
+			#{universityNoticeNo},
+			#{universityNoticeTitle},
+			#{universityNoticeContent},
+			#{universityWriterUserNo},
+			#{universityNoticePriorityCode},
+			#{universityNoticePriorityName},
+			#{universityNoticeViewCnt},
+			now(),
+			now()
+		)
+		
+	</insert>
+	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 수정 기능 -->
+	<update id="updateUniversityNotice" parameterType="com.example.lms.dto.UniversityNoticeDTO">
+	
+		UPDATE 
+			tb_notice
+		SET
+			university_notice_title = #{universityNoticeTitle},
+			university_notice_content = #{universityNoticeContent},
+			university_notice_priority_code = #{universityNoticePriorityCode},
+			university_notice_updatedate = now()
+		WHERE university_notice_no = #{universityNoticeNo}
+	
+	</update>
+		
+	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 삭제  -->
+	<delete id="removeUniversityNotice" parameterType="int">
+	
+		DELETE FROM tb_notice WHERE university_notice_no = #{universityNoticeNo}
+	
+	</delete>
+
+</mapper>
