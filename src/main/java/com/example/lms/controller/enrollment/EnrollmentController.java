@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.lms.dto.EnrollmentDTO;
 import com.example.lms.dto.EnrollmentListDTO;
 import com.example.lms.dto.StudentCourseDTO;
+import com.example.lms.dto.StudentCourseDetailDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.enrollment.EnrollmentService;
 import com.example.lms.service.studentCourse.StudentCourseService;
@@ -28,7 +29,20 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
     private final StudentCourseService studentCourseService;
-
+    
+	// ---------------------------------------------------------
+	// 학생용 강의 상세보기
+	// ---------------------------------------------------------
+    @GetMapping("/studentCourseDetail")
+    public String studentCourseDetail(@RequestParam("courseNo") int courseNo, Model model) {
+		StudentCourseDetailDTO detail = studentCourseService.getStudentCourseDetail(courseNo);
+    	
+		model.addAttribute("detail", detail);
+		model.addAttribute("nav_enrollment", "border-blue-600 text-blue-600");
+		
+		return "enrollment/studentCourseDetail";
+    }
+    
     // ---------------------------------------------------------
     // 수강신청 가능 강의 목록
     // ---------------------------------------------------------
@@ -91,19 +105,17 @@ public class EnrollmentController {
             EnrollmentDTO dto,
             @RequestParam(defaultValue="1") int currentPage,
             HttpSession session,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
 
-        // ★ 반드시 넣어줘야 하는 부분 ★
         dto.setStudentUserNo(loginUser.getUserNo());
-
         dto.setEnrollmentStatus(0); // 기본 신청값
 
         String msg = enrollmentService.addEnrollment(dto);
 
-        model.addAttribute("message", msg);
-        model.addAttribute("currentPage", currentPage);
+        redirectAttributes.addFlashAttribute("message", msg);
+        redirectAttributes.addFlashAttribute("currentPage", currentPage);
 
         return "redirect:/courseListForEnrollment?currentPage=" + currentPage;
     }
@@ -127,13 +139,6 @@ public class EnrollmentController {
         // 신청 내역 조회
         List<EnrollmentListDTO> list =
                 enrollmentService.getEnrollmentList(studentUserNo, startRow, rowPerPage);
-
-        // Mustache 전용 상태값 세팅
-        for (EnrollmentListDTO e : list) {
-            Integer status = e.getEnrollmentStatus();
-            e.setIsActive(status != null && status == 0);
-            e.setIsCanceled(status != null && status == 1);
-        }
 
         model.addAttribute("list", list);
 

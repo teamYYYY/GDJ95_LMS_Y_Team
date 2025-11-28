@@ -26,11 +26,23 @@ public class EnrollmentListDTO {
     private String professorName;
 
     // TB_COURSE_TIME
-    private String courseTimeYoil;
-    private String courseTimeStart;
-    private String courseTimeEnd;
+    private Integer courseTimeYoil;
+    private Integer courseTimeStart;
+    private Integer courseTimeEnd;
+    
+    public String getYoilName() {
+        if (courseTimeYoil == null) return "";
+        return switch (courseTimeYoil) {
+            case 1 -> "월";
+            case 2 -> "화";
+            case 3 -> "수";
+            case 4 -> "목";
+            case 5 -> "금";
+            default -> "";
+        };
+    }
 
     // 화면 전용 (Mustache 사용)
-    private Boolean isActive;    // status=0
-    private Boolean isCanceled;  // status=1
+    private Boolean active;    // status=0
+    private Boolean canceled;  // status=1
 }

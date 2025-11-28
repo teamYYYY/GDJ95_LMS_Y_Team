@@ -54,12 +54,11 @@
                 <td class="py-3 px-4">{{courseName}}</td>
                 <td class="py-3 px-4">{{professorName}}</td>
                 <td class="py-3 px-4">{{courseScore}}</td>
-                <td class="py-3 px-4">{{courseTimeYoil}}</td>
+                <td class="py-3 px-4">{{yoilName}}</td>
                 <td class="py-3 px-4">{{courseTimeStart}} ~ {{courseTimeEnd}}</td>
                 <td class="py-3 px-4">{{createdate}}</td>
 
                 <td class="py-3 px-4 text-center">
-				    {{^isCanceled}}
 				    <!-- 활성 상태 → 취소 가능 -->
 				    <form method="post" action="/cancelEnrollment">
 				        <input type="hidden" name="enrollmentNo" value="{{enrollmentNo}}">
@@ -67,15 +66,6 @@
 				            취소
 				        </button>
 				    </form>
-				    {{/isCanceled}}
-				
-				    {{#isCanceled}}
-				    <!-- 취소됨 표시 -->
-				    <button disabled
-				        class="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg text-sm cursor-not-allowed">
-				        취소됨
-				    </button>
-				    {{/isCanceled}}
 				</td>
             </tr>
             {{/list}}
@@ -118,7 +108,17 @@
                class="px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200 text-sm">마지막 »</a>
             {{/hasNext}}
         </div>
-
+		
+		<!-- 뒤로가기 -->
+        <div class="mt-10 flex justify-end">
+		    <a href="/courseListForEnrollment"
+		       class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 
+		              bg-white text-gray-700 shadow-sm hover:bg-gray-50 transition text-sm">
+		        <i class="fa-solid fa-arrow-left text-gray-500"></i>
+		        목록으로
+		    </a>
+		</div>
+		
     </div>
 
 </main>

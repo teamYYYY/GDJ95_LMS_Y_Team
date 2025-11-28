@@ -3,71 +3,105 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.lms.mapper.studentCourse.StudentCourseMapper">
+	<!-- 강의 상세 시간표 리스트 -->
+	<select id="selectCourseTimeList"
+        resultType="com.example.lms.dto.CourseTimeDTO">
 
+	    SELECT
+	          t.course_time_no    AS courseTimeNo
+	        , t.course_time_yoil  AS courseTimeYoil
+	        , t.course_time_start AS courseTimeStart
+	        , t.course_time_end   AS courseTimeEnd
+	
+	    FROM tb_course_time t
+	    WHERE t.course_no = #{courseNo}
+	    ORDER BY t.course_time_yoil, t.course_time_start
+	</select>
+
+	<!-- 학생 강의 상세정보(기본 정보) -->
+	<select id = "selectStudentCourseDetail" 
+		resultType="com.example.lms.dto.StudentCourseDetailDTO">
+    	SELECT
+    		  c.course_no AS courseNo
+	        , c.course_name AS courseName
+	        , c.course_year AS courseYear
+	        , c.course_semester AS courseSemester
+	        , c.course_score AS courseScore
+	        , c.course_capacity AS courseCapacity
+	        , c.course_description AS courseDescription
+	        ,c.course_classroom AS courseClassroom
+	
+	        , d.dept_name AS deptName
+	        , u.user_name AS professorName
+	    
+	    FROM tb_course c
+	    LEFT JOIN tb_dept d      ON d.dept_code = c.dept_code
+	    LEFT JOIN tb_sysuser u   ON u.user_no   = c.professor_user_no
+	    
+	    WHERE c.course_no = #{courseNo}
+	</select>
+	
     <!-- 학생용 강의 목록 조회 (수강신청 화면) -->
     <select id="selectCourseListForStudent"
-            resultType="com.example.lms.dto.StudentCourseDTO">
-
-        SELECT
-              c.course_no courseNo
-            , c.course_name courseName
-            , u.user_name professorName
-            , c.course_score courseScore
-            , c.course_capacity courseCapacity
-
-            , (
-                SELECT CASE t.course_time_yoil
-                        WHEN 1 THEN '월'
-                        WHEN 2 THEN '화'
-                        WHEN 3 THEN '수'
-                        WHEN 4 THEN '목'
-                        WHEN 5 THEN '금'
-                      END
-                FROM tb_course_time t
-                WHERE t.course_no = c.course_no
-                ORDER BY t.course_time_yoil
-                LIMIT 1
-            ) courseTimeYoil
-
-            , (
-                SELECT t.course_time_start
-                FROM tb_course_time t
-                WHERE t.course_no = c.course_no
-                ORDER BY t.course_time_yoil
-                LIMIT 1
-            ) courseTimeStart
-
-            , (
-                SELECT t.course_time_end
-                FROM tb_course_time t
-                WHERE t.course_no = c.course_no
-                ORDER BY t.course_time_yoil
-                LIMIT 1
-            ) courseTimeEnd
-
-            , IFNULL(e.current_count, 0) currentCount
-            , (IFNULL(e.current_count, 0) >= c.course_capacity) isFull
-
-            , s.enrollment_status myStatus
-
-        FROM tb_course c
-        LEFT JOIN tb_sysuser u ON u.user_no = c.professor_user_no
-
-        LEFT JOIN (
-            SELECT course_no, COUNT(*) current_count
-            FROM tb_enrollment
-            WHERE enrollment_status = 0
-            GROUP BY course_no
-        ) e ON e.course_no = c.course_no
-
-        LEFT JOIN tb_enrollment s
-               ON s.course_no = c.course_no
-              AND s.student_user_no = #{studentUserNo}
-
-        ORDER BY c.course_no DESC
-        LIMIT #{startRow}, #{rowPerPage}
-    </select>
-
+        	resultType="com.example.lms.dto.StudentCourseDTO">
+	    SELECT
+	          c.course_no AS courseNo
+	        , c.course_name AS courseName
+	        , u.user_name AS professorName
+	        , c.course_score AS courseScore
+	        , c.course_capacity AS courseCapacity
+	
+	        , (
+	            SELECT t.course_time_yoil
+	            FROM tb_course_time t
+	            WHERE t.course_no = c.course_no
+	            ORDER BY t.course_time_yoil
+	            LIMIT 1
+	        ) AS courseTimeYoil
+	
+	        , (
+	            SELECT t.course_time_start
+	            FROM tb_course_time t
+	            WHERE t.course_no = c.course_no
+	            ORDER BY t.course_time_yoil
+	            LIMIT 1
+	        ) AS courseTimeStart
+	
+	        , (
+	            SELECT t.course_time_end
+	            FROM tb_course_time t
+	            WHERE t.course_no = c.course_no
+	            ORDER BY t.course_time_yoil
+	            LIMIT 1
+	        ) AS courseTimeEnd
+	
+	        , IFNULL(e.current_count, 0) AS currentCount
+	        , (IFNULL(e.current_count, 0) >= c.course_capacity) AS isFull
+	
+	        , s.enrollment_status AS myStatus
+	
+	    FROM tb_course c
+	    LEFT JOIN tb_sysuser u ON u.user_no = c.professor_user_no
+	
+	    LEFT JOIN (
+	        SELECT course_no, COUNT(*) AS current_count
+	        FROM tb_enrollment
+	        WHERE enrollment_status = 0
+	        GROUP BY course_no
+	    ) e ON e.course_no = c.course_no
+	
+	    LEFT JOIN (
+	        SELECT course_no, student_user_no, enrollment_status
+	        FROM tb_enrollment
+	        WHERE student_user_no = #{studentUserNo}
+	          AND enrollment_status = 0
+	    ) s ON s.course_no = c.course_no
+	
+	    ORDER BY c.course_no DESC
+	    LIMIT #{startRow}, #{rowPerPage}
+	</select>
+    
+    
     <!-- 전체 강의 row -->
     <select id="countCourseList" resultType="int">
         SELECT COUNT(*)

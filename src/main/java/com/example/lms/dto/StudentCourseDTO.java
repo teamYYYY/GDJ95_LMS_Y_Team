@@ -20,17 +20,31 @@ public class StudentCourseDTO {
     private Integer courseCapacity;      // 정원
     private Integer courseScore;         // 학점
 
-    // 강의 시간
-    private String courseTimeYoil;
-    private String courseTimeStart;
-    private String courseTimeEnd;
-    
+    // 강의 시간  ← ★ int 로 변경
+    private Integer courseTimeYoil;      // 요일 코드
+    private Integer courseTimeStart;     // 시작 교시
+    private Integer courseTimeEnd;       // 종료 교시
+
     // 수강 현황
     private Integer currentCount;        // 현재 신청 인원
     private Boolean isFull;              // 정원 초과 여부
-    
-	 // null  → 한번도 신청하지 않음
-	 // 0     → 현재 신청중
-	 // 1     → 신청했다가 취소함
-	 private Integer myStatus; // 학생 개인 수강 상태
+
+    // 학생 개인 수강 상태
+    // null → 한번도 신청하지 않음
+    // 0    → 현재 신청중
+    // 1    → 신청했다가 취소함
+    private Integer myStatus;
+
+    // 화면 편의를 위한 요일명
+    public String getYoilName() {
+        if (courseTimeYoil == null) return "";
+        return switch (courseTimeYoil) {
+            case 1 -> "월";
+            case 2 -> "화";
+            case 3 -> "수";
+            case 4 -> "목";
+            case 5 -> "금";
+            default -> "";
+        };
+    }
 }

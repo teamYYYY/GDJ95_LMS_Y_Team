@@ -50,12 +50,13 @@
             <tbody>
 
             {{#courseList}}
-            <tr class="border-b hover:bg-gray-50 text-sm">
+			<tr class="border-b hover:bg-blue-50 cursor-pointer"
+			    onclick="location.href='/studentCourseDetail?courseNo={{courseNo}}'">
                 <td class="py-3 px-4">{{courseName}}</td>
                 <td class="py-3 px-4">{{professorName}}</td>
                 <td class="py-3 px-4">{{courseScore}}</td>
 
-                <td class="py-3 px-4">{{courseTimeYoil}}</td>
+                <td class="py-3 px-4">{{yoilName}}</td>
                 <td class="py-3 px-4">{{courseTimeStart}} ~ {{courseTimeEnd}}</td>
 
                 <td class="py-3 px-4">{{courseCapacity}}</td>
@@ -72,10 +73,10 @@
                     <form action="/addEnrollment" method="post">
                         <input type="hidden" name="courseNo" value="{{courseNo}}">
                         <input type="hidden" name="currentPage" value="{{currentPage}}">
-                        <button
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
-                            신청
-                        </button>
+                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+						        onclick="event.stopPropagation();">
+						    신청
+						</button>
                     </form>
                     {{/isFull}}
 
