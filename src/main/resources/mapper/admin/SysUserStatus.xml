@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.SysUserStatusMapper">
+
+	<!-- 2025. 11. 26. JM. 사용자 상태 정보 리스트 -->
+	<select id="sysUserStatusList" resultType="com.example.lms.dto.SysUserStatusDTO">
+	
+		SELECT
+			status_code AS statusCode,
+			status_name AS statusName,
+			status_createdate AS statusCreatedate
+		FROM
+			tb_sysuser_status
+	
+	</select>
+
+</mapper>
