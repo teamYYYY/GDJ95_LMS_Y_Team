@@ -21,6 +21,13 @@ import com.example.lms.mapper.excel.SysAuthManagementExcelMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+*
+* 2025. 12. 01.
+* Autor - JM
+* 권한관리 - 엑셀 기능
+*/
 @Slf4j
 @Transactional
 @Service

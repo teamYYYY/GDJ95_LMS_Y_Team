@@ -53,8 +53,8 @@ public class SysAuthManagementExcelController {
     @GetMapping("/downloadSysAuthForm")
     public void downloadDeptForm(HttpServletResponse response) throws IOException {
 
-        final String FORM_RESOURCE_PATH = "/excel/사용자권한코드등록양식.xlsx"; // resources 하위 경로
-        final String FORM_FILE_NAME = "사용자권한코드등록양식.xlsx";
+        final String FORM_RESOURCE_PATH = "/excel/사용자권한코드일괄등록양식.xlsx"; // resources 하위 경로
+        final String FORM_FILE_NAME = "사용자권한코드일괄등록양식.xlsx";
 
         // ⭐️ 1. ClassPathResource를 사용하여 리소스 객체 생성 ⭐️
         Resource resource = new ClassPathResource(FORM_RESOURCE_PATH);
