@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional; // 트랜잭션 관리를 위해 추가
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,35 +63,88 @@ public class SysAuthManagementController {
 	// 2. 사용자 권한 등록 (AJAX) - SysAuth와 SysAuthDetail 동시 등록
 	// ================================================================================
 	@PostMapping("/insertSysAuth")
-	@Transactional // 두 테이블에 모두 적용되므로 트랜잭션 적용
 	@ResponseBody
 	public Map<String, Object> insertSysAuth(@RequestBody SysAuthDTO insertSysAuthDTO) {
 		
 		Map<String, Object> response = new HashMap<>();
 		
 		try {
-			// 권한(SysAuth) 테이블 등록 시도
-			// 💡 주의: 권한 코드가 이미 tb_sysauth에 있을 수 있으므로, INSERT 대신 INSERT IGNORE나 ON DUPLICATE KEY UPDATE를 고려하거나,
-			// 서비스단에서 중복 체크 후 insertSysAuthDetail만 실행하는 로직이 더 안전합니다.
-			int authResult = sysAuthService.insertSysAuth(insertSysAuthDTO);
+
 			
-			// 세부 권한(SysAuthDetail) 등록 시도
-			int authDetailResult = sysAuthService.insertSysAuthDetail(insertSysAuthDTO);
+			// 권한코드나 권한코드명이 이미 존재하는지 확인
+			int sysAuthExistChk = sysAuthService.insertSysAuthExistChk(insertSysAuthDTO);
 			
-			if (authDetailResult == 1) {
-				// 세부 권한 등록이 성공하면 성공으로 간주
-				response.put("status", "success");
-				response.put("message", (authResult == 1) ? "새로운 권한 및 세부 권한이 성공적으로 등록되었습니다." : "세부 권한이 등록되었습니다. (권한 코드는 이미 존재)");
+			if ( sysAuthExistChk > 0 ) {
+				
+				// 권한코드가 존재하므로 세부권한만 등록처리한다.
+				// 세부권한코드나 세부권한코드명이 이미 존재하는지 확인
+				int insertSysAuthDetailExistChk = sysAuthService.insertSysAuthDetailExistChk(insertSysAuthDTO);
+				
+				if ( insertSysAuthDetailExistChk > 0 ) {
+					
+					// 존재하므로 등록 불가
+					response.put("status", "fail");
+					response.put("message", "세부 권한 등록에 실패했습니다. (코드 중복 등) 다시 시도해주세요.");
+				} else {
+					
+					// 세부 권한(SysAuthDetail) 등록 시도
+					int authDetailResult = sysAuthService.insertSysAuthDetail(insertSysAuthDTO);
+
+					if (authDetailResult == 1) {
+
+						// 세부 권한 등록이 성공하면 성공으로 간주
+						response.put("status", "success");
+						response.put("message", "세부 권한이 성공적으로 등록되었습니다.");
+					} else {
+						
+						response.put("status", "fail");
+						response.put("message", "세부 권한 등록에 실패했습니다. (코드 중복 등) 다시 시도해주세요.");
+					}
+				}
 			} else {
-				response.put("status", "fail");
-				response.put("message", "세부 권한 등록에 실패했습니다. (코드 중복 등) 다시 시도해주세요.");
+				
+				//권한 코드가 존재 하지 않는다면 새로 등록 처리 한다.
+				int authResult = sysAuthService.insertSysAuth(insertSysAuthDTO);
+				
+				if ( authResult > 0 ) {
+					
+					// 권한코드가 존재하므로 세부권한만 등록처리한다.
+					// 세부권한코드나 세부권한코드명이 이미 존재하는지 확인
+					int insertSysAuthDetailExistChk = sysAuthService.insertSysAuthDetailExistChk(insertSysAuthDTO);
+					
+					if ( insertSysAuthDetailExistChk > 0 ) {
+						
+						// 존재하므로 등록 불가
+						response.put("status", "fail");
+						response.put("message", "권한코드는 등록이 가능하나 세부 권한 등록에 실패했습니다. (코드 중복 등) 다시 시도해주세요.");
+					} else {
+						
+						// 세부 권한(SysAuthDetail) 등록 시도
+						int authDetailResult = sysAuthService.insertSysAuthDetail(insertSysAuthDTO);
+
+						if (authDetailResult == 1) {
+
+							// 세부 권한 등록이 성공하면 성공으로 간주
+							response.put("status", "success");
+							response.put("message", "권한코드 및 세부 권한 등록이 성공적으로 등록되었습니다.");
+						} else {
+							
+							response.put("status", "fail");
+							response.put("message", " 권한 코드 등록에 실패하였습니다. (문자 오류 등) 다시 시도해주세요.");
+						}
+					} 
+				} else {
+					
+					//권한코드 등록 실패 예외
+					response.put("status", "fail");
+					response.put("message", "권한 코드 등록에 실패하였습니다. (문자 오류 등) 다시 시도해주세요.");
+				}
 			}
-			
 		} catch (Exception e) {
+			
 			log.error("권한 등록 중 오류 발생", e);
 			response.put("status", "error");
-			response.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
-			throw e; // 트랜잭션을 롤백하기 위해 예외를 던집니다.
+			response.put("message", "권한 등록 중 예상치 못한 서버 오류가 발생했습니다. 잠시 후 다시 시도하거나 관리자에게 문의해주세요.");
 		}
 		
 		return response;
@@ -126,47 +178,54 @@ public class SysAuthManagementController {
 	// ================================================================================
 	// 4. 시스템 사용자 권한 코드 상세 정보 수정 (AJAX)
 	// ================================================================================
-	@PostMapping("/updateSysAuth") // ⭐️ GET -> POST 변경 (수정 작업은 POST/PUT 사용) ⭐️
-	@Transactional // 두 테이블에 모두 적용되므로 트랜잭션 적용
+	@PostMapping("/updateSysAuth")
 	@ResponseBody
 	public Map<String, Object> updateSysAuth(@RequestBody SysAuthDTO updateSysAuthDTO) {
-		
-		Map<String, Object> response = new HashMap<>();
-		
-		try {
-			// 1. 검증: 사용자 테이블에 해당 권한 코드가 사용 중인지 확인
-			// updateSysAuthDTO.getAuthDetailCode()는 WHERE 절에 쓰일 기존 코드
-			int updateRemoveValidate = sysAuthService.updateRemoveSysAuthDetailValidate(updateSysAuthDTO.getAuthDetailCode());
-		
-			if (updateRemoveValidate > 0) {
-				// 수정불가
-				response.put("status", "fail");
-				response.put("message", "사용자 테이블에서 사용 중인 권한 코드입니다. 수정할 수 없습니다.");
-			} else {
-				// 2. 수정 가능: 안전한 업데이트 순서 (자식 -> 부모)
-				
-				// 2-1. 세부 권한 코드 수정 (tb_sysauth_detail)
-				int updateSysAuthDetailResult = sysAuthService.updateSysAuthDetail(updateSysAuthDTO);
-				
-				// 2-2. 권한 코드 수정 (tb_sysauth)
-				int updateSysAuthResult = sysAuthService.updateSysAuth(updateSysAuthDTO);
-				
-				if (updateSysAuthDetailResult == 1 || updateSysAuthResult == 1) {
-					response.put("status", "success");
-					response.put("message", "권한 정보가 성공적으로 수정되었습니다.");
-				} else {
-					response.put("status", "fail");
-					response.put("message", "수정된 항목이 없거나 수정에 실패했습니다.");
-				}
-			}
-		} catch (Exception e) {
-			log.error("권한 수정 중 오류 발생", e);
-			response.put("status", "error");
-			response.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
-			throw e; // 트랜잭션을 롤백합니다.
-		}
-		
-		return response;
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        // 1. 검증: 사용자 테이블에 해당 세부 권한 코드가 사용 중인지 확인 (수정/삭제 불가 검증)
+	        // updateSysAuthDTO.getAuthDetailCode()는 WHERE 절에 쓰일 기존 코드
+	        int updateRemoveValidate = sysAuthService.updateRemoveSysAuthDetailValidate(updateSysAuthDTO.getAuthDetailCode());
+	    
+	        if (updateRemoveValidate > 0) {
+	            // 수정불가
+	            response.put("status", "fail");
+	            response.put("message", "사용자 테이블에서 사용 중인 권한 코드입니다. 수정할 수 없습니다.");
+	        } else {
+	            // 2. 수정 가능: 안전한 업데이트 순서 (ON UPDATE CASCADE 적용 기준)
+	            
+	            // 💡 2-1. 권한 코드 수정 (tb_sysauth) - 부모 테이블 먼저 업데이트
+	            // tb_sysauth의 auth_code(PK)가 변경되면, DB의 CASCADE 설정에 따라
+	            // tb_sysauth_detail의 auth_code(FK)가 자동으로 연쇄 변경됩니다.
+	            int updateSysAuthResult = sysAuthService.updateSysAuth(updateSysAuthDTO); 
+	            
+	            // 💡 2-2. 세부 권한 코드 수정 (tb_sysauth_detail) - PK 및 상세 이름만 업데이트
+	            // 이 서비스는 auth_code를 제외한 다른 필드(auth_detail_code, auth_detail_name)를 업데이트합니다.
+	            int updateSysAuthDetailResult = sysAuthService.updateSysAuthDetail(updateSysAuthDTO);
+	            
+	            // Note: updateSysAuthDetailResult와 updateSysAuthResult는 각각 0 또는 1이 나올 수 있으며,
+	            // 변경된 내용이 없다면 0이 나올 수 있습니다.
+	            
+	            if (updateSysAuthDetailResult >= 0 && updateSysAuthResult >= 0) {
+	                // 두 업데이트가 모두 오류 없이 실행되었다면 성공으로 간주 (트랜잭션이 성공적으로 커밋됨)
+	                response.put("status", "success");
+	                response.put("message", "권한 정보가 성공적으로 수정되었습니다.");
+	            } else {
+	                // 이 블록에 도달하면 논리적 오류이거나 예상치 못한 DB 상태입니다. (실제로는 거의 발생하지 않음)
+	                response.put("status", "fail");
+	                response.put("message", "수정된 항목이 없거나 수정에 실패했습니다.");
+	            }
+	        }
+	    } catch (Exception e) {
+	        log.error("권한 수정 중 오류 발생", e);
+	        // @Transactional에 의해 자동 롤백됩니다.
+	        response.put("status", "error");
+	        response.put("message", "서버 오류가 발생했습니다: " + e.getMessage()); 
+	    }
+	    
+	    return response;
 	}
 	
 	// ================================================================================
@@ -204,7 +263,6 @@ public class SysAuthManagementController {
 		// 6. 다수 사용자 권한 코드 삭제 처리 (AJAX)
 		// ================================================================================
 		@PostMapping("/removeSysAuth")
-		@Transactional // 두 테이블에 모두 적용되므로 트랜잭션 적용
 		@ResponseBody
 		public Map<String, Object> removeSysAuth(@RequestBody Map<String, List<String>> requestBody) { 
 			
@@ -306,8 +364,7 @@ public class SysAuthManagementController {
 			} catch (Exception e) {
 				log.error("권한 삭제 중 서버 오류 발생", e);
 				response.put("status", "error");
-				response.put("message", "서버 오류 발생: " + e.getMessage());
-				throw e; // 트랜잭션을 롤백합니다.
+				response.put("message", "서버 오류 발생: ");
 			}
 			
 			return response;

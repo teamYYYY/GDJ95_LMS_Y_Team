@@ -3,7 +3,7 @@
 <mapper namespace="com.example.lms.mapper.excel.DeptManagementExcelMapper">
 
     <!-- 2025. 11. 27. JM. 학과관리 - 학과 코드 검색 조회 -->
-    <select id="searchDeptInfoListForExcel" parameterType="java.util.Map" resultType="com.example.lms.dto.DeptDTO">
+    <select id="searchDeptInfoListForExcel" parameterType="String" resultType="com.example.lms.dto.DeptDTO">
 
         SELECT * FROM (
             SELECT
@@ -23,7 +23,6 @@
                 )
             </if>
             ) t
-        ORDER BY rownum DESC
 
     </select>
 

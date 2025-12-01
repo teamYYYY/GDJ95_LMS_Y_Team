@@ -173,6 +173,17 @@
 	
 	</select>
 	
+	<!-- 2025. 12. 01. JM. 권한관리 - 사용자 권한 코드 등록시 권한코드 존재 여부 확인 있을 경우 Detail만 insert-->
+	<select id="insertSysAuthExistChk" parameterType="com.example.lms.dto.SysAuthDTO" resultType="int">
+	
+		SELECT 
+			count(auth_code) 
+		FROM tb_sysauth 
+		WHERE auth_code = #{authCode}
+		OR auth_name = #{authName}
+	
+	</select>
+	
 	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 등록 기능 -->
 	<insert id="insertSysAuth" parameterType="com.example.lms.dto.SysAuthDTO">
 		
@@ -188,6 +199,17 @@
 			NOW())
 		
 	</insert>
+	
+	<!-- 2025. 12. 01. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
+	<select id="insertSysAuthDetailExistChk" parameterType="com.example.lms.dto.SysAuthDTO" resultType="int">
+	
+		SELECT 
+			count(auth_detail_code) 
+		FROM tb_sysauth_detail 
+		WHERE auth_detail_code = #{authDetailCode}
+		OR auth_detail_name = #{authDetailName}
+	
+	</select>
 	
 	
 	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
@@ -227,7 +249,6 @@
 		SET
 			auth_detail_code = #{newAuthDetailCode},
 			auth_detail_name = #{authDetailName},
-			auth_code = #{newAuthCode},
 			auth_detail_updatedate = NOW()
 		WHERE auth_detail_code = #{authDetailCode}
 	
