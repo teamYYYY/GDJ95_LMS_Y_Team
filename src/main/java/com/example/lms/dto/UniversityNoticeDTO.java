@@ -25,5 +25,11 @@ public class UniversityNoticeDTO {
     private LocalDateTime universityNoticeCreatedate; //등록일자
     
     //TB_UNIVERSITY_NOTICE_PRIORITY
-    private int universityNoticePriorityName; // 우선순위코드 명칭 ex) 고정공지사항 10 , 우선공지사항 20, 일반공지사항 30
+    private String universityNoticePriorityName; // 우선순위코드 명칭 ex) 고정공지사항 10 , 우선공지사항 20, 일반공지사항 30
+    
+    // 뷰단 순위 스타일땜에 추가
+    private String priorityColorClass; // 예: "text-red-600"
+    
+    // 작성자 이름 DTO에 담아야해서 추가함
+    private String universityWriterUserName; // 작성자 이름
 }

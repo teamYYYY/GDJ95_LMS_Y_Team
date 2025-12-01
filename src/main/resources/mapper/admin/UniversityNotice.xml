@@ -10,6 +10,7 @@
 			a.university_notice_title AS universityNoticeTitle,
 			a.university_notice_content AS universityNoticeContent,
 			a.university_writer_user_no AS universityWriterUserNo,
+			c.user_name AS universityWriterUserName,
 			a.university_notice_priority_code AS universityNoticePriorityCode,
 			b.university_notice_priority_name AS universityNoticePriorityName,
 			a.university_notice_view_cnt AS universityNoticeViewCnt,
@@ -19,7 +20,10 @@
 			tb_notice a
 		INNER JOIN tb_university_notice_priority b
 		ON
-			a.university_notice_priority_code = b.university_notice_priority_code 
+			a.university_notice_priority_code = b.university_notice_priority_code
+		INNER JOIN tb_sysuser c
+		ON
+			a.university_writer_user_no = c.user_no 
 		ORDER BY a.university_notice_priority_code ASC, a.university_notice_updatedate DESC
 		LIMIT #{startRow}, #{limit}
 	
@@ -46,6 +50,7 @@
 			a.university_notice_title AS universityNoticeTitle,
 			a.university_notice_content AS universityNoticeContent,
 			a.university_writer_user_no AS universityWriterUserNo,
+			c.user_name AS universityWriterUserName,
 			a.university_notice_priority_code AS universityNoticePriorityCode,
 			b.university_notice_priority_name AS universityNoticePriorityName,
 			a.university_notice_view_cnt AS universityNoticeViewCnt,
@@ -55,7 +60,10 @@
 			tb_notice a
 		INNER JOIN tb_university_notice_priority b
 		ON
-			a.university_notice_priority_code = b.university_notice_priority_code 
+			a.university_notice_priority_code = b.university_notice_priority_code
+		INNER JOIN tb_sysuser c
+		ON
+			a.university_writer_user_no = c.user_no 
 		WHERE 1=1
 			<if test="searchUniversityNoticeCondition != null and searchUniversityNoticeCondition.trim() != ''">
 	        AND (
@@ -77,6 +85,7 @@
 			a.university_notice_title AS universityNoticeTitle,
 			a.university_notice_content AS universityNoticeContent,
 			a.university_writer_user_no AS universityWriterUserNo,
+			c.user_name AS universityWriterUserName,
 			a.university_notice_priority_code AS universityNoticePriorityCode,
 			b.university_notice_priority_name AS universityNoticePriorityName,
 			a.university_notice_view_cnt AS universityNoticeViewCnt,
@@ -86,7 +95,10 @@
 			tb_notice a
 		INNER JOIN tb_university_notice_priority b
 		ON
-			a.university_notice_priority_code = b.university_notice_priority_code 
+			a.university_notice_priority_code = b.university_notice_priority_code
+		INNER JOIN tb_sysuser c
+		ON
+			a.university_writer_user_no = c.user_no  
 		WHERE 1=1
 			<if test="searchUniversityNoticeCondition != null and searchUniversityNoticeCondition.trim() != ''">
 	        AND (
@@ -107,6 +119,7 @@
 			a.university_notice_title AS universityNoticeTitle,
 			a.university_notice_content AS universityNoticeContent,
 			a.university_writer_user_no AS universityWriterUserNo,
+			c.user_name AS universityWriterUserName,
 			a.university_notice_priority_code AS universityNoticePriorityCode,
 			b.university_notice_priority_name AS universityNoticePriorityName,
 			a.university_notice_view_cnt AS universityNoticeViewCnt,
@@ -116,7 +129,10 @@
 			tb_notice a
 		INNER JOIN tb_university_notice_priority b
 		ON
-			a.university_notice_priority_code = b.university_notice_priority_code 
+			a.university_notice_priority_code = b.university_notice_priority_code
+		INNER JOIN tb_sysuser c
+		ON
+			a.university_writer_user_no = c.user_no  
 		WHERE a.university_notice_no = #{universityNoticeNo}
 	
 	</select>
@@ -140,14 +156,14 @@
 			WHERE c.university_writer_user_no = #{userNo}
 			AND a.user_id = #{userId}
 			AND c.university_notice_no = #{universityNo}
-		)
+		) t
 	
 	</select>
 	
-	<!-- 2025. 11. 28. JM. 학과관리 - 학교 공지사항 수정 및 삭제 기능 사용시 검증기능2 (접속한 사람이 혹시 관리자인가?)-->
-	<!-- 세션에서 userNo를 가져와서 비교해야함 -->
-	<select id="updateRemoveUniversityNoticeValidate2" parameterType="java.util.Map" resultType="int">
-	
+	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 등록 및 수정 및 삭제 기능 사용시 검증기능 (접속한 사람이 혹시 관리자인가?)-->
+	<!-- 세션에서 userNo, userId를 가져와서 비교해야함 -->
+	<select id="insertUpdateRemoveUniversityNoticeValidate" parameterType="java.util.Map" resultType="int">
+
 		SELECT COUNT(*) FROM (
 			SELECT
 				b.auth_code AS authCode
@@ -155,13 +171,10 @@
 				tb_sysuser a
 			INNER JOIN tb_sysauth_detail b
 			ON a.user_auth = b.auth_detail_code
-			INNER JOIN tb_notice c
-			ON a.user_no = c.university_writer_user_no
-			WHERE c.university_writer_user_no = #{userNo}
+			WHERE a.user_no = #{userNo}
 			AND a.user_id = #{userId}
-			AND c.university_notice_no = #{universityNo}
 			AND b.auth_code = 'a001'
-		)
+		) t
 	
 	</select>
 	
@@ -175,12 +188,18 @@
 			tb_university_notice_priority
 	
 	</select>
-	
+
+	<!-- 2025. 11. 28. JM. 공지사항 관리 - 학교 공지사항 등록, 수정, 삭제 전에 한번 검증 하기 -->
+	<select id="insertUpdRemvUniversityNoticeNoValidate" parameterType="Integer" resultType="int">
+
+		SELECT COUNT(university_notice_no) from tb_notice where university_notice_no = #{universityNoticeNo}
+
+	</select>
+
 	<!-- 2025. 11. 28. JM. 공지사항관리 - 학교 공지사항 등록 기능 -->
 	<insert id="insertUniversityNotice" parameterType="com.example.lms.dto.UniversityNoticeDTO">
 		
 		INSERT INTO tb_notice (
-			university_notice_no,
 			university_notice_title,
 			university_notice_content,
 			university_writer_user_no,
@@ -190,12 +209,10 @@
 			university_notice_createdate
 			)
 		VALUES (
-			#{universityNoticeNo},
 			#{universityNoticeTitle},
 			#{universityNoticeContent},
 			#{universityWriterUserNo},
 			#{universityNoticePriorityCode},
-			#{universityNoticePriorityName},
 			#{universityNoticeViewCnt},
 			now(),
 			now()
@@ -217,7 +234,7 @@
 	
 	</update>
 		
-	<!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 삭제  -->
+	<!-- 2025. 11. 28. JM. 공지사항 관리 - 학교 공지사항 삭제  -->
 	<delete id="removeUniversityNotice" parameterType="int">
 	
 		DELETE FROM tb_notice WHERE university_notice_no = #{universityNoticeNo}
