@@ -77,6 +77,30 @@
 			<version>3.0.5</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- 엑셀 기능 관련 추가 -->
+		<dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>5.2.5</version> </dependency>
+
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml</artifactId>
+	        <version>5.2.5</version> </dependency>
+	
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml-schemas</artifactId>
+	        <version>4.1.2</version> </dependency>
+	    
+	    <dependency>
+	        <groupId>commons-io</groupId>
+	        <artifactId>commons-io</artifactId>
+	        <version>2.15.1</version> 
+	    </dependency>
+	    <!-- 엑셀관련 여기 까지 -->
+	    
 	</dependencies>
 
 	<build>

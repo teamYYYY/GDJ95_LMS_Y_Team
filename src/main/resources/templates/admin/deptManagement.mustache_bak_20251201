@@ -115,14 +115,13 @@
             </div>
         </section>
 
-        <!-- excel 엑셀 -->
         <div class="flex justify-between items-center mb-4">
             <p class="text-gray-700 font-medium" id="totalCountDisplay">학과 목록 (총 0개의 학과)</p>
             <div class="flex space-x-2">
-                <button onclick="downloadDeptList()" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
                     <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
                 </button>
-                <button onclick="downloadDeptForm()" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
                     <i class="fa-solid fa-file-excel"></i> 양식 다운로드
                 </button>
                 <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
@@ -245,38 +244,35 @@
 
 
 
-<!-- Excel Dialog 부분 엑셀 다이얼로그-->
+	<!-- 엑셀 기능 -->
 
-<div id="batchUploadModal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden z-50">
-    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
-        <div class="p-6">
-            <div class="flex justify-between items-center pb-4 border-b">
-                <h3 class="text-2xl font-bold text-gray-900">학과 일괄 업로드</h3>
-                <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
-                </button>
-            </div>
+    <div id="batchUploadModal" class="modal-container hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
+                    <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
 
-            <form id="deptUploadForm" enctype="multipart/form-data">
                 <div class="mt-6 text-center space-y-4">
                     <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
-
-                    <label for="excelFile" class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500 cursor-pointer block hover:border-blue-400 transition">
+                    <div class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500">
                         <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
-                        <p id="fileNameDisplay">파일을 드래그하거나 클릭하여 업로드</p>
+                        <p>파일을 드래그하거나 클릭하여 업로드</p>
                         <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
-                        <button type="button" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition text-sm">
+                        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
                             파일 선택
                         </button>
-                        <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" class="hidden">
-                    </label>
-
+                    </div>
+                    
                     <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
                         <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
                         <ul class="list-disc list-inside space-y-1">
                             <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
                             <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
-                            <li>필수 항목은 반드시 입력되어야 합니다. (학과코드, 학과명, 사용여부)</li>
+                            <li>필수 항목은 반드시 입력되어야 합니다.</li>
                             <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
                             <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
                             <li>중복된 데이터는 자동으로 제외됩니다.</li>
@@ -285,13 +281,12 @@
                 </div>
 
                 <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeBatchUploadModal()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">취소</button>
-                    <button type="submit" id="submitUploadBtn" disabled class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 text-sm">업로드</button>
+                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
+                    <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">업로드</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
 
 
 <script>
@@ -300,42 +295,32 @@
     const $deptForm = $('#deptForm');
     const $modalTitle = $('#modalTitle');
     const $modalSubtitle = $('#modalSubtitle');
-
+    
     const $registerBtns = $('#registerButtons');
     const $detailBtns = $('#detailButtons');
     const $editBtns = $('#editBtns');
-
+    
     // Hidden Fields
     const $originalDeptCodeInput = $('#originalDeptCode');
-
+    
     // Input Fields
     const $newDeptCodeInput = $('#newDeptCode');
     const $deptNameInput = $('#deptName');
-
+    
     // List/Search Elements
     const $deptListBody = $('#deptListBody');
     const $searchConditionInput = $('#searchCondition');
     const $searchBtn = $('#searchBtn');
     const $removeSelectedBtn = $('#removeSelectedBtn');
     const $totalCountDisplay = $('#totalCountDisplay');
-    const $paginationDiv = $('#pagination');
-
-    // ⭐️ 엑셀 업로드 관련 DOM 변수 ⭐️
-    const $batchUploadModal = $('#batchUploadModal');
-    const $deptUploadForm = $('#deptUploadForm');
-    const $excelFile = $('#excelFile');
-    const $fileNameDisplay = $('#fileNameDisplay');
-    const $submitUploadBtn = $('#submitUploadBtn');
+    const $paginationDiv = $('#pagination'); 
     
-    // ⭐️ 파일 드롭 영역으로 사용할 라벨 선택 ⭐️
-    const $dropArea = $('label[for="excelFile"]'); 
-
     // [상태 관리 변수]
     let originalDetailData = {}; // 상세 조회 시 원본 데이터 저장용
-    let currentSearchCondition = $searchConditionInput.val().trim() || '';
+    let currentSearchCondition = $searchConditionInput.val().trim() || ''; 
     let currentPageNo = {{currentPage}} || 1; // Mustache 템플릿의 초기 값 사용
-
-    // **⭐️ 컨트롤러가 전달하는 초기 값 ⭐️**
+    
+ 	// **⭐️ 컨트롤러가 전달하는 초기 값 ⭐️**
     const initialTotalCount = {{totalCount}} || 0;
 
     // ------------------------
@@ -351,18 +336,20 @@
     // 💡 입력 필드 상태 토글 (readonly / disabled)
     // ------------------------
     function toggleInputState(isReadOnly) {
+        // 모든 input-field 클래스 필드를 선택
         const $inputFields = $deptCrudModal.find('.input-field');
 
         $inputFields.each(function() {
             const $this = $(this);
             $this.prop('readOnly', isReadOnly);
-            $this.prop('disabled', isReadOnly);
+            $this.prop('disabled', isReadOnly); // 조회 모드에서는 disabled로 설정
 
             if (isReadOnly) {
                 $this.addClass('input-readonly');
             } else {
                 $this.removeClass('input-readonly');
-                $this.prop('disabled', false);
+                // 수정/등록 모드에서는 PK도 활성화
+                $this.prop('disabled', false); 
             }
         });
     }
@@ -372,11 +359,12 @@
     // ------------------------
     function renderDeptTable(deptList) {
         let html = '';
-
+        
         if (deptList && deptList.length > 0) {
             deptList.forEach((dept) => {
-                const rownum = dept.rownum;
-
+                // Controller의 쿼리 결과에 'rownum'이 있으므로 이를 사용
+                const rownum = dept.rownum; 
+                
                 html += `
                     <tr>
                         <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedDept" data-dept-code="${dept.deptCode}"></td>
@@ -399,9 +387,10 @@
                 </tr>
             `;
         }
-
+        
         $deptListBody.html(html);
-
+        
+        // 체크박스 상태 초기화 및 버튼 갱신
         $('#selectAll').prop('checked', false);
         updateRemoveButtonState();
     }
@@ -412,43 +401,43 @@
     // ------------------------
     function renderPagination(totalCount, currentPage, pageSize = 10) {
         const totalPages = Math.ceil(totalCount / pageSize);
-
+        
         $totalCountDisplay.text(`학과 목록 (총 ${totalCount}개의 학과)`);
-
+        
         if (totalPages <= 1) {
             $paginationDiv.empty().hide();
             return;
         }
 
         let html = '<nav class="flex items-center space-x-1">';
-
+        
         const pagesPerBlock = 10;
         const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
         const blockStart = currentBlock * pagesPerBlock + 1;
         const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
-
+        
         // 이전 페이지 버튼 (◀)
         const prevPage = currentPage - 1;
         const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
-        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}"
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
                      class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
 
         // 페이지 번호 링크
         for (let i = blockStart; i <= blockEnd; i++) {
             const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
-            html += `<a href="#" data-page="${i}"
+            html += `<a href="#" data-page="${i}" 
                        class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
         }
 
         // 다음 페이지 버튼 (▶)
         const nextPage = currentPage + 1;
         const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
-        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}"
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
                      class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
-
-
+        
+        
         html += '</nav>';
-
+        
         $paginationDiv.html(html).show();
     }
 
@@ -457,20 +446,22 @@
     // ------------------------
     function searchAndRenderDept(pageNo) {
         const condition = $searchConditionInput.val().trim();
-
-        currentSearchCondition = condition;
+        
+        // 🚀 상태 갱신
+        currentSearchCondition = condition; 
         currentPageNo = pageNo;
 
         $.ajax({
-            url: '/admin/searchDept',
+            url: '/admin/searchDept', 
             type: 'GET',
-            data: {
-                searchDeptCondition: condition,
-                currentPage: pageNo
+            data: { 
+                searchDeptCondition: condition, 
+                currentPage: pageNo 
             },
             success: function(response) {
                 if (response.status === 'success') {
-                    renderDeptTable(response.searchDeptInfoList);
+                    // ⭐️ Controller에서 searchDeptInfoList로 반환하므로 키 이름 주의 ⭐️
+                    renderDeptTable(response.searchDeptInfoList); 
                     renderPagination(response.totalCount, response.currentPage);
                     $searchConditionInput.val(currentSearchCondition);
                 } else {
@@ -483,49 +474,56 @@
         });
     }
 
-    // ------------------------
-    // 모달 제어 함수 (CRUD)
-    // ------------------------
 
+    // ------------------------
+    // 모달 제어 함수
+    // ------------------------
+    
     window.closeDeptCrudModal = function() {
         $deptCrudModal.removeClass('flex').addClass('hidden');
         $deptForm[0].reset();
+        
+        // 폼 초기화 시 숨김 필드도 비우기
         $originalDeptCodeInput.val('');
-        $searchConditionInput.val(currentSearchCondition);
-        searchAndRenderDept(currentPageNo);
+        
+        // 목록 갱신 (현재 상태 유지)
+        $searchConditionInput.val(currentSearchCondition); 
+        searchAndRenderDept(currentPageNo); 
     }
 
     window.openRegisterModal = function() {
         $deptForm[0].reset();
         $modalTitle.text("학과 등록");
         $modalSubtitle.text("* 표시는 필수 항목입니다");
-
-        toggleInputState(false);
-
+        
+        toggleInputState(false); // 쓰기 모드
+        
         $registerBtns.removeClass('hidden');
         $detailBtns.addClass('hidden');
         $editBtns.addClass('hidden');
-
+        
         $deptCrudModal.removeClass('hidden').addClass('flex');
     }
 
     window.openDeptDetailModal = function(deptCode) {
         $.ajax({
-            url: '/admin/getDeptDetail',
+            url: '/admin/getDeptDetail', 
             type: 'GET',
             data: { deptCode: deptCode },
             success: function(response) {
                 if (response.status === 'success') {
                     const data = response.data;
-                    originalDetailData = data;
-
-                    bindFormData(data);
-
+                    originalDetailData = data; 
+                    
+                    // 1. 필드 바인딩 
+                    bindFormData(data); 
+                    
+                    // 2. 모달 상태 설정
                     $modalTitle.text("학과 세부 정보 (" + deptCode + ")");
                     $modalSubtitle.text("학과 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)");
-
-                    toggleInputState(true);
-
+                    
+                    toggleInputState(true); // 읽기 전용 모드
+                    
                     $detailBtns.removeClass('hidden');
                     $registerBtns.addClass('hidden');
                     $editBtns.addClass('hidden');
@@ -543,69 +541,31 @@
     window.enterDetailEditMode = function() {
         $modalTitle.text("학과 정보 수정");
         $modalSubtitle.text("정보를 수정 후 저장해주세요.");
-
-        toggleInputState(false);
-
+        
+        toggleInputState(false); // 쓰기 모드
+        
         $editBtns.removeClass('hidden');
         $detailBtns.addClass('hidden');
         $registerBtns.addClass('hidden');
     }
 
     window.cancelDetailEditMode = function() {
-        bindFormData(originalDetailData);
-
+        // 원본 데이터로 복원
+        bindFormData(originalDetailData); 
+        
         $modalTitle.text("학과 세부 정보 (" + originalDetailData.deptCode + ")");
         $modalSubtitle.text("학과 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)");
-
-        toggleInputState(true);
-
+        
+        toggleInputState(true); // 읽기 전용 모드
+        
         $detailBtns.removeClass('hidden');
         $editBtns.addClass('hidden');
     }
-
+    
     // 유틸리티 함수 (체크박스 상태)
     function updateRemoveButtonState() {
         const checkedCount = $('input[name="selectedDept"]:checked').length;
         $removeSelectedBtn.prop('disabled', checkedCount === 0);
-    }
-
-    // ------------------------
-    // 💡 엑셀 기능 함수 (양식 다운로드)
-    // ------------------------
-
-    /**
-     * 엑셀 양식 파일 다운로드 (GET 요청)
-     */
-    window.downloadDeptForm = function() {
-        // 서버의 다운로드 엔드포인트로 리다이렉트
-        window.location.href = '/admin/downloadDeptForm';
-    };
-
-    /**
-     * 학과 목록 엑셀 다운로드 (다음 단계에서 구현)
-     */
-    window.downloadDeptList = function() {
-        // ⭐️ 현재 검색 조건(currentSearchCondition)을 쿼리 파라미터로 전달 ⭐️
-       const condition = currentSearchCondition;
-       // URL 인코딩은 자바스크립트에서 처리하여 한글 깨짐 방지
-       window.location.href = `/admin/downloadDeptList?searchDeptCondition=${encodeURIComponent(condition)}`;
-    };
-
-    // ------------------------
-    // 모달 제어 함수 (일괄 업로드)
-    // ------------------------
-
-    window.openBatchUploadModal = function() {
-        $deptUploadForm[0].reset();
-        // input[type=file] 값을 초기화해야 드롭된 파일 정보도 제거됨
-        $excelFile.val(''); 
-        $fileNameDisplay.text('파일을 드래그하거나 클릭하여 업로드');
-        $submitUploadBtn.prop('disabled', true);
-        $batchUploadModal.removeClass('hidden').addClass('flex');
-    }
-
-    window.closeBatchUploadModal = function() {
-        $batchUploadModal.removeClass('flex').addClass('hidden');
     }
 
 
@@ -613,22 +573,25 @@
     // 문서 로딩 완료 후 이벤트 리스너 설정
     // ------------------------
     $(document).ready(function() {
-
+        
+        // ⭐️⭐️⭐️ [수정된 부분] 초기 로드 시 페이징 렌더링 ⭐️⭐️⭐️
+        // DB에 31개 이상 데이터가 있다면 totalCount를 사용하여 페이징을 즉시 렌더링
         renderPagination(initialTotalCount, currentPageNo);
-
+        // ⭐️⭐️⭐️ ----------------------------------------- ⭐️⭐️⭐️
+        
         // 1. 페이징 링크 클릭 이벤트 위임
         $paginationDiv.on('click', '.page-link', function(e) {
             e.preventDefault();
             const targetPage = parseInt($(this).data('page'));
-
+            
             if ($(this).hasClass('cursor-not-allowed')) return;
 
-            searchAndRenderDept(targetPage);
+            searchAndRenderDept(targetPage); 
         });
 
         // 2. 체크박스 이벤트 설정
         const $selectAll = $('#selectAll');
-
+        
         $selectAll.on('change', function() {
             const isChecked = $(this).prop('checked');
             $('input[name="selectedDept"]').prop('checked', isChecked);
@@ -641,25 +604,30 @@
             const allChecked = $checkboxes.length > 0 && $checkboxes.filter(':checked').length === $checkboxes.length;
             $selectAll.prop('checked', allChecked);
         });
-
+        
         // 3. 폼 제출 이벤트 핸들링 (등록/수정)
         $deptForm.on('submit', function(e) {
             e.preventDefault();
-
+            
             const isRegisterMode = !$registerBtns.hasClass('hidden');
-            const url = isRegisterMode ? '/admin/insertDept' : '/admin/updateDept';
+            const url = isRegisterMode ? '/admin/insertDept' : '/admin/updateDept'; 
 
+            // 폼 데이터를 DTO 구조에 맞게 재구성
             let formData = {};
 
             if (isRegisterMode) {
+                // 등록: 새로운 값만 DTO 필드명에 맞게 전송
                 formData.deptCode = $newDeptCodeInput.val().trim();
                 formData.deptName = $deptNameInput.val().trim();
             } else {
-                formData.deptCode = $originalDeptCodeInput.val();
-                formData.deptNewCode = $newDeptCodeInput.val().trim();
+                // 수정: DTO에 필요한 모든 필드를 담아 전송
+                formData.deptCode = $originalDeptCodeInput.val(); // WHERE 조건용 기존 코드
+                
+                // 새로운 값 (수정된 값)
+                formData.deptNewCode = $newDeptCodeInput.val().trim(); // XML의 #{deptNewCode}와 일치
                 formData.deptName = $deptNameInput.val().trim();
             }
-
+            
             if ( !formData.deptCode || !formData.deptName || (!isRegisterMode && !formData.deptNewCode) ) {
                 alert("필수 항목을 모두 입력해주세요.");
                 return;
@@ -674,7 +642,7 @@
                 success: function(response) {
                     alert(response.message);
                     if (response.status === 'success') {
-                        closeDeptCrudModal();
+                        closeDeptCrudModal(); 
                     }
                 },
                 error: function() {
@@ -682,33 +650,35 @@
                 }
             });
         });
-
+        
         // 4. 검색 버튼 클릭 이벤트 처리
         $searchBtn.on('click', function() {
-             searchAndRenderDept(1);
+             searchAndRenderDept(1); // 검색 시 1페이지부터 시작
         });
 
         // 5. 선택 항목 삭제 버튼 클릭 이벤트 처리
         $removeSelectedBtn.on('click', function() {
             const selectedDeptCodes = $('input[name="selectedDept"]:checked')
                 .map(function() { return $(this).data('dept-code'); })
-                .get();
-
+                .get(); // jQuery Map을 JS Array로 변환
+            
             if(selectedDeptCodes.length === 0) {
                 alert("삭제할 학과 코드를 선택해주세요.");
                 return;
             }
 
             if(confirm(`선택된 ${selectedDeptCodes.length}개의 학과 코드를 정말 삭제 처리하시겠습니까?`)) {
-
+                
                 $.ajax({
-                    url: '/admin/removeDept',
+                    url: '/admin/removeDept', 
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ deptCodeList: selectedDeptCodes }),
+                    // Controller에서 Map<String, List<String>>을 받으므로 키 이름을 'deptCodeList'로 설정
+                    data: JSON.stringify({ deptCodeList: selectedDeptCodes }), 
                     success: function(response) {
                         alert(response.message);
-                        searchAndRenderDept(currentPageNo);
+                        // 삭제 성공/실패 여부와 관계없이 목록을 갱신하여 최신 상태를 반영
+                        searchAndRenderDept(currentPageNo); 
                     },
                     error: function() {
                         alert('학과 삭제 처리 중 서버 통신 오류가 발생했습니다.');
@@ -716,124 +686,15 @@
                 });
             }
         });
-
-        // 6. 엑셀 파일 선택/변경 이벤트 
-        $excelFile.on('change', function() {
-            const fileName = $(this).val().split('\\').pop();
-            if (fileName) {
-                $fileNameDisplay.text(fileName);
-                $submitUploadBtn.prop('disabled', false);
-            } else {
-                $fileNameDisplay.text('파일을 드래그하거나 클릭하여 업로드');
-                $submitUploadBtn.prop('disabled', true);
-            }
-        });
-
-        // ⭐️ 9. 파일 선택 영역/버튼 클릭 시 input[type=file] 강제 실행 로직 (재조정) ⭐️
-        $dropArea.on('click', function(e) {
-            // 클릭된 요소가 input 자체가 아닐 때만 trigger를 실행하여 확실하게 팝업을 띄웁니다.
-            // label의 기본 동작을 막지 않으므로, 환경에 따라 한 번 또는 두 번 팝업이 뜰 수 있지만,
-            // 기능 불작동보다는 중복 팝업이 덜 치명적입니다.
-            if (e.target.id !== 'excelFile') {
-                $excelFile.trigger('click'); 
-            }
-        });
-
-        // ⭐️ 10. 드래그 앤 드롭 이벤트 구현 (유지) ⭐️
-        // dragenter, dragover: 파일이 영역 위로 들어왔을 때
-        $dropArea.on('dragenter dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // 시각적 피드백 제공 
-            $(this).addClass('border-blue-600 bg-blue-50'); 
-        });
-
-        // dragleave: 파일이 영역을 벗어났을 때
-        $dropArea.on('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('border-blue-600 bg-blue-50');
-        });
-
-        // drop: 파일을 드롭했을 때
-        $dropArea.on('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('border-blue-600 bg-blue-50');
-
-            // 드롭된 파일 가져오기
-            const files = e.originalEvent.dataTransfer.files;
-
-            if (files.length > 0) {
-                const file = files[0];
-                const fileName = file.name;
-                const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
-
-                // 파일 확장자 유효성 검사
-                if (fileExtension === '.xlsx' || fileExtension === '.xls') {
-                    // input[type=file] 요소에 드롭된 파일을 설정
-                    $excelFile[0].files = files;
-
-                    // change 이벤트를 수동으로 발생시켜 파일 이름 표시 및 버튼 활성화 로직 실행 (6번 항목)
-                    $excelFile.trigger('change'); 
-                } else {
-                    alert("엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.");
-                    $excelFile.val(''); // input 값 초기화
-                    $excelFile.trigger('change'); // 초기화 후 change 이벤트 재실행
-                }
-            }
-        });
-
-        // 7. 엑셀 일괄 업로드 폼 제출 처리 
-        $deptUploadForm.on('submit', function(e) {
-            e.preventDefault();
-
-            if ($excelFile[0].files.length === 0) {
-                alert('업로드할 엑셀 파일을 선택해주세요.');
-                return;
-            }
-
-            const formData = new FormData(this);
-
-            $submitUploadBtn.prop('disabled', true).text('업로드 중...');
-
-            $.ajax({
-                url: '/admin/uploadDeptBatch',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    alert(response.message);
-                    if (response.status === 'success') {
-                        closeBatchUploadModal();
-                        searchAndRenderDept(1);
-                    }
-                },
-                error: function(xhr) {
-                    let errorMessage = '학과 일괄 업로드 중 서버 오류가 발생했습니다.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = `업로드 실패: ${xhr.responseJSON.message}`;
-                    }
-                    alert(errorMessage);
-                },
-                complete: function() {
-                    $submitUploadBtn.prop('disabled', false).text('업로드');
-                }
-            });
-        });
-
-        // 8. 키보드 ESC로 모달 닫기 (CRUD 및 일괄 업로드 모달 통합)
+        
+        // 6. 키보드 ESC로 모달 닫기
         $(document).on('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if ($deptCrudModal.hasClass('flex')) {
-                    if (!$detailBtns.hasClass('hidden') || !$editBtns.hasClass('hidden')) {
-                         cancelDetailEditMode();
-                    }
-                    closeDeptCrudModal();
-                } else if ($batchUploadModal.hasClass('flex')) {
-                     closeBatchUploadModal();
-                }
+            if (e.key === 'Escape' && $deptCrudModal.hasClass('flex')) {
+                // 상세/수정 모드일 때 취소 버튼 누름 효과
+                if (!$detailBtns.hasClass('hidden') || !$editBtns.hasClass('hidden')) {
+                     cancelDetailEditMode();
+                } 
+                closeDeptCrudModal();
             }
         });
     });
