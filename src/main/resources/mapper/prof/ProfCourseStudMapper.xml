@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.prof.ProfCourseStudMapper">
+	<select id="selectStudentListByProf" resultType="com.example.lms.dto.ProfCourseStudDTO">
+	    SELECT
+	        e.enrollment_no AS enrollmentNo,
+	        u.user_no AS studentUserNo,
+	        u.user_id AS studentId,
+	        u.user_name AS studentName,
+	        u.user_phone AS studentPhone,
+	        u.user_grade AS studentGrade,
+	        d.dept_name AS deptName,
+	
+	        g.grade_value AS gradeValue,
+	        g.grade_score AS gradeScore,
+	
+	        (
+	            SELECT ROUND(
+	                (
+	                    -- 출석 0점 + 지각 0.5점
+	                    SUM(
+	                        CASE 
+	                            WHEN a.attendance_status = 0 THEN 1
+	                            WHEN a.attendance_status = 2 THEN 0.5
+	                            ELSE 0
+	                        END
+	                    ) 
+	                    / 15 * 100
+	                ), 1
+	            )
+	            FROM tb_attendance a
+	            WHERE a.student_user_no = e.student_user_no
+	              AND a.course_no = e.course_no
+	        ) AS attendanceRate
+	
+	    FROM tb_enrollment e
+	    JOIN tb_sysuser u ON e.student_user_no = u.user_no
+	    LEFT JOIN tb_dept d ON u.dept_code = d.dept_code
+	    LEFT JOIN tb_grade g ON g.student_user_no = e.student_user_no
+	                        AND g.course_no = e.course_no
+	
+	    WHERE e.course_no = #{courseNo}
+	      AND e.enrollment_status = 0
+	      
+	    ORDER BY u.user_name ASC
+    	LIMIT #{startRow}, #{rowPerPage}
+	</select>
+
+		
+	<select id="selectStudentCountByProf" resultType="int">
+		SELECT COUNT(*)
+		FROM tb_enrollment 
+		WHERE course_no = #{courseNo} AND enrollment_status = 0
+	</select>
+</mapper>

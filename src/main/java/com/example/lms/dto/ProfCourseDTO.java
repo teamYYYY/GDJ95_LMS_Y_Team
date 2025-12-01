@@ -44,6 +44,14 @@ public class ProfCourseDTO {
             default -> "";
         };
     }
+    
+    public boolean isOpened() {
+        return this.courseStatus == 1;
+    }
+
+    public boolean isClosed() {
+        return this.courseStatus == 0;
+    }
 
     private List<ProfCourseTimeDTO> timeList;
 }

@@ -1,38 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>공지사항 등록</title>
+
+    <link rel="stylesheet" as="style" crossorigin 
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: Pretendard, sans-serif; }
+        input, textarea {
+            border: 1px solid #D1D5DB;
+            padding: 8px 10px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
-<body>
-	<h2>공지사항 등록</h2>
-	
-	{{#courseNo}}
-	 <form action="/addCourseNotice" method="post">
-	 
-	 	<input type="hidden" name="courseNo" value="{{courseNo}}">
-	 
-	 	<table border="1">
-	        <tr>
-	            <th>제목</th>
-	            <td>
-	                <input type="text" name="courseNoticeTitle" required>
-	            </td>
-	        </tr>
-	
-	        <tr>
-	            <th>내용</th>
-	            <td>
-	                <textarea name="courseNoticeContent" required></textarea>
-	            </td>
-	        </tr>
-	 	</table>
-	 	
-	 	<input type="hidden" name="courseNoticeViewCount" value="0">
-	 	
-	 	 <button type="submit">등록</button>
-	 	 <a href="/courseNoticeList?courseNo={{courseNo}}">취소</a>
-	 </form>
-	 {{/courseNo}}
+
+<body class="text-gray-800">
+
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">
+                공지사항 등록
+            </h2>
+
+            {{#courseNo}}
+            <form action="/addCourseNotice" method="post" class="space-y-6">
+
+                <input type="hidden" name="courseNo" value="{{courseNo}}">
+                <input type="hidden" name="courseNoticeViewCount" value="0">
+
+                <table class="min-w-full divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200">
+
+                        <tr>
+                            <th class="w-1/5 bg-gray-50 px-4 py-3 text-left text-sm font-medium">제목</th>
+                            <td class="px-4 py-3">
+                                <input type="text" name="courseNoticeTitle" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th class="bg-gray-50 px-4 py-3 text-left text-sm font-medium">내용</th>
+                            <td class="px-4 py-3">
+                                <textarea name="courseNoticeContent" rows="10" required></textarea>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="flex justify-end gap-4">
+                    <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-md">
+                        <i class="fa-solid fa-check mr-1"></i> 등록하기
+                    </button>
+
+                    <a href="/courseNoticeList?courseNo={{courseNo}}"
+                        class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-400">
+                        취소
+                    </a>
+                </div>
+
+            </form>
+            {{/courseNo}}
+
+        </div>
+    </main>
+
+    {{> profLayout/profFooter }}
+
 </body>
 </html>

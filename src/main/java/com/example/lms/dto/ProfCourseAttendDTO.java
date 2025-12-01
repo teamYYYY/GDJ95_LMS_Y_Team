@@ -11,6 +11,7 @@ public class ProfCourseAttendDTO {
     private String studentPhone;
 
     private int attendanceStatus; // 0출석 1결석 2지각
+    private Double attendanceRate;
     
     private boolean isAttend;
     private boolean isAbsent;

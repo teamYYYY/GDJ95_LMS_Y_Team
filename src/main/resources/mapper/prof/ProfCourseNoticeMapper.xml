@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.prof.ProfCourseNoticeMapper">
+	
+	<!-- 강의별 공지사항 리스트 -->
+	<select id="selectCourseNoticeListByPage" resultType="com.example.lms.dto.CourseNoticeDTO">
+		select 
+			course_notice_no courseNoticeNo
+			, course_no courseNo
+			, course_notice_title courseNoticeTitle
+			, course_notice_view_count courseNoticeViewCount
+			, createdate
+		from tb_course_notice
+		where course_no = #{courseNo}
+		order by course_notice_no desc
+		limit #{startRow}, #{rowPerPage}
+	</select>
+	
+	<select id="selectCourseNoticeCount" resultType="int">
+    	select count(*) from tb_course_notice where course_no = #{courseNo}
+	</select>
+	
+	<!-- 조회수 -->
+	<update id="updateCourseNoticeViewCount" parameterType="int"> 
+        UPDATE tb_course_notice
+        SET course_notice_view_count = course_notice_view_count + 1
+        WHERE course_notice_no = #{courseNoticeNo}
+    </update>
+
+	<!-- 상세보기 -->
+	<select id="selectCourseNoticeDetail" resultType="com.example.lms.dto.CourseNoticeDTO">
+		select
+			course_notice_no courseNoticeNo
+			, course_no courseNo
+			, course_notice_title courseNoticeTitle
+			, course_notice_content courseNoticeContent
+			, course_notice_view_count courseNoticeViewCount
+			, createdate
+			, updatedate
+		from tb_course_notice
+		where course_notice_no = #{courseNoticeNo}
+		order by course_notice_no
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="insertCourseNotice" parameterType="com.example.lms.dto.CourseNoticeDTO"
+		useGeneratedKeys="true" keyColumn="course_notice_no" keyProperty="courseNoticeNo">
+		insert into tb_course_notice(writer_user_no, course_no, course_notice_title, course_notice_content, course_notice_view_count, createdate, updatedate)
+		values(#{writerUserNo}, #{courseNo}, #{courseNoticeTitle}, #{courseNoticeContent}, #{courseNoticeViewCount}, now(), now())
+	</insert> 
+	
+	<!-- 수정 -->
+	<update id="updateCourseNotice" parameterType="com.example.lms.dto.CourseNoticeDTO">
+		update tb_course_notice
+		set
+			course_notice_title = #{courseNoticeTitle},
+	        course_notice_content = #{courseNoticeContent},
+	        updatedate = NOW()
+	    where course_notice_no = #{courseNoticeNo}
+	</update>
+	
+	<!-- 식제 -->
+	<delete id="deleteCourseNotice" parameterType="com.example.lms.dto.CourseNoticeDTO">
+		delete from tb_course_notice
+		where course_notice_no = #{courseNoticeNo}
+	</delete>
+</mapper>

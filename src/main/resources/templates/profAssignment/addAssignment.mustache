@@ -1,54 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>과제 등록</title>
-</head>
-<body>
+    <meta charset="UTF-8">
+    <title>과제 등록</title>
 
-	<h2>과제 등록</h2>
-	
-	<form action="/addAssignment" method="post">
-	
-	    <!-- courseNo 유지 -->
-	    <input type="hidden" name="courseNo" value="{{courseNo}}">
-	
-	    <table border="1" cellspacing="0" cellpadding="8">
-	        <tr>
-	            <th>과제 제목</th>
-	            <td><input type="text" name="assignmentTitle" required></td>
-	        </tr>
-	
-	        <tr>
-	            <th>과제 내용</th>
-	            <td>
-	                <textarea name="assignmentDescription" rows="6" cols="50"></textarea>
-	            </td>
-	        </tr>
-	
-	        <tr>
-	            <th>마감일시</th>
-	            <td>
-	                <input type="datetime-local" name="assignmentDueDate" required>
-	            </td>
-	        </tr>
-	
-	        <tr>
-	            <th>상태</th>
-	            <td>
-	                <select name="assignmentStatus">
-	                    <option value="1">활성</option>
-	                    <option value="0">비활성</option>
-	                </select>
-	            </td>
-	        </tr>
-	    </table>
-	
-	    <br>
-	    <button type="submit">등록하기</button>
-	    <a href="/assignmentListByProf?courseNo={{courseNo}}">취소</a>
-	
-	</form>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: Pretendard, sans-serif; }
+    </style>
+</head>
+
+<body class="text-gray-800 bg-gray-50">
+
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+
+            <!-- 제목 -->
+            <div class="pb-4 border-b border-gray-200 mb-6">
+                <h2 class="text-xl font-bold text-gray-800">과제 등록</h2>
+            </div>
+
+            <form action="/addAssignment" method="post">
+
+                <input type="hidden" name="courseNo" value="{{courseNo}}">
+
+                <div class="overflow-hidden border border-gray-200 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+
+                        <tbody class="bg-white divide-y divide-gray-200">
+
+                            <tr>
+                                <th class="bg-gray-50 px-6 py-4 w-1/4 text-sm font-medium text-gray-600">과제 제목</th>
+                                <td class="px-6 py-4">
+                                    <input type="text" name="assignmentTitle"
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                           required>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th class="bg-gray-50 px-6 py-4 text-sm font-medium text-gray-600">과제 내용</th>
+                                <td class="px-6 py-4">
+                                    <textarea name="assignmentDescription"
+                                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                              rows="6"></textarea>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th class="bg-gray-50 px-6 py-4 text-sm font-medium text-gray-600">마감일시</th>
+                                <td class="px-6 py-4">
+                                    <input type="datetime-local" name="assignmentDueDate"
+                                           class="border border-gray-300 rounded-lg px-3 py-2 text-sm w-60"
+                                           required>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th class="bg-gray-50 px-6 py-4 text-sm font-medium text-gray-600">상태</th>
+                                <td class="px-6 py-4">
+                                    <select name="assignmentStatus"
+                                            class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                        <option value="1">활성</option>
+                                        <option value="0">비활성</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium shadow hover:bg-blue-700">
+                        <i class="fa-solid fa-check mr-1"></i> 등록하기
+                    </button>
+
+                    <a href="/assignmentListByProf?courseNo={{courseNo}}"
+                       class="bg-gray-300 text-gray-700 px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-400">
+                        <i class="fa-solid fa-xmark mr-1"></i> 취소
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+    {{> profLayout/profFooter }}
 
 </body>
 </html>
