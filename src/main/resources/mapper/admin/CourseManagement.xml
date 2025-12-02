@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.admin.CourseManagementMapper">
+
+
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 (관리자전용) -->
+	<select id="courseManagementListUseAdmin" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+	
+		SELECT * FROM (
+			SELECT
+				ROW_NUMBER() OVER (ORDER BY a.createdate asc) AS rownm
+				a.course_no AS courseNo,
+				a.course_year AS courseYear,
+				a.course_semester AS courseSemester,
+				b.dept_code AS deptCode,
+				c.dept_name AS deptName, -- 학과명
+				a.course_name AS courseName,
+				a.professor_user_no AS professorUserNo,
+				b.user_name AS professorUserName, -- 교수이름
+				a.course_score AS courseScore, -- 이수학점
+				d.grade_final_score AS gradeFinalScore, -- 평가점수
+				d.grade_value AS gradeValue, -- 평가등급
+				a.createdate AS createdate,
+				d.student_user_no AS studentUserNo,
+				e.user_name AS studentUserName -- 학생이름
+			FROM
+				tb_course a
+			INNER JOIN tb_sysuser b
+				ON
+				a.professor_user_no = b.user_no
+			INNER JOIN tb_dept c
+				ON
+				b.dept_code = c.dept_code
+			INNER JOIN tb_grade d
+				ON
+				a.course_no = d.course_no
+			INNER JOIN tb_sysuser e
+				ON
+				d.student_user_no = e.user_no
+			) t
+		ORDER BY rownm DESC 
+	    LIMIT #{startRow}, #{limit}
+		
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 (관리자전용) 리스트 페이징 수 -->
+	<select id="courseManagementListUseAdminCnt" resultType="int">
+	
+		SELECT COUNT(*) FROM (
+			SELECT
+				a.course_no AS courseNo,
+				a.course_year AS courseYear,
+				a.course_semester AS courseSemester,
+				b.dept_code AS deptCode,
+				c.dept_name AS deptName, -- 학과명
+				a.course_name AS courseName,
+				a.professor_user_no AS professorUserNo,
+				b.user_name AS professorUserName, -- 교수이름
+				a.course_score AS courseScore, -- 이수학점
+				d.grade_final_score AS gradeFinalScore, -- 평가점수
+				d.grade_value AS gradeValue, -- 평가등급
+				a.createdate AS createdate,
+				d.student_user_no AS studentUserNo,
+				e.user_name AS studentUserName -- 학생이름
+			FROM
+				tb_course a
+			INNER JOIN tb_sysuser b
+				ON
+				a.professor_user_no = b.user_no
+			INNER JOIN tb_dept c
+				ON
+				b.dept_code = c.dept_code
+			INNER JOIN tb_grade d
+				ON
+				a.course_no = d.course_no
+			INNER JOIN tb_sysuser e
+				ON
+				d.student_user_no = e.user_no
+			) t
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 (학생전용) -->
+	<select id="courseManagementListUseStudt" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+	
+		SELECT * FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY a.createdate asc) AS rownm
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				WHERE
+					d.student_user_no = #{userNo}
+			 ) t
+		 ORDER BY rownm DESC 
+		 LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 (학생전용) 리스트 페이징 수 -->
+	<select id="courseManagementListUseStudtCnt" parameterType="int" resultType="int">
+	
+		SELECT COUNT(*) FROM (
+			SELECT
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				WHERE
+					d.student_user_no = #{userNo}
+			) t
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 연도별 셀렉박스 리스트 -->
+	
+	<select id="selectCourseYearList" resultType="com.example.lms.dto.CourseManagementDTO">
+		
+		SELECT DISTINCT(course_year) FROM tb_course
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 조회 학기별 셀렉박스 리스트 -->
+	
+	<select id="selectCourseSemesterList" resultType="com.example.lms.dto.CourseManagementDTO">
+	
+		SELECT DISTINCT(course_semester) FROM tb_course
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 (관리자전용) -->
+	<select id="searchCourseManagementListUseAdmin" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+		
+		SELECT * FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY a.createdate asc) AS rownm
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate,
+					d.student_user_no AS studentUserNo,
+					e.user_name AS studentUserName -- 학생이름
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				INNER JOIN tb_sysuser e
+					ON
+					d.student_user_no = e.user_no
+				WHERE 1=1
+					<if test="selectedYear != null and selectedYear.trim() != ''">
+		                AND a.course_year = #{selectedYear}
+		            </if>
+		            
+		            <if test="selectedSemester != null and selectedSemester.trim() != ''">
+		                AND a.course_semester = #{selectedSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+		            </if>
+				) t
+			ORDER BY rownm DESC 
+		    LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 카운트 (관리자전용)-->
+	<select id="searchCourseManagementListUseAdminCnt" parameterType="java.util.Map" resultType="int">
+		
+		SELECT COUNT(*) FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY a.createdate asc) AS rownm
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate,
+					d.student_user_no AS studentUserNo,
+					e.user_name AS studentUserName -- 학생이름
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				INNER JOIN tb_sysuser e
+					ON
+					d.student_user_no = e.user_no
+				WHERE 1=1
+					<if test="selectedYear != null and selectedYear.trim() != ''">
+		                AND a.course_year = #{selectedYear}
+		            </if>
+		            
+		            <if test="selectedSemester != null and selectedSemester.trim() != ''">
+		                AND a.course_semester = #{selectedSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+		            </if>
+				) t
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 (학생전용) -->
+	<select id="searchCourseManagementListUseStudt" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+		
+		SELECT * FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY a.createdate asc) AS rownm
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				WHERE 1=1
+						AND d.student_user_no = #{userNo}
+					<if test="selectedYear != null and selectedYear.trim() != ''">
+		                AND a.course_year = #{selectedYear}
+		            </if>
+		            
+		            <if test="selectedSemester != null and selectedSemester.trim() != ''">
+		                AND a.course_semester = #{selectedSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+		            </if>
+				) t
+			ORDER BY rownm DESC 
+		    LIMIT #{startRow}, #{limit}
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 카운트 (학생전용)-->
+	<select id="searchCourseManagementListUseStudtCnt" parameterType="java.util.Map" resultType="int">
+		
+		SELECT COUNT(*) FROM (
+				SELECT
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				WHERE 1=1
+						AND d.student_user_no = #{userNo}
+					<if test="selectedYear != null and selectedYear.trim() != ''">
+		                AND a.course_year = #{selectedYear}
+		            </if>
+		            
+		            <if test="selectedSemester != null and selectedSemester.trim() != ''">
+		                AND a.course_semester = #{selectedSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+		            </if>
+				) t
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 강의 상세정보 조회 -->
+	<select id="selectCourseDetail" parameterType="int" resultType="com.example.lms.dto.CourseManagementDTO" >
+
+		SELECT
+			a.course_no AS courseNo,
+			a.course_year AS courseYear,
+			a.course_semester AS courseSemester,
+			c.dept_name AS deptName, -- 학과명
+			a.course_name AS courseName, -- 강의명
+			a.course_description AS courseDescription, -- 강의설명
+			b.user_name AS professorUserName, -- 교수이름
+			a.course_score AS courseScore, -- 이수학점
+			a.course_classroom AS courseClassroom, -- 강의실
+			a.course_status AS courseStatus, -- 개설 상태
+			a.createdate AS createdate, -- 개설일자
+			a.updatedate AS updatedate -- 업데이트일자
+		FROM
+			tb_course a
+		INNER JOIN tb_sysuser b
+		ON
+			a.professor_user_no = b.user_no
+		INNER JOIN tb_dept c
+		ON
+			b.dept_code = c.dept_code
+		WHERE a.course_no = #{courseNo}
+	
+	</select>
+	
+</mapper>
