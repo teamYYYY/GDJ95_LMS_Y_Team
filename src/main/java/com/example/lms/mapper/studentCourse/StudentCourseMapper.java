@@ -20,6 +20,21 @@ import com.example.lms.dto.StudentTimetableDTO;
 @Mapper
 public interface StudentCourseMapper {
 
+	// 학생용 공지 목록
+    List<StudentCourseNoticeDTO> selectStudentCourseNoticeList(
+            @Param("courseNo") int courseNo,
+            @Param("startRow") int startRow,
+            @Param("rowPerPage") int rowPerPage);
+
+    // 학생용 공지 total
+    int selectStudentCourseNoticeTotal(int courseNo);
+
+    // 학생용 공지 상세
+    StudentCourseNoticeDTO selectStudentCourseNoticeDetail(int courseNoticeNo);
+
+    // 조회수 증가
+    int updateStudentCourseNoticeViewCount(int courseNoticeNo);
+    
     // 강의 기본 정보 조회
     StudentCourseHomeDTO selectCourseBasicInfo(@Param("courseNo") int courseNo);
 

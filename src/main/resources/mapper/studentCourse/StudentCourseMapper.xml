@@ -3,7 +3,57 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.lms.mapper.studentCourse.StudentCourseMapper">
+	
+	<!-- 학생용 공지 목록 -->
+    <select id="selectStudentCourseNoticeList"
+            resultType="com.example.lms.dto.StudentCourseNoticeDTO">
+        SELECT
+            n.course_notice_no AS courseNoticeNo,
+            n.course_no AS courseNo,
+            n.course_notice_title AS courseNoticeTitle,
+            u.user_name AS writerUserName,
+            n.course_notice_view_count AS courseNoticeViewCount,
+            DATE_FORMAT(n.createdate, '%Y-%m-%d') AS createdate
+        FROM tb_course_notice n
+        LEFT JOIN tb_sysuser u ON n.writer_user_no = u.user_no
+        WHERE n.course_no = #{courseNo}
+        ORDER BY n.createdate DESC
+        LIMIT #{startRow}, #{rowPerPage}
+    </select>
 
+
+    <!-- 전체 개수 -->
+    <select id="selectStudentCourseNoticeTotal" resultType="int">
+        SELECT COUNT(*) 
+        FROM tb_course_notice
+        WHERE course_no = #{courseNo}
+    </select>
+
+
+    <!-- 학생용 공지 상세 -->
+    <select id="selectStudentCourseNoticeDetail"
+            resultType="com.example.lms.dto.StudentCourseNoticeDTO">
+        SELECT
+            n.course_notice_no AS courseNoticeNo,
+            n.course_no AS courseNo,
+            n.course_notice_title AS courseNoticeTitle,
+            n.course_notice_content AS courseNoticeContent,
+            u.user_name AS writerUserName,
+            n.course_notice_view_count AS courseNoticeViewCount,
+            DATE_FORMAT(n.createdate, '%Y-%m-%d %H:%i:%s') AS createdate
+        FROM tb_course_notice n
+        LEFT JOIN tb_sysuser u ON n.writer_user_no = u.user_no
+        WHERE n.course_notice_no = #{courseNoticeNo}
+    </select>
+
+
+    <!-- 조회수 증가 -->
+    <update id="updateStudentCourseNoticeViewCount">
+        UPDATE tb_course_notice
+        SET course_notice_view_count = course_notice_view_count + 1
+        WHERE course_notice_no = #{courseNoticeNo}
+    </update>
+		
     <!-- 내 수강 과목 목록 -->
     <select id="selectMyCourseList"
             resultType="com.example.lms.dto.StudentCourseDTO">

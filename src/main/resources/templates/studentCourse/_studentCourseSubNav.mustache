@@ -1,0 +1,60 @@
+<!-- 강의 내부 서브 네비게이션 -->
+<nav class="bg-white shadow-sm border border-gray-200 rounded-xl mb-10 mt-6">
+    <ul class="flex flex-wrap px-2">
+
+        <li>
+            <a href="/studentCourseHome?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_home}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                강의 홈
+            </a>
+        </li>
+
+        <li>
+            <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_notice}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                공지
+            </a>
+        </li>
+
+        <li>
+            <a href="/assignmentList?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_assignment}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                과제
+            </a>
+        </li>
+
+        <li>
+            <a href="/studentAttendance?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_attendance}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                출석
+            </a>
+        </li>
+
+        <li>
+            <a href="/studentGrade?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_grade}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                성적
+            </a>
+        </li>
+
+        <li>
+            <a href="/courseQuestionList?courseNo={{course.courseNo}}"
+               class="block px-6 py-3 text-sm font-medium rounded-lg
+                      {{nav_qna}}
+                      hover:bg-blue-50 hover:text-blue-600">
+                질문(Q&A)
+            </a>
+        </li>
+
+    </ul>
+</nav>

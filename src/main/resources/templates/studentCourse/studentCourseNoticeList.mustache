@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>공지사항 전체보기</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-[#F5F7FA]">
+
+    {{> studentLayout/studentHeader }}
+
+    <main class="max-w-6xl mx-auto px-4 py-10">
+
+        <!-- 상단 타이틀 + 과목 정보 + 버튼 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-bullhorn text-blue-600"></i>
+                공지사항 전체보기
+            </h2>
+
+        </div>
+		
+		{{> studentCourse/_studentCourseSubNav }}
+		
+        <!-- 공지 리스트 박스 -->
+        <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="bg-gray-50 text-gray-700 border-b">
+                        <th class="px-4 py-3 w-16">번호</th>
+                        <th class="px-4 py-3">제목</th>
+                        <th class="px-4 py-3 w-28">작성자</th>
+                        <th class="px-4 py-3 w-16">조회수</th>
+                        <th class="px-4 py-3 w-28">등록일</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#list}}
+                    <tr class="border-b hover:bg-gray-50 cursor-pointer"
+                        onclick="location.href='/studentCourseNoticeDetail?courseNoticeNo={{courseNoticeNo}}&courseNo={{course.courseNo}}'">
+                        <td class="px-4 py-3">{{index}}</td>
+                        <td class="px-4 py-3 text-gray-900">{{courseNoticeTitle}}</td>
+                        <td class="px-4 py-3 text-gray-600">{{writerUserName}}</td>
+                        <td class="px-4 py-3 text-gray-600">{{courseNoticeViewCount}}</td>
+                        <td class="px-4 py-3 text-gray-600">{{createdate}}</td>
+                    </tr>
+                    {{/list}}
+
+                    {{^list}}
+                    <tr>
+                        <td colspan="5" class="text-center py-6 text-gray-500">
+                            등록된 공지사항이 없습니다.
+                        </td>
+                    </tr>
+                    {{/list}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 페이징 -->
+        <div class="flex justify-center mt-8">
+            <div class="flex items-center gap-2">
+
+                {{#hasPrev}}
+                <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}&currentPage={{prevPage}}"
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm">
+                    이전
+                </a>
+                {{/hasPrev}}
+
+                {{#pageList}}
+                {{#current}}
+                <span class="px-3 py-2 bg-blue-600 text-white rounded text-sm">{{page}}</span>
+                {{/current}}
+                {{^current}}
+                <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}&currentPage={{page}}"
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm">
+                    {{page}}
+                </a>
+                {{/current}}
+                {{/pageList}}
+
+                {{#hasNext}}
+                <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}&currentPage={{nextPage}}"
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm">
+                    다음
+                </a>
+                {{/hasNext}}
+
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
