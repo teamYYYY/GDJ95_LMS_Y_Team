@@ -41,8 +41,6 @@
 </head>
 <body class="text-gray-800">
 
-	<!--  헤더  -->
-	
     <header class="bg-white border-b border-gray-200">
     <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -94,7 +92,6 @@
                 </a>
             </nav>
         </aside>
-        
 		<!--  여기부터 동적 -->
         <main class="flex-grow p-8 max-w-screen-2xl mx-auto">
             <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
@@ -112,26 +109,24 @@
                     </div>
                 </div>
                 
-                <!-- 버튼 -->
-                
                 <div class="flex justify-between items-center mb-4">
-				    <p class="text-gray-700 font-medium">사용자 목록 <span class="text-sm text-gray-500 ml-1" id="totalCountDisplay">총 {{totalCount}}명의 사용자</span></p>
-				    <div class="flex gap-2">
-				        <button id="downloadListExcelBtn" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
-				            <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
-				        </button>
-				        <button id="downloadFormExcelBtn" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
-				            <i class="fa-solid fa-file-excel"></i> 양식 다운로드
-				        </button>
-				        <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
-				            <i class="fa-solid fa-upload"></i> 일괄 업로드
-				        </button>
-				        <button onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
-				            <i class="fa-solid fa-plus"></i> 등록
-				        </button>
-				    </div>
-				</div>
-				
+                    <p class="text-gray-700 font-medium">사용자 목록 <span class="text-sm text-gray-500 ml-1" id="totalCountDisplay">총 {{totalCount}}명의 사용자</span></p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                            <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
+                        </button>
+                        <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                            <i class="fa-solid fa-file-excel"></i> 양식 다운로드
+                        </button>
+                        <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
+                            <i class="fa-solid fa-upload"></i> 일괄 업로드
+                        </button>
+                        <button onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+                            <i class="fa-solid fa-plus"></i> 등록
+                        </button>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto border rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -199,52 +194,49 @@
         </main>
     </div>
 
-    <!-- 엑셀 모달 -->
+    <!-- 엑셀 기능 -->
 
-   <div id="batchUploadModal" class="modal-container hidden">
-    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
-        <form id="excelUploadForm">
-            <div class="p-8 rounded-xl shadow-lg border border-gray-100"> <div class="flex justify-between items-center pb-4 border-b">
-                    <h2 class="text-2xl font-bold text-gray-900">사용자 일괄 업로드</h2> <button type="button" onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+    <div id="batchUploadModal" class="modal-container hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
+                    <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
                         <i class="fa-solid fa-xmark text-2xl"></i>
                     </button>
                 </div>
 
                 <div class="mt-6 text-center space-y-4">
                     <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
-                    
-                    <label for="excelFileInput" class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500 cursor-pointer block hover:bg-gray-50 transition">
+                    <div class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500">
                         <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
-                        <p id="fileNameDisplay">클릭하여 파일을 선택하여 업로드</p>
+                        <p>파일을 드래그하거나 클릭하여 업로드</p>
                         <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
-                        <input type="file" id="excelFileInput" name="excelFile" accept=".xlsx, .xls" class="hidden">
-                        </label>
+                        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                            파일 선택
+                        </button>
+                    </div>
                     
                     <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
                         <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
-                        <ul class="list-disc list-inside space-y-1 text-sm text-gray-600"> 
-                        <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
-					    <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
-					    <li>필수 항목은 반드시 입력되어야 합니다. (학과코드, 학과명, 사용여부)</li>
-					    <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
-					    <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
-					    <li>중복된 데이터는 자동으로 제외됩니다.</li>
-					</ul>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
+                            <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
+                            <li>필수 항목은 반드시 입력되어야 합니다.</li>
+                            <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
+                            <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
+                            <li>중복된 데이터는 자동으로 제외됩니다.</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition text-sm">취소</button>
-                    <button type="submit" id="submitUploadBtn" disabled  class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 text-sm">
-						업로드
-					</button>
+                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
+                    <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">업로드</button>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-    
-    <!--  사용자 등록 모달 -->
     
     <div id="userCrudModal" class="modal-container hidden">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">
@@ -390,8 +382,6 @@
     </div>
 </div>
 
-<!-- 스크립트 부분 -->
-
 <script>
     // 전역 변수 설정
     const batchModal = document.getElementById('batchUploadModal');
@@ -429,13 +419,6 @@
     const userAuthSelect = document.getElementById('userAuth');
     const userDetailAuthSelect = document.getElementById('userDetailAuth');
 
-    // ⭐️ 엑셀 관련 전역 변수 추가 ⭐️
-    const downloadFormExcelBtn = document.getElementById('downloadFormExcelBtn');
-    const downloadListExcelBtn = document.getElementById('downloadListExcelBtn');
-    const excelUploadForm = document.getElementById('excelUploadForm'); // HTML에 추가된 폼 ID
-    const excelFileInput = document.getElementById('excelFileInput');   // HTML에 추가된 파일 input ID
-    const fileNameDisplay = document.getElementById('fileNameDisplay'); // 파일명 표시 DOM ID
-    const submitUploadBtn = document.getElementById('submitUploadBtn'); // 👈 **추가: 업로드 버튼**
 
 	 // ------------------------
 	 // 유틸리티 함수: 폼에 데이터 바인딩
@@ -445,6 +428,7 @@
 	         const input = document.getElementById(key);
 	         
 	         if (input) { 
+	             // 🚀 수정 후: 해당 조건 없이 모든 필드를 바인딩하도록 합니다.
 	             input.value = (data[key] === null || data[key] === undefined) ? '' : data[key].toString(); 
 	         }
 	     }
@@ -465,6 +449,7 @@
     // ------------------------
     function toggleInputReadOnly(isReadOnly, preservePassword) {
         inputFields.forEach(input => {
+            // 🟢 수정: userId 예외 처리 제거. userNo만 예외 처리 🟢
             if (input.id !== 'userNo') {
                 input.readOnly = isReadOnly;
                 input.disabled = isReadOnly;
@@ -514,6 +499,7 @@
                     let html = '<option value="">세부 권한을 선택하세요</option>';
                     
                     response.detailList.forEach(item => {
+                        // 선택된 detailCode가 있으면 selected 속성 추가
                         const isSelected = (item.authDetailCode === selectedDetailCode) ? 'selected' : '';
                         html += `<option value="${item.authDetailCode}" ${isSelected}>${item.authDetailName}</option>`;
                     });
@@ -533,6 +519,7 @@
     // 💡 추가된 유틸리티 함수: 사용자 목록 테이블 렌더링
     // ------------------------
     function renderUserTable(userList) {
+        // ... (기존 로직 동일) ...
         let html = '';
         
         const statusMap = {
@@ -544,9 +531,10 @@
         
         if (userList && userList.length > 0) {
             userList.forEach((user) => {
+            	// 🚀 수정: userStatus를 문자열로 변환하여 Map에 접근합니다.
                 const statusKey = user.userStatus !== null && user.userStatus !== undefined
                                   ? user.userStatus.toString() 
-                                  : ''; 
+                                  : ''; // null/undefined 대비
                                   
                 const statusInfo = statusMap[statusKey] || { name: '알 수 없음', class: 'text-gray-500' };
                 
@@ -578,6 +566,7 @@
         }
         
         userListBody.innerHTML = html;
+        // 체크박스 상태 초기화 및 버튼 갱신
         const selectAll = document.getElementById('selectAll');
         if (selectAll) selectAll.checked = false;
         updateRetireButtonState();
@@ -590,8 +579,9 @@
     function renderPagination(totalCount, currentPage, pageSize = 10) {
         const totalPages = Math.ceil(totalCount / pageSize);
         
-        // ... (페이지네이션 렌더링 로직 유지) ...
+        // ... (기존 로직 동일) ...
         
+        // 총 개수 표시 갱신
         totalCountDisplay.textContent = `총 ${totalCount}명의 사용자`;
         
         if (totalPages <= 1) {
@@ -603,24 +593,28 @@
         let html = '';
         html += '<nav class="flex items-center space-x-1">';
         
+        // --- 1. 페이지 블록 계산 (10개) ---
         const pagesPerBlock = 10;
         const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
         const blockStart = currentBlock * pagesPerBlock + 1;
         const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
         
         
+        // --- 2. 이전 페이지 버튼 (◀) ---
         const prevPage = currentPage - 1;
         const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
         html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
                      class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
 
 
+        // --- 3. 페이지 번호 링크 (블록 내) ---
         for (let i = blockStart; i <= blockEnd; i++) {
             const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
             html += `<a href="#" data-page="${i}" 
                        class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
         }
 
+        // --- 4. 다음 페이지 버튼 (▶) ---
         const nextPage = currentPage + 1;
         const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
         html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
@@ -632,6 +626,7 @@
         paginationDiv.innerHTML = html;
         paginationDiv.style.display = 'flex';
         
+        // --- 5. 이벤트 위임 (클릭 이벤트 처리) ---
         paginationDiv.querySelectorAll('.page-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -656,6 +651,7 @@
     // 핵심 함수: 검색 및 페이지 이동 AJAX 요청 (상태 저장 로직 추가)
     // ------------------------
     function searchAndRenderUser(pageNo) {
+        // ... (기존 로직 동일) ...
         const condition = searchConditionInput.value.trim();
         
         // 🚀 상태 갱신
@@ -674,6 +670,7 @@
                 if (response.status === 'success') {
                     renderUserTable(response.userList);
                     renderPagination(response.totalCount, response.currentPage);
+                    // 💡 검색 조건 input 필드에 현재 검색어를 다시 설정
                     searchConditionInput.value = currentSearchCondition;
                 } else {
                     alert('사용자 검색에 실패했습니다.');
@@ -687,7 +684,7 @@
 
 
     // ------------------------
-    // 모달 제어 함수 (closeBatchUploadModal 수정 - 버튼 초기화 추가)
+    // 모달 제어 함수
     // ------------------------
     function openBatchUploadModal() {
         batchModal.classList.remove('hidden');
@@ -697,21 +694,6 @@
     function closeBatchUploadModal() {
         batchModal.classList.add('hidden');
         batchModal.classList.remove('flex');
-        
-        // ⭐️ 모달 닫을 때 파일 입력 및 버튼 상태 초기화 ⭐️
-        if (excelUploadForm) {
-            excelUploadForm.reset();
-        }
-        if (fileNameDisplay) {
-            fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-        }
-        // 버튼 비활성화 초기화
-        if (submitUploadBtn) {
-            submitUploadBtn.disabled = true;
-        }
-        
-        // 🚀 일괄 업로드 후 목록을 현재 상태로 갱신
-        searchAndRenderUser(currentPageNo); 
     }
     
     function closeUserCrudModal() {
@@ -719,9 +701,11 @@
         userCrudModal.classList.remove('flex');
         userForm.reset();
         
+        // 등록 모드 대비: userIdInput의 readonly/스타일 제거
         userIdInput.removeAttribute('readonly');
         userIdInput.classList.remove('input-readonly');
         
+        // 🚀 수정된 로직: location.reload() 대신 현재 상태를 유지하며 목록 갱신
         searchConditionInput.value = currentSearchCondition; 
         searchAndRenderUser(currentPageNo); 
     }
@@ -739,6 +723,7 @@
         userCrudModal.classList.remove('hidden');
         userCrudModal.classList.add('flex');
         
+        // 🚀 추가: 등록 모드 시 세부 권한 초기화
         loadAndRenderAuthDetails(userAuthSelect.value, null); 
     }
 
@@ -752,20 +737,28 @@
                     const data = response.data;
                     originalDetailData = data; 
                     
+                    // 1. 일반 필드 바인딩 
                     bindFormData(data); 
                     
+                	// ❌ 상세 정보 조회 시 userId를 readonly 처리하는 로직 제거.
+                    //    toggleInputReadOnly(true, true)가 모든 필드를 readonly로 만듭니다.
+
+                    // 2. 🚀 세부 권한 동적 로딩 및 기존 값 선택
                     const authCode = data.userAuth; 
                     const detailCode = data.userDetailAuth; 
                     
                     if (authCode) {
                         loadAndRenderAuthDetails(authCode, detailCode); 
                     } else {
+                        // userAuth가 없는 경우 세부 권한 초기화
                          loadAndRenderAuthDetails(null, null); 
                     }
+                    // ------------------------------------
 
                     modalTitle.textContent = "사용자 상세 정보 (" + userId + ")";
                     modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
                     
+                    // 🟢 여기서 userId를 포함한 모든 필드를 readonly로 만듭니다.
                     toggleInputReadOnly(true, true); 
                     
                     detailBtns.classList.remove('hidden');
@@ -787,11 +780,15 @@
         modalTitle.textContent = "사용자 정보 수정";
         modalSubtitle.textContent = "정보를 수정 후 저장해주세요. (비밀번호 미입력 시 변경 없음)";
         
+        // 🟢 여기서 userId를 포함한 모든 필드의 readonly를 해제합니다.
         toggleInputReadOnly(false, true); 
         
         editBtns.classList.remove('hidden');
         detailBtns.classList.add('hidden');
         registerBtns.classList.add('hidden');
+        
+        // ❌ userIdInput을 readonly로 유지하는 로직을 제거합니다. 
+        //    이제 userIdInput은 수정 가능합니다.
         
         passwordInput.setAttribute('type', 'password'); 
         passwordInput.removeAttribute('readonly');
@@ -804,6 +801,7 @@
     function cancelDetailEditMode() {
         bindFormData(originalDetailData); 
         
+        // 🚀 추가: 수정 취소 시 세부 권한도 원본 데이터로 복원
         const authCode = originalDetailData.userAuth; 
         const detailCode = originalDetailData.userDetailAuth; 
         loadAndRenderAuthDetails(authCode, detailCode);
@@ -811,6 +809,7 @@
         modalTitle.textContent = "사용자 상세 정보 (" + userIdInput.value + ")";
         modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
         
+        // 🟢 여기서 userId를 포함한 모든 필드를 다시 readonly로 만듭니다.
         toggleInputReadOnly(true, true); 
         
         detailBtns.classList.remove('hidden');
@@ -832,12 +831,13 @@
 
 
     // ------------------------
-    // DOMContentLoaded 이벤트 및 AJAX 요청 (엑셀 기능 통합)
+    // DOMContentLoaded 이벤트 및 AJAX 요청 (상태 초기화 로직 추가)
     // ------------------------
     document.addEventListener('DOMContentLoaded', () => {
         const selectAll = document.getElementById('selectAll');
         const retireBtn = document.getElementById('retireSelectedBtn'); 
         
+        // ... (기존 초기화 로직 동일) ...
         const initialTotalCount = {{totalCount}}; 
         const initialCurrentPage = {{currentPage}}; 
         
@@ -852,12 +852,14 @@
         // 🚀 핵심: userAuth 변경 시 세부 권한 동적 로딩 리스너 추가
         if (userAuthSelect && userDetailAuthSelect) {
             userAuthSelect.addEventListener('change', function() {
+                // 선택된 authCode로 세부 권한 로드 (기존 선택된 세부 권한 값은 null)
                 loadAndRenderAuthDetails(this.value, null); 
             });
         }
         
         // 체크박스 이벤트 리스너 설정
         selectAll.addEventListener('change', (e) => {
+            // 전체 체크/체크 해제 로직
             const isChecked = e.target.checked;
             document.querySelectorAll('input[name="selectedUser"]').forEach(cb => {
                 cb.checked = isChecked;
@@ -866,6 +868,7 @@
         });
 
         document.addEventListener('change', (e) => {
+             // 개별 체크박스 변경 시 전체 선택 상태 및 버튼 상태 업데이트
             if (e.target.name === 'selectedUser') {
                 updateRetireButtonState();
                 const allChecked = Array.from(document.querySelectorAll('input[name="selectedUser"]')).every(cb => cb.checked);
@@ -885,11 +888,15 @@
                 return obj;
             }, {});
             
+            // ⭐️ 수정된 로직: userAuth 외래 키 오류 해결을 위해 userAuth에 userDetailAuth 값을 할당합니다.
+            // 데이터베이스 설계상 user_auth 필드가 tb_sysauth_detail의 auth_detail_code를 참조하는 것으로 가정합니다.
             if (formData.userDetailAuth) {
                 formData.userAuth = formData.userDetailAuth;
             } else if (formData.userAuth === '') {
-                 // DB NOT NULL 제약 조건 대응 로직 필요 시 여기에 추가
+                 // 만약 세부 권한을 선택하지 않았고, 주 권한도 선택하지 않았다면,
+                 // DB에서 user_auth가 NOT NULL 제약 조건이 걸려있을 경우를 대비해 여기서 처리할 수도 있습니다.
             }
+            // ----------------------------------------------------
             
             if (!isRegisterMode && formData.userPassword === '') {
                 delete formData.userPassword;
@@ -951,112 +958,11 @@
             }
         });
 
-        // ----------------------------------------------------
-        // ⭐️ 엑셀 기능 이벤트 리스너 통합 (버튼 활성화/비활성화 로직 포함) ⭐️
-        // ----------------------------------------------------
-        
-        // 4. 양식 다운로드 버튼 처리: GET 요청
-        if (downloadFormExcelBtn) {
-            downloadFormExcelBtn.addEventListener('click', () => {
-                window.location.href = '/admin/downloadSysUserForm'; 
-            });
-        }
-
-        // 5. 목록 엑셀 다운로드 버튼 처리: GET 요청 (현재 검색 조건 반영)
-        if (downloadListExcelBtn) {
-            downloadListExcelBtn.addEventListener('click', () => {
-                // 현재 검색어는 currentSearchCondition 변수에 저장되어 있음
-                const condition = encodeURIComponent(currentSearchCondition);
-                const url = `/admin/downloadSysUserList?searchUserCondition=${condition}`;
-                window.location.href = url;
-            });
-        }
-
-        // 6. 파일 선택 시 파일명 표시 및 버튼 상태 변경
-        if (excelFileInput && fileNameDisplay && submitUploadBtn) {
-            excelFileInput.addEventListener('change', function() {
-                const fileSelected = this.files.length > 0;
-                
-                // 파일명 표시
-                if (fileSelected) {
-                    fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
-                } else {
-                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-                }
-                
-                // ⭐️ 버튼 상태 변경 ⭐️
-                submitUploadBtn.disabled = !fileSelected;
-            });
-        } else if (excelFileInput && fileNameDisplay) {
-             // submitUploadBtn이 없는 경우 파일명 표시만이라도 작동하도록 6번 로직 유지
-             excelFileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
-                } else {
-                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-                }
-            });
-        }
-        
-        // 7. 일괄 업로드 폼 제출 처리: POST AJAX 요청
-        if (excelUploadForm) {
-            excelUploadForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (excelFileInput.files.length === 0) {
-                    alert("업로드할 엑셀 파일을 선택해주세요.");
-                    return;
-                }
-                
-                const file = excelFileInput.files[0];
-                const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-                if (extension !== '.xlsx' && extension !== '.xls') {
-                    alert("엑셀 파일(.xlsx 또는 .xls)만 업로드 가능합니다.");
-                    excelUploadForm.reset();
-                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-                    
-                    // ⭐️ 업로드 실패 시 버튼 비활성화 ⭐️
-                    if (submitUploadBtn) submitUploadBtn.disabled = true;
-
-                    return;
-                }
-
-                if (!confirm(`'${file.name}' 파일을 업로드하여 사용자 정보를 일괄 등록하시겠습니까?`)) {
-                    return;
-                }
-
-                const formData = new FormData(this);
-
-                $.ajax({
-                    url: '/admin/uploadSysUserBatch',
-                    type: 'POST',
-                    data: formData,
-                    processData: false, 
-                    contentType: false, 
-                    success: function(response) {
-                        alert(response.message);
-                        if (response.status === 'success') {
-                            closeBatchUploadModal(); 
-                        } else {
-                            // 업로드 실패 시에도 모달을 닫지 않고 상태만 초기화 (선택적)
-                            excelUploadForm.reset();
-                            fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-                            if (submitUploadBtn) submitUploadBtn.disabled = true;
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                         alert('일괄 업로드 처리 중 서버 통신 오류가 발생했습니다. (HTTP 상태: ' + xhr.status + ')');
-                         // 서버 통신 오류 시에도 상태 초기화
-                         excelUploadForm.reset();
-                         fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
-                         if (submitUploadBtn) submitUploadBtn.disabled = true;
-                    }
-                });
-            });
-        }
-
         // 🟢 초기 목록 색상 오류 해결을 위한 AJAX 재렌더링 로직 추가 🟢
+        // 페이지 로드 시 AJAX 호출을 한 번 실행하여 renderUserTable을 통해 색상을 정상화합니다.
+        // 현재 페이지 상태(currentPageNo, currentSearchCondition)를 사용하여 다시 로드
         if (typeof searchAndRenderUser === 'function') {
+            // 서버 템플릿의 초기 렌더링을 덮어쓰기 위해 호출
             searchAndRenderUser(currentPageNo); 
         }
     });

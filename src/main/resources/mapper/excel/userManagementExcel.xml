@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.lms.mapper.excel.userManagementExcelMapper">
+<mapper namespace="com.example.lms.mapper.excel.UserManagementExcelMapper">
 
 	<!-- 2025. 12. 01. JM. 시스템사용자 관리 - 시스템 사용자 검색 조회 -->
-	<select id="searchUserInfoMapListForExcel" parameterType="String" resultType="java.util.Map">
+	<select id="searchUserInfoMapListForExcel" parameterType="String" resultType="com.example.lms.dto.SysUserExcelDTO">
 		
 		SELECT
 		    a.user_no            AS userNo,
@@ -28,8 +28,8 @@
 			a.user_zipcode     AS userZipcode,
 		    a.user_last_login    AS userLastLogin,
 		    a.user_login_fail_cnt 	AS userLoginFailCnt,
-		    a.user_createdate         AS createDate,
-		    a.user_updatedate         AS updateDate
+		    a.user_createdate         AS userCreateDate,
+		    a.user_updatedate         AS userUpdateDate
 		FROM tb_sysuser a
 		INNER JOIN tb_sysauth_detail b ON
 		a.user_auth = b.auth_detail_code
@@ -53,7 +53,7 @@
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 엑셀로 다수 사용자 등록 시 검증 필요함 - 1. 권한코드 검증 필요 -->
-	<select id="sysAuthDetailCdValidateExcel">
+	<select id="sysAuthDetailCdValidateExcel" parameterType="String" resultType="int">
 		
 		SELECT
 			count(b.auth_code)
@@ -66,19 +66,19 @@
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 엑셀로 다수 사용자 등록 시 검증 필요함 - 2. 학년코드 검증 필요 -->
-	<select id="sysUserGradeCdValidateExcel">
+	<select id="sysUserGradeCdValidateExcel" parameterType="int" resultType="int">
 	
 		SELECT
-			grade_code
+			count(grade_code)
 		FROM
 			tb_sysuser_grade
 		WHERE
-			grade_code = #{gradeCode}
+			grade_code = #{userGrade}
 	
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 엑셀로 다수 사용자 등록 시 검증 필요함 - 2_1. 학생인지 검증 필요 -->
-	<select id="sysUserGradeCdValidateExcel2">
+	<select id="sysUserGradeCdValidateExcel2" parameterType="String" resultType="int">
 		
 		SELECT
 			count(b.auth_code)
@@ -92,10 +92,10 @@
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 엑셀로 다수 사용자 등록 시 검증 필요함 - 3. 학과,소속코드 검증 필요 -->
-	<select id="deptCdValidateExcel">
+	<select id="deptCdValidateExcel" parameterType="String" resultType="int">
 	
 		SELECT
-			dept_code AS deptCode
+			count(dept_code)
 		FROM
 			tb_dept
 		WHERE dept_code = #{deptCode}
@@ -103,18 +103,18 @@
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 엑셀로 다수 사용자 등록 시 검증 필요함 - 4. 계정상태코드 검증 필요 -->
-	<select id="sysUserStatusCdValidateExcel">
+	<select id="sysUserStatusCdValidateExcel" parameterType="String" resultType="int">
 	
 		SELECT
-			status_code as statusCode
+			count(status_code)
 		FROM 
 			tb_sysuser_status
-		WHERE status_code = #{statusCode}
+		WHERE status_code = #{userStatus}
 	
 	</select>
 	
 	<!-- 2025. 12. 01. JM. 시스템사용자관리 - 사용자 등록 -->
-	<insert id="insertUserInfoForExcel">
+	<insert id="insertSysUserExcel">
 	
 		INSERT INTO tb_sysuser (
 				  user_id,
@@ -148,8 +148,8 @@
 				  #{userAddr},
 				  #{userAddrDetail},
 				  #{userZipcode},
-				  #{userLastLogin},
-				  #{userLoginFailCnt},
+				  NULL,
+				  '0',
 				  NOW(),
 				  NOW()
 			  )

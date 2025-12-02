@@ -160,13 +160,14 @@ public class SysAuthManagementExcelController {
             String userFriendlyMessage = "일괄 업로드 처리 중 알 수 없는 오류가 발생했습니다. 파일 내용을 확인하거나 관리자에게 문의해주세요.";
 
             return ResponseEntity.ok(Map.of("status", "fail", "message", userFriendlyMessage));
-        } finally {
+        } 
+        /*
+        finally {
             // 5. 로컬에 임시 저장된 파일 삭제 (선택 사항이지만 보안 및 디스크 관리 측면에서 권장)
             if (dest != null && dest.exists()) {
                 dest.delete();
                 log.info("업로드 임시 파일 삭제 완료: {}", dest.getAbsolutePath());
-            }
-        }
+            }*/
     }
 
     /**

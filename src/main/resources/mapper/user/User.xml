@@ -159,8 +159,8 @@
 			  #{userAddr},
 			  #{userAddrDetail},
 			  #{userZipcode},
-			  #{userLastLogin},
-			  #{userLoginFailCnt},
+			  NULL,
+			  '0',
 			  NOW(),
 			  NOW()
 		  )
