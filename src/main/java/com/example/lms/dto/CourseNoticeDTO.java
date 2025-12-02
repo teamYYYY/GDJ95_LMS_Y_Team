@@ -19,5 +19,5 @@ public class CourseNoticeDTO {
 	private int courseNoticeViewCount;	// 조회수
 	private String createdate;			// 생성일시
 	private String updatedate;			// 수정일시
-	
+
 }

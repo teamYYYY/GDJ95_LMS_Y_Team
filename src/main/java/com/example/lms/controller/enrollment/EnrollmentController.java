@@ -32,12 +32,12 @@ public class EnrollmentController {
     private final StudentCourseService studentCourseService;
 	
     // ---------------------------------------------------------
-	// 필터
-	// ---------------------------------------------------------
+ 	// 필터
+ 	// ---------------------------------------------------------
     @GetMapping("/courseListForEnrollment")
     public String courseListForEnrollment(
             @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-            @RequestParam(value = "yoil", required = false) Integer yoil,  // 1~5
+            @RequestParam(value = "yoil", required = false) Integer yoil,
             @RequestParam(value = "professor", required = false) String professor,
             @RequestParam(value = "deptCode", required = false) String deptCode,
             HttpSession session,
@@ -50,121 +50,103 @@ public class EnrollmentController {
         int rowPerPage = 10;
         int startRow = (currentPage - 1) * rowPerPage;
 
+        // ===== 필터 값 정제 =====
+        Integer yoilClean = (yoil == null || yoil < 1 || yoil > 5) ? 0 : yoil;
+
+        String professorClean = (professor == null) ? "" : professor.trim();
+        if (professorClean.isBlank()) professorClean = "";
+
+        String deptCodeClean = (deptCode == null) ? "" : deptCode.trim();
+        if (deptCodeClean.isBlank()) deptCodeClean = "";
+
+        // DB 조회
         List<StudentCourseDTO> list =
                 studentCourseService.getCourseListForStudentFiltered(
-                        studentUserNo, yoil, professor, deptCode, startRow, rowPerPage
+                        studentUserNo, yoilClean, professorClean, deptCodeClean, startRow, rowPerPage
                 );
 
-        int totalRow = studentCourseService.countFilteredCourseList(yoil, professor, deptCode);
+        int totalRow = studentCourseService.countFilteredCourseList(yoilClean, professorClean, deptCodeClean);
+        int lastPage = (totalRow + rowPerPage - 1) / rowPerPage;
 
+        // 페이징 계산
+        int pageGroup = (currentPage - 1) / 5;
+        int startPage = pageGroup * 5 + 1;
+        int endPage = Math.min(startPage + 4, lastPage);
+
+        // pageList 구성
+        List<Map<String, Object>> pageList = new ArrayList<>();
+        for (int i = startPage; i <= endPage; i++) {
+            Map<String, Object> p = new HashMap<>();
+            p.put("page", i);
+            p.put("current", i == currentPage);
+
+            // 필터 값 넣기
+            p.put("yoil", yoilClean);
+            p.put("professor", professorClean);
+            p.put("deptCode", deptCodeClean);
+
+            pageList.add(p);
+        }
+
+        // ===== Model에 넣기 =====
         model.addAttribute("courseList", list);
-        model.addAttribute("yoil", yoil);
-        model.addAttribute("professor", professor);
-        model.addAttribute("deptCode", deptCode);
+        model.addAttribute("yoil", yoilClean);
+        model.addAttribute("professor", professorClean);
+        model.addAttribute("deptCode", deptCodeClean);
         model.addAttribute("deptList", studentCourseService.getDeptList());
 
-        // nav 하이라이트
-        model.addAttribute("nav_enrollment", "border-blue-600 text-blue-600");
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("lastPage", lastPage);
+        model.addAttribute("hasPrev", currentPage > 1);
+        model.addAttribute("hasNext", currentPage < lastPage);
+        model.addAttribute("prevPage", currentPage - 1);
+        model.addAttribute("nextPage", currentPage + 1);
 
         return "enrollment/courseListForEnrollment";
     }
 
-	// ---------------------------------------------------------
-	// 학생 시간표 보기
-	// ---------------------------------------------------------
-	 @GetMapping("/studentTimetable")
-	 public String studentTimetable(HttpSession session, Model model) {
+	 // ---------------------------------------------------------
+	 // 수강 신청 처리
+	 // ---------------------------------------------------------
+	 @PostMapping("/addEnrollment")
+	 public String addEnrollment(
+	         EnrollmentDTO dto,
+	         @RequestParam(defaultValue="1") int currentPage,
+	         // ✅ 1. 필터링 파라미터 추가
+	         @RequestParam(value = "yoil", required = false) Integer yoil,
+	         @RequestParam(value = "professor", required = false) String professor,
+	         @RequestParam(value = "deptCode", required = false) String deptCode,
+	         HttpSession session,
+	         RedirectAttributes redirectAttributes) {
 	
 	     SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-	     if (loginUser == null) {
-	         return "redirect:/login";
-	     }
 	
-	     int studentUserNo = loginUser.getUserNo();
+	     dto.setStudentUserNo(loginUser.getUserNo());
+	     dto.setEnrollmentStatus(0); // 기본 신청값
 	
-	     // 1) DB에서 신청 강의 시간표 목록 가져오기
-	     List<StudentTimetableDTO> timetable = studentCourseService.getStudentTimetable(studentUserNo);
+	     String msg = enrollmentService.addEnrollment(dto);
 	
-	     // 2) 월~금 / 1~8교시 2차원 배열 생성
-	     StudentTimetableDTO[][] grid = new StudentTimetableDTO[5][8];
-	
-	     for (StudentTimetableDTO t : timetable) {
-	         int yoilIndex = t.getCourseTimeYoil() - 1;     // 1=월 → index 0
-	         for (int p = t.getCourseTimeStart(); p <= t.getCourseTimeEnd(); p++) {
-	             int periodIndex = p - 1;                   // 1교시 → index 0
-	             grid[yoilIndex][periodIndex] = t;
-	         }
-	     }
+	     redirectAttributes.addFlashAttribute("message", msg);
+	     redirectAttributes.addFlashAttribute("currentPage", currentPage);
 	     
-	     // periods 설정
-	     List<Map<String, Object>> periods = new ArrayList<>();
-
-	     for (int p = 1; p <= 8; p++) {
-	         Map<String, Object> periodRow = new HashMap<>();
-	         periodRow.put("period", p);
-
-	         List<Map<String, Object>> yoils = new ArrayList<>();
-	         for (int y = 0; y < 5; y++) {
-
-	             Map<String, Object> cell = new HashMap<>();
-
-	             StudentTimetableDTO t = grid[y][p - 1];
-	             if (t != null) cell.put("timetable", t);
-
-	             yoils.add(cell);
-	         }
-	         periodRow.put("yoils", yoils);
-	         periods.add(periodRow);
+	     // ✅ 2. 리다이렉트 URL 구성 (필터 파라미터 포함)
+	     StringBuilder redirectUrl = new StringBuilder("redirect:/courseListForEnrollment?currentPage=").append(currentPage);
+	     
+	     if (yoil != null) {
+	         redirectUrl.append("&yoil=").append(yoil);
 	     }
-
-	     model.addAttribute("periods", periods);
-
-	     model.addAttribute("grid", grid);
-	     model.addAttribute("nav_timetable", "border-blue-600 text-blue-600");
+	     if (professor != null && !professor.isEmpty()) {
+	         redirectUrl.append("&professor=").append(professor);
+	     }
+	     if (deptCode != null && !deptCode.isEmpty()) {
+	         redirectUrl.append("&deptCode=").append(deptCode);
+	     }
 	
-	     return "enrollment/studentTimetable";
+	     return redirectUrl.toString();
 	 }
 
-    
-	// ---------------------------------------------------------
-	// 학생용 강의 상세보기
-	// ---------------------------------------------------------
-    @GetMapping("/studentCourseDetail")
-    public String studentCourseDetail(@RequestParam("courseNo") int courseNo, Model model) {
-		StudentCourseDetailDTO detail = studentCourseService.getStudentCourseDetail(courseNo);
-    	
-		model.addAttribute("detail", detail);
-		model.addAttribute("nav_enrollment", "border-blue-600 text-blue-600");
-		
-		return "enrollment/studentCourseDetail";
-    }
-    
-    // ---------------------------------------------------------
-    // 수강 신청 처리
-    // ---------------------------------------------------------
-    @PostMapping("/addEnrollment")
-    public String addEnrollment(
-            EnrollmentDTO dto,
-            @RequestParam(defaultValue="1") int currentPage,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
-
-        SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-
-        dto.setStudentUserNo(loginUser.getUserNo());
-        dto.setEnrollmentStatus(0); // 기본 신청값
-
-        String msg = enrollmentService.addEnrollment(dto);
-
-        redirectAttributes.addFlashAttribute("message", msg);
-        redirectAttributes.addFlashAttribute("currentPage", currentPage);
-
-        return "redirect:/courseListForEnrollment?currentPage=" + currentPage;
-    }
-
-    // ---------------------------------------------------------
     // 수강 신청 내역
-    // ---------------------------------------------------------
     @GetMapping("/enrollmentList")
     public String enrollmentList(
             Model model,
