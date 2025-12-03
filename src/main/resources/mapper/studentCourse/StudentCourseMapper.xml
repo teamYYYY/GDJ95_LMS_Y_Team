@@ -355,27 +355,29 @@
 
 
     <!-- 강의 홈 - 최근 질문 -->
-	<select id="selectRecentQuestions" 
+	<select id="selectRecentQuestions"
 	        resultType="com.example.lms.dto.StudentQuestionDTO">
 	
 	    SELECT 
 	          q.course_question_no AS questionNo
 	        , q.course_question_title AS questionTitle
-	        , q.createdate AS createdate
+	        , DATE_FORMAT(q.createdate, '%Y-%m-%d') AS createdate
 	
 	        , (
-	              SELECT COUNT(*)
-	              FROM tb_course_question_answer qa
-	              WHERE qa.course_question_no = q.course_question_no
-	          ) > 0 AS answered
+	            SELECT COUNT(*)
+	            FROM tb_course_question_answer qa
+	            WHERE qa.course_question_no = q.course_question_no
+	          ) AS answerCount
+	
+	        , q.is_private AS privatePost  
+	        , q.writer_user_no AS writerUserNo
 	
 	    FROM tb_course_question q
 	    WHERE q.course_no = #{courseNo}
-	      AND q.writer_user_no = #{studentUserNo}
 	    ORDER BY q.createdate DESC
 	    LIMIT 3
-	
 	</select>
+
 	
     <!-- 학과 리스트 -->
     <select id="selectDeptList"

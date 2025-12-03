@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class CourseQuestionService {
 
     private final CourseQuestionMapper courseQuestionMapper;
-
+    
     // 질문 목록
     public List<CourseQuestionDTO> getQuestionList(int courseNo, SysUserDTO loginUser) {
 
@@ -27,9 +27,16 @@ public class CourseQuestionService {
         boolean isProfessor = "PROFESSOR".equalsIgnoreCase(loginUser.getUserAuth());
 
         for (CourseQuestionDTO q : list) {
+
             boolean isOwner = q.getWriterUserNo() == loginUser.getUserNo();
-            boolean canView = !q.isPrivate() || isOwner || isProfessor;
+            boolean canView = !q.isPrivatePost() || isOwner || isProfessor;
             q.setCanView(canView);
+
+            if (!canView) {
+                q.setCourseQuestionTitle("비밀글입니다.");
+                q.setWriterName("비공개");
+                q.setCourseQuestionContent(null); // or "비밀글입니다."
+            }
         }
 
         return list;
@@ -46,7 +53,7 @@ public class CourseQuestionService {
 
         boolean isProfessor = "PROFESSOR".equalsIgnoreCase(loginUser.getUserAuth());
         boolean isOwner = question.getWriterUserNo() == loginUser.getUserNo();
-        boolean canView = !question.isPrivate() || isOwner || isProfessor;
+        boolean canView = !question.isPrivatePost() || isOwner || isProfessor;
         question.setCanView(canView);
 
         return question;

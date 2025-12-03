@@ -57,9 +57,7 @@ public interface StudentCourseMapper {
             @Param("studentUserNo") int studentUserNo);
 
     // 최근 질문 3개 조회
-    List<StudentQuestionDTO> selectRecentQuestions(
-            @Param("courseNo") int courseNo,
-            @Param("studentUserNo") int studentUserNo);
+    List<StudentQuestionDTO> selectRecentQuestions(@Param("courseNo") int courseNo);
 
     // 내 수강 과목 목록
     List<StudentCourseDTO> selectMyCourseList(@Param("studentUserNo") int studentUserNo);

@@ -5,33 +5,21 @@
 <mapper namespace="com.example.lms.mapper.courseQuestion.CourseQuestionMapper">
 
     <!-- 1) 문의 목록 조회 -->
-    <select id="selectQuestionList"
-            parameterType="int"
-            resultType="com.example.lms.dto.CourseQuestionDTO">
-
-        SELECT
-              q.course_question_no     AS courseQuestionNo
-            , q.course_no              AS courseNo
-            , q.writer_user_no         AS writerUserNo
-            , u.user_name              AS writerName
-            , 'STUDENT'                AS writerRole
-            , q.course_question_title  AS courseQuestionTitle
-            , q.course_question_content AS courseQuestionContent
-            , q.course_question_status AS courseQuestionStatus
-            , q.createdate             AS createdate
-            , q.is_private             AS isPrivate
-
-            , (SELECT COUNT(*)
-               FROM tb_course_question_answer a
-               WHERE a.course_question_no = q.course_question_no) > 0
-               AS answered
-
-        FROM tb_course_question q
-        LEFT JOIN tb_sysuser u ON q.writer_user_no = u.user_no
-        WHERE q.course_no = #{courseNo}
-        ORDER BY q.createdate DESC
-    </select>
-
+    <select id="selectQuestionList" resultType="com.example.lms.dto.CourseQuestionDTO">
+	    SELECT 
+	        q.course_question_no,
+	        q.course_question_title,
+	        q.createdate,
+	        (
+	            SELECT COUNT(*)
+	            FROM tb_course_question_answer a
+	            WHERE a.course_question_no = q.course_question_no
+	              AND a.writer_role = 'PROF'
+	        ) AS answerCount
+	    FROM tb_course_question q
+	    WHERE q.course_no = #{courseNo}
+	    ORDER BY q.createdate DESC
+	</select>
 
     <!-- 2) 문의 상세 조회 (질문 1건) -->
 	<select id="selectQuestionDetail"
@@ -48,7 +36,7 @@
 	        , q.course_question_content AS courseQuestionContent
 	        , q.course_question_status AS courseQuestionStatus
 	        , q.createdate             AS createdate
-	        , q.is_private             AS isPrivate
+	        , q.is_private             AS privatePost
 	
 	        , (SELECT COUNT(*)
 	           FROM tb_course_question_answer a
@@ -100,28 +88,17 @@
             #{courseQuestionTitle},
             #{courseQuestionContent},
             0,
-            #{isPrivate}
+            #{privatePost}
         )
     </insert>
 
 
     <!-- 5) 답변 INSERT -->
-    <insert id="insertAnswer"
-            parameterType="com.example.lms.dto.CourseQuestionAnswerDTO">
-        INSERT INTO tb_course_question_answer
-        (
-            course_question_no,
-            writer_user_no,
-            answer_content,
-            createdate
-        )
-        VALUES
-        (
-            #{courseQuestionNo},
-            #{writerUserNo},
-            #{answerContent},
-            NOW()
-        )
-    </insert>
+    <insert id="insertAnswer">
+	    INSERT INTO tb_course_question_answer
+	        (course_question_no, writer_user_no, writer_role, answer_content, createdate)
+	    VALUES
+	        (#{courseQuestionNo}, #{writerUserNo}, 'PROF', #{answerContent}, NOW())
+	</insert>
 
 </mapper>

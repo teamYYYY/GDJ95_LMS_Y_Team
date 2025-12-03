@@ -1,6 +1,9 @@
 package com.example.lms.controller.courseQuestion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,76 +26,94 @@ public class CourseQuestionController {
 
     private final CourseQuestionService courseQuestionService;
 
-    // 질문등록
+    // 질문 등록 처리
     @PostMapping("/courseQuestionWrite")
     public String courseQuestionWrite(HttpSession session,
                                       @ModelAttribute CourseQuestionDTO q) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
         q.setWriterUserNo(loginUser.getUserNo());
-        // 공개/비밀은 form 에서 isPrivate 라디오로 넘어옴
-
         courseQuestionService.insertQuestion(q);
 
         return "redirect:/courseQuestionList?courseNo=" + q.getCourseNo();
     }
 
-    // 질문 폼
+    // 질문 작성 폼
     @GetMapping("/courseQuestionWriteForm")
-    public String courseQuestionWriteForm(@RequestParam("courseNo") int courseNo,
-                                          Model model,
-                                          HttpSession session) {
+    public String courseQuestionWriteForm(@RequestParam int courseNo,
+                                          HttpSession session,
+                                          Model model) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
         model.addAttribute("courseNo", courseNo);
-
         return "courseQuestion/courseQuestionWriteForm";
     }
 
     // 질문 목록
     @GetMapping("/courseQuestionList")
-    public String courseQuestionList(@RequestParam("courseNo") int courseNo,
-                                     Model model,
-                                     HttpSession session) {
+    public String courseQuestionList(@RequestParam int courseNo,
+                                     HttpSession session,
+                                     Model model) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
-        List<CourseQuestionDTO> questionList =
+        List<CourseQuestionDTO> rawList =
                 courseQuestionService.getQuestionList(courseNo, loginUser);
 
-        model.addAttribute("questionList", questionList);
+        List<Map<String, Object>> viewList = new ArrayList<>();
+
+        for (CourseQuestionDTO q : rawList) {
+
+            Map<String, Object> row = new HashMap<>();
+
+            boolean isOwner = q.getWriterUserNo() == loginUser.getUserNo();
+            boolean isProfessor = loginUser.getUserGrade() == 2;
+            boolean canView = !q.isPrivatePost() || isOwner || isProfessor;
+
+            row.put("courseQuestionNo", q.getCourseQuestionNo());
+            row.put("createdate", q.getCreatedate());
+            row.put("privatePost", q.isPrivatePost());
+            row.put("canView", canView);
+
+            if (!canView) {
+                row.put("courseQuestionTitle", "비밀글입니다.");
+                row.put("writerName", "비공개");
+            } else {
+                row.put("courseQuestionTitle", q.getCourseQuestionTitle());
+                row.put("writerName", q.getWriterName());
+            }
+
+            viewList.add(row);
+        }
+
         model.addAttribute("courseNo", courseNo);
+        model.addAttribute("questionList", viewList);
 
         return "courseQuestion/courseQuestionList";
     }
 
-    // 질문 상세(질문 + 댓글)
+    // 질문 상세 (질문 + 댓글)
     @GetMapping("/courseQuestionDetail")
-    public String courseQuestionDetail(Model model,
+    public String courseQuestionDetail(@RequestParam int courseQuestionNo,
                                        HttpSession session,
-                                       @RequestParam("courseQuestionNo") int courseQuestionNo) {
+                                       Model model) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
         CourseQuestionDTO question =
                 courseQuestionService.getQuestionDetail(courseQuestionNo, loginUser);
 
-        model.addAttribute("question", question);
+        if (!question.isCanView()) {
+            return "redirect:/courseQuestionList?courseNo=" + question.getCourseNo();
+        }
 
+        model.addAttribute("question", question);
         return "courseQuestion/courseQuestionDetail";
     }
 
@@ -102,12 +123,10 @@ public class CourseQuestionController {
                             @ModelAttribute CourseQuestionAnswerDTO answerDTO) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
-        }
+        if (loginUser == null) return "redirect:/login";
 
         answerDTO.setWriterUserNo(loginUser.getUserNo());
-        answerDTO.setWriterRole("STUDENT"); // 교수 쪽 만들면 여기 분기
+        answerDTO.setWriterRole("STUDENT"); 
 
         courseQuestionService.addAnswer(answerDTO);
 

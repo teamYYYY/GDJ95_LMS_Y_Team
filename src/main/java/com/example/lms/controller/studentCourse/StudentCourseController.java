@@ -14,6 +14,7 @@ import com.example.lms.dto.StudentCourseDTO;
 import com.example.lms.dto.StudentCourseDetailDTO;
 import com.example.lms.dto.StudentCourseHomeDTO;
 import com.example.lms.dto.StudentCourseNoticeDTO;
+import com.example.lms.dto.StudentQuestionDTO;
 import com.example.lms.dto.StudentTimetableDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.studentCourse.StudentCourseService;
@@ -76,9 +77,13 @@ public class StudentCourseController {
         loadCourseInfo(courseNo, loginUser.getUserNo(), model);
         setActiveNav(model, "home");
 
+        List<StudentQuestionDTO> questionList =
+                studentCourseService.getRecentQuestionList(courseNo, loginUser.getUserNo());
+
+        model.addAttribute("questionList", questionList);
+
         return "studentCourse/studentCourseHome";
     }
-
 
     // ---------------------------------------------------------
     // 공지 전체보기

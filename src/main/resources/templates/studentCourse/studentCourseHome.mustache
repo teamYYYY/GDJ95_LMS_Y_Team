@@ -21,7 +21,7 @@
 
 <main class="max-w-6xl mx-auto px-4 py-10">
 
-    <!-- 상단: 강의 기본 정보 대형 카드 -->
+    <!-- 상단: 강의 기본 정보 -->
     <section class="mb-8">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -70,9 +70,9 @@
             </div>
         </div>
     </section>
-    
-	{{> studentCourse/_studentCourseSubNav }}
-	
+
+    {{> studentCourse/_studentCourseSubNav }}
+
     <!-- 중단: 공지 / 과제 / 출석 / 성적 2x2 카드 -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
 
@@ -84,17 +84,16 @@
                     최근 공지
                 </h2>
                 <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}"
-				   class="text-xs text-blue-600 hover:underline">
-				    전체보기
-				</a>
-
+                   class="text-xs text-blue-600 hover:underline">
+                    전체보기
+                </a>
             </div>
 
             <ul class="space-y-2 text-sm flex-1">
 
                 {{#course.noticeTitle1}}
                 <li class="flex items-start justify-between gap-2">
-                    <a href="/courseNoticeDetail?courseNo={{course.courseNo}}&noticeNo={{course.noticeNo1}}"
+                    <a href="/studentCourseNoticeDetail?courseNoticeNo={{course.noticeNo1}}&courseNo={{course.courseNo}}"
                        class="text-gray-800 hover:text-blue-600 line-clamp-1">
                         {{course.noticeTitle1}}
                     </a>
@@ -106,7 +105,7 @@
 
                 {{#course.noticeTitle2}}
                 <li class="flex items-start justify-between gap-2">
-                    <a href="/courseNoticeDetail?courseNo={{course.courseNo}}&noticeNo={{course.noticeNo2}}"
+                    <a href="/studentCourseNoticeDetail?courseNoticeNo={{course.noticeNo2}}&courseNo={{course.courseNo}}"
                        class="text-gray-800 hover:text-blue-600 line-clamp-1">
                         {{course.noticeTitle2}}
                     </a>
@@ -118,7 +117,7 @@
 
                 {{#course.noticeTitle3}}
                 <li class="flex items-start justify-between gap-2">
-                    <a href="/courseNoticeDetail?courseNo={{course.courseNo}}&noticeNo={{course.noticeNo3}}"
+                    <a href="/studentCourseNoticeDetail?courseNoticeNo={{course.noticeNo3}}&courseNo={{course.courseNo}}"
                        class="text-gray-800 hover:text-blue-600 line-clamp-1">
                         {{course.noticeTitle3}}
                     </a>
@@ -266,8 +265,8 @@
         </div>
 
     </section>
-
-    <!-- 하단: Q&A 섹션 -->
+	
+	<!-- Q&A -->
 	<section class="mb-8">
 	    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 md:p-6">
 	
@@ -279,9 +278,8 @@
 	
 	            <div class="flex items-center gap-2">
 	                <a href="/courseQuestionList?courseNo={{course.courseNo}}"
-	                   class="text-xs text-blue-600 hover:underline">
-	                    전체보기
-	                </a>
+	                   class="text-xs text-blue-600 hover:underline">전체보기</a>
+	
 	                <a href="/courseQuestionWriteForm?courseNo={{course.courseNo}}"
 	                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full 
 	                          bg-blue-600 text-white text-xs font-medium hover:bg-blue-700">
@@ -296,13 +294,30 @@
 	            {{#questionList}}
 	            <div class="flex items-center justify-between py-2 border-b border-gray-100">
 	
-	                <a href="/courseQuestionDetail?courseQuestionNo={{courseQuestionNo}}"
-	                   class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
-	                    {{courseQuestionTitle}}
-	                </a>
+	                <!-- 제목 (비밀글 여부 반영) -->
+	                {{#canView}}
+	                    <a href="/courseQuestionDetail?courseQuestionNo={{questionNo}}"
+	                       class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
 	
+	                        {{#privatePost}}
+	                            <i class="fa-solid fa-lock text-[11px] text-gray-400 mr-1"></i>
+	                        {{/privatePost}}
+	
+	                        {{questionTitle}}
+	                    </a>
+	                {{/canView}}
+	
+	                {{^canView}}
+	                    <span class="flex-1 text-gray-400 line-clamp-1">
+	                        <i class="fa-solid fa-lock text-[11px] mr-1"></i>
+	                        비밀글입니다.
+	                    </span>
+	                {{/canView}}
+	
+	                <!-- 오른쪽 정보 -->
 	                <div class="flex items-center gap-2 ml-3">
 	
+	                    <!-- 답변 여부 표시 -->
 	                    {{#answered}}
 	                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
 	                        답변 완료
@@ -315,10 +330,12 @@
 	                    </span>
 	                    {{/answered}}
 	
+	                    <!-- 작성일 -->
 	                    <span class="text-[11px] text-gray-400">
 	                        {{createdate}}
 	                    </span>
 	                </div>
+	
 	            </div>
 	            {{/questionList}}
 	
@@ -331,8 +348,7 @@
 	        </div>
 	    </div>
 	</section>
-    
-
+		
 </main>
 
 {{> studentLayout/studentFooter }}

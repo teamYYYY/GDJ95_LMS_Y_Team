@@ -23,6 +23,26 @@ public class StudentCourseService {
     @Autowired
     private StudentCourseMapper studentCourseMapper;
     
+    public List<StudentQuestionDTO> getRecentQuestionList(int courseNo, int studentUserNo) {
+
+        List<StudentQuestionDTO> list = studentCourseMapper.selectRecentQuestions(courseNo);
+
+        for (StudentQuestionDTO q : list) {
+
+            boolean isPrivate = Boolean.TRUE.equals(q.getPrivatePost());
+            boolean isWriter = q.getWriterUserNo() == studentUserNo;
+
+            boolean canView = !isPrivate || isWriter;
+            q.setCanView(canView);
+
+            if (!canView) {
+                q.setQuestionTitle("비밀글입니다.");
+            }
+        }
+
+        return list;
+    }
+
     // 공지 목록
     public List<StudentCourseNoticeDTO> getStudentCourseNoticeList(int courseNo, int startRow, int rowPerPage) {
         return studentCourseMapper.selectStudentCourseNoticeList(courseNo, startRow, rowPerPage);
@@ -109,23 +129,23 @@ public class StudentCourseService {
         }
 
         // 6) 최근 질문 3개
-        List<StudentQuestionDTO> questions = studentCourseMapper.selectRecentQuestions(courseNo, studentUserNo);
+        List<StudentQuestionDTO> questions = getRecentQuestionList(courseNo, studentUserNo);
 
         if (questions.size() > 0) {
             dto.setQuestionNo1(questions.get(0).getQuestionNo());
-            dto.setQuestionTitle1(questions.get(0).getTitle());
+            dto.setQuestionTitle1(questions.get(0).getQuestionTitle());
             dto.setQuestionDate1(questions.get(0).getCreatedate());
             dto.setQuestionAnswered1(questions.get(0).getAnswered());
         }
         if (questions.size() > 1) {
             dto.setQuestionNo2(questions.get(1).getQuestionNo());
-            dto.setQuestionTitle2(questions.get(1).getTitle());
+            dto.setQuestionTitle2(questions.get(1).getQuestionTitle());
             dto.setQuestionDate2(questions.get(1).getCreatedate());
             dto.setQuestionAnswered2(questions.get(1).getAnswered());
         }
         if (questions.size() > 2) {
             dto.setQuestionNo3(questions.get(2).getQuestionNo());
-            dto.setQuestionTitle3(questions.get(2).getTitle());
+            dto.setQuestionTitle3(questions.get(2).getQuestionTitle());
             dto.setQuestionDate3(questions.get(2).getCreatedate());
             dto.setQuestionAnswered3(questions.get(2).getAnswered());
         }
