@@ -27,12 +27,12 @@ public interface CourseManagementMapper {
 	
 	// 2025. 12. 02. JM. 학점 관리 - 학점 조회 (학생전용) 리스트 페이징 수
 	Integer courseManagementListUseStudtCnt(Integer userNo);
-	
-	// 2025. 12. 02. JM. 학점 관리 - 학점 조회 연도별 셀렉박스 리스트
-	List<CourseManagementDTO> selectCourseYearList();
-	
-	// 2025. 12. 02. JM. 학점 관리 - 학점 조회 학기별 셀렉박스 리스트
-	List<CourseManagementDTO> selectCourseSemesterList();
+
+	// 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 조건 셀렉박스 리스트 (연도-학기별 관리자 전용)
+	List<CourseManagementDTO> selectCourseYearAndSemesterListByAdmin();
+
+	// 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 조건 셀렉박스 리스트 (연도-학기별 학생 전용)
+	List<CourseManagementDTO> selectCourseYearAndSemesterListByAStudt(Integer userNo);
 	
 	// 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 (관리자전용)
 	// Map에 모든 검색 조건 (연도, 학기, 검색어, 페이징) 포함

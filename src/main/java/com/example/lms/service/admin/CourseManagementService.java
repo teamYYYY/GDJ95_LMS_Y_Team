@@ -1,5 +1,6 @@
 package com.example.lms.service.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,42 +35,43 @@ public class CourseManagementService {
 	    // 2025. 12. 03. JM. 학점 관리 - 통합 검색 및 리스트 조회 (관리자전용)
 	    /**
 	     * 관리자용 학점 목록을 조회하고, 검색 조건에 따라 카운트도 처리하는 통합 메서드
-	     * @param paramMap 검색 조건 (selectedYear, selectedSemester, searchCourseCondition) 및 페이징 조건 (startRow, limit)
+	     * @param paramMap 검색 조건 (selectedCourseYearAndSemester, searchCourseCondition) 및 페이징 조건 (startRow, limit)
 	     * @return 조회된 학점 목록 및 전체 카운트를 담은 Map
 	     */
 	    public Map<String, Object> getCourseManagementListUseAdmin(Map<String, Object> paramMap) {
 	        
 	        Map<String, Object> resultMap = new HashMap<>();
-	        List<CourseManagementDTO> courseList;
-	        Integer totalCount;
-	        Integer totalPages;
+	        // List<CourseManagementDTO> courseList = new ArrayList<CourseManagementDTO>();
+	        List<CourseManagementDTO> searchList = new ArrayList<CourseManagementDTO>();
+	        Integer totalCount = 0;
+	        Integer totalPages = 0;
 	        Integer limit = (Integer) paramMap.get("limit");
 	        
 	        // 1. 검색 조건 유무 확인
 	        boolean isSearchActive = 
 	        		
-	            (paramMap.get("selectedYear") != null && !String.valueOf(paramMap.get("selectedYear")).trim().isEmpty()) ||
-	            (paramMap.get("selectedSemester") != null && !String.valueOf(paramMap.get("selectedSemester")).trim().isEmpty()) ||
+	        	(paramMap.get("selectedCourseYearAndSemester") != null && !String.valueOf(paramMap.get("selectedCourseYearAndSemester")).trim().isEmpty()) ||
 	            (paramMap.get("searchCourseCondition") != null && !String.valueOf(paramMap.get("searchCourseCondition")).trim().isEmpty());
 	        
 	        if (isSearchActive) {
 	            
 	            // 2. 검색 조건이 있는 경우: search 쿼리 사용
 	            log.info("관리자 학점 관리: 검색 조건 적용 조회 시작. Params: {}", paramMap);
-	            courseList = searchCourseManagementListUseAdmin(paramMap);
+	            searchList = searchCourseManagementListUseAdmin(paramMap);
 	            totalCount = searchCourseManagementListUseAdminCnt(paramMap);
-	            totalPages = (int) Math.ceil((double) totalCount / limit);
 	            
 	        } else {
 	            
 	            // 3. 검색 조건이 없는 경우: 기본 list 쿼리 사용
 	            log.info("관리자 학점 관리: 기본 전체 조회 시작. Params: {}", paramMap);
-	            courseList = courseManagementListUseAdmin(paramMap);
-	            totalCount = courseManagementListUseAdminCnt(); // 파라미터 없음
-	            totalPages = (int) Math.ceil((double) totalCount / limit);
+	            searchList = courseManagementListUseAdmin(paramMap);
+	            totalCount = courseManagementListUseAdminCnt();
 	        }
 	        
-	        resultMap.put("list", courseList);
+	        totalPages = (int) Math.ceil((double) totalCount / limit);
+	        
+	        // resultMap.put("courseList", courseList);
+	        resultMap.put("searchList", searchList);
 	        resultMap.put("totalCount", totalCount);
 	        resultMap.put("totalPages", totalPages);
 	        
@@ -79,46 +81,45 @@ public class CourseManagementService {
 	    // 2025. 12. 03. JM. 학점 관리 - 통합 검색 및 리스트 조회 (학생전용)
 	    /**
 	     * 학생용 학점 목록을 조회하고, 검색 조건에 따라 카운트도 처리하는 통합 메서드
-	     * @param paramMap 검색 조건 및 페이징 조건 (userNo, selectedYear, selectedSemester, searchCourseCondition, startRow, limit)
+	     * @param paramMap 검색 조건 및 페이징 조건 (userNo, selectedCourseYearAndSemester, searchCourseCondition, startRow, limit)
 	     * @return 조회된 학점 목록 및 전체 카운트를 담은 Map
 	     */
 	    public Map<String, Object> getCourseManagementListUseStudt(Map<String, Object> paramMap) {
 	        
 	        Map<String, Object> resultMap = new HashMap<>();
-	        List<CourseManagementDTO> courseList;
-	        Integer totalCount;
-	        Integer totalPages;
+	        List<CourseManagementDTO> courseList = new ArrayList<CourseManagementDTO>();
+	        List<CourseManagementDTO> searchList = new ArrayList<CourseManagementDTO>();
+	        Integer totalCount = 0;
+	        Integer totalPages = 0;
 	        Integer limit = (Integer) paramMap.get("limit");
 
 	        // 1. 검색 조건 유무 확인 (userNo 외의 검색 조건)
 	        boolean isSearchActive = 
-	            (paramMap.get("selectedYear") != null && !String.valueOf(paramMap.get("selectedYear")).trim().isEmpty()) ||
-	            (paramMap.get("selectedSemester") != null && !String.valueOf(paramMap.get("selectedSemester")).trim().isEmpty()) ||
+	            (paramMap.get("selectedCourseYearAndSemester") != null && !String.valueOf(paramMap.get("selectedCourseYearAndSemester")).trim().isEmpty()) ||
 	            (paramMap.get("searchCourseCondition") != null && !String.valueOf(paramMap.get("searchCourseCondition")).trim().isEmpty());
-	        
-	        // userNo 파라미터가 Map에 존재함을 가정합니다.
 	        
 	        if (isSearchActive) {
 	            
 	            // 2. 검색 조건이 있는 경우: search 쿼리 사용
 	            log.info("학생 학점 관리: 검색 조건 적용 조회 시작. Params: {}", paramMap);
-	            courseList = searchCourseManagementListUseStudt(paramMap);
+	            searchList = searchCourseManagementListUseStudt(paramMap);
 	            totalCount = searchCourseManagementListUseStudtCnt(paramMap);
-	            totalPages = (int) Math.ceil((double) totalCount / limit);
 	            
 	        } else {
 	            
 	            // 3. 검색 조건이 없는 경우: 기본 list 쿼리 사용
 	            log.info("학생 학점 관리: 기본 전체 조회 시작. Params: {}", paramMap);
-	            courseList = courseManagementListUseStudt(paramMap);
+	            searchList = courseManagementListUseStudt(paramMap);
 	            
 	            // userNo를 Map에서 추출하여 Integer로 전달
 	            Integer userNo = (Integer) paramMap.get("userNo");
 	            totalCount = courseManagementListUseStudtCnt(userNo);
-	            totalPages = (int) Math.ceil((double) totalCount / limit);
 	        }
 	        
-	        resultMap.put("list", courseList);
+	        totalPages = (int) Math.ceil((double) totalCount / limit);
+	        
+	        // resultMap.put("courseList", courseList);
+	        resultMap.put("searchList", searchList);
 	        resultMap.put("totalCount", totalCount);
 	        resultMap.put("totalPages", totalPages);
 	        
@@ -178,15 +179,15 @@ public class CourseManagementService {
 	    // ----------------------------------------------------
 
 	    // 2025. 12. 02. JM. 학점 관리 - 학점 조회 연도별 셀렉박스 리스트
-	    public List<CourseManagementDTO> selectCourseYearList() {
+	    public List<CourseManagementDTO> selectCourseYearAndSemesterListByAdmin() {
 	    	
-	        return courseManagementMapper.selectCourseYearList();
+	        return courseManagementMapper.selectCourseYearAndSemesterListByAdmin();
 	    }
 	    
 	    // 2025. 12. 02. JM. 학점 관리 - 학점 조회 학기별 셀렉박스 리스트
-	    public List<CourseManagementDTO> selectCourseSemesterList() {
+	    public List<CourseManagementDTO> selectCourseYearAndSemesterListByAStudt(Integer userNo) {
 	    	
-	        return courseManagementMapper.selectCourseSemesterList();
+	        return courseManagementMapper.selectCourseYearAndSemesterListByAStudt(userNo);
 	    }
 	    
 	    // 2025. 12. 02. JM. 학점 관리 - 강의 상세정보 조회 

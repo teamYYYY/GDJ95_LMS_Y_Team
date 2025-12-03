@@ -75,8 +75,7 @@
 		    c.auth_name			 AS authName,
 			a.user_status AS userStatus,
 			a.dept_code AS deptCode,
-			a.user_grade AS userGrade,
-			b.auth_code AS dAuthCode
+			a.user_grade AS userGrade
 		FROM
 			tb_sysuser a
 		INNER JOIN tb_sysauth_detail b ON

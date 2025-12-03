@@ -33,6 +33,8 @@ public class CourseManagementDTO {
 		private int userNo; //사용자번호
 		private String userAuth; //사용자권한
 		private String userName; //사용자명
+		private String userPhone; //사용자연락처
+		private String deptName; //부서명
 		 
 		// TB_SYSAUTH
 		private String authCode; //사용자 권한코드
@@ -48,10 +50,13 @@ public class CourseManagementDTO {
 		private String gradeValue;	// 성적표기 (등급 A+, B0 등 성적 표기 )
 		private double gradeFinalScore; //최종점수
 		
-		// 쿼리 순번 시 사용
+		// 쿼리 순번 시 사용 불필요.
 		private Integer rownm;
 		
 		// 사용자명 별칭 나눔
 		private String studentUserName; // 학생이름
 		private String professorUserName; //교수이름
+
+		// 조회 카테고리 셀렉박스용
+		private String courseYearSemester; // 연도별-학기별
 }

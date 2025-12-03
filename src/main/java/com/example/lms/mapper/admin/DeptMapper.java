@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.lms.dto.DeptDTO;
-import com.example.lms.dto.SysAuthDTO;
 
 /**
  * 
