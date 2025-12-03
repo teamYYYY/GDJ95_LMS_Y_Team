@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.courseQuestion.CourseQuestionMapper">
+
+    <!-- 1) 문의 목록 조회 -->
+    <select id="selectQuestionList"
+            parameterType="int"
+            resultType="com.example.lms.dto.CourseQuestionDTO">
+
+        SELECT
+              q.course_question_no     AS courseQuestionNo
+            , q.course_no              AS courseNo
+            , q.writer_user_no         AS writerUserNo
+            , u.user_name              AS writerName
+            , 'STUDENT'                AS writerRole
+            , q.course_question_title  AS courseQuestionTitle
+            , q.course_question_content AS courseQuestionContent
+            , q.course_question_status AS courseQuestionStatus
+            , q.createdate             AS createdate
+            , q.is_private             AS isPrivate
+
+            , (SELECT COUNT(*)
+               FROM tb_course_question_answer a
+               WHERE a.course_question_no = q.course_question_no) > 0
+               AS answered
+
+        FROM tb_course_question q
+        LEFT JOIN tb_sysuser u ON q.writer_user_no = u.user_no
+        WHERE q.course_no = #{courseNo}
+        ORDER BY q.createdate DESC
+    </select>
+
+
+    <!-- 2) 문의 상세 조회 (질문 1건) -->
+	<select id="selectQuestionDetail"
+	        parameterType="int"
+	        resultType="com.example.lms.dto.CourseQuestionDTO">
+	
+	    SELECT
+	          q.course_question_no     AS courseQuestionNo
+	        , q.course_no              AS courseNo
+	        , q.writer_user_no         AS writerUserNo
+	        , u.user_name              AS writerName
+	        , 'STUDENT'                AS writerRole
+	        , q.course_question_title  AS courseQuestionTitle
+	        , q.course_question_content AS courseQuestionContent
+	        , q.course_question_status AS courseQuestionStatus
+	        , q.createdate             AS createdate
+	        , q.is_private             AS isPrivate
+	
+	        , (SELECT COUNT(*)
+	           FROM tb_course_question_answer a
+	           WHERE a.course_question_no = q.course_question_no) > 0
+	           AS answered
+	
+	    FROM tb_course_question q
+	    LEFT JOIN tb_sysuser u ON q.writer_user_no = u.user_no
+	    WHERE q.course_question_no = #{courseQuestionNo}
+	</select>
+
+    <!-- 3) 답변 목록 -->
+    <select id="selectAnswerList"
+            parameterType="int"
+            resultType="com.example.lms.dto.CourseQuestionAnswerDTO">
+
+        SELECT
+              a.answer_no         AS answerNo
+            , a.course_question_no AS courseQuestionNo
+            , a.writer_user_no    AS writerUserNo
+            , u.user_name         AS writerName
+            , 'STUDENT'           AS writerRole
+            , a.answer_content    AS answerContent
+            , a.createdate        AS createdate
+
+        FROM tb_course_question_answer a
+        LEFT JOIN tb_sysuser u ON a.writer_user_no = u.user_no
+        WHERE a.course_question_no = #{courseQuestionNo}
+        ORDER BY a.createdate ASC
+    </select>
+
+
+    <!-- 4) 문의 INSERT -->
+    <insert id="insertQuestion"
+            parameterType="com.example.lms.dto.CourseQuestionDTO">
+        INSERT INTO tb_course_question
+        (
+            course_no,
+            writer_user_no,
+            course_question_title,
+            course_question_content,
+            course_question_status,
+            is_private
+        )
+        VALUES
+        (
+            #{courseNo},
+            #{writerUserNo},
+            #{courseQuestionTitle},
+            #{courseQuestionContent},
+            0,
+            #{isPrivate}
+        )
+    </insert>
+
+
+    <!-- 5) 답변 INSERT -->
+    <insert id="insertAnswer"
+            parameterType="com.example.lms.dto.CourseQuestionAnswerDTO">
+        INSERT INTO tb_course_question_answer
+        (
+            course_question_no,
+            writer_user_no,
+            answer_content,
+            createdate
+        )
+        VALUES
+        (
+            #{courseQuestionNo},
+            #{writerUserNo},
+            #{answerContent},
+            NOW()
+        )
+    </insert>
+
+</mapper>

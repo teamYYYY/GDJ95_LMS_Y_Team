@@ -268,111 +268,70 @@
     </section>
 
     <!-- 하단: Q&A 섹션 -->
-    <section class="mb-8">
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 md:p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                    <i class="fa-regular fa-comment-dots text-blue-600"></i>
-                    최근 질문(Q&A)
-                </h2>
-
-                <div class="flex items-center gap-2">
-                    <a href="/courseQuestionList?courseNo={{course.courseNo}}"
-                       class="text-xs text-blue-600 hover:underline">
-                        전체보기
-                    </a>
-                    <a href="/courseQuestionWriteForm?courseNo={{course.courseNo}}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full 
-                              bg-blue-600 text-white text-xs font-medium hover:bg-blue-700">
-                        <i class="fa-solid fa-pen"></i>
-                        질문하기
-                    </a>
-                </div>
-            </div>
-
-            <div class="space-y-2 text-sm">
-
-                {{#course.questionTitle1}}
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <a href="/courseQuestionDetail?courseNo={{course.courseNo}}&questionNo={{course.questionNo1}}"
-                       class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
-                        {{course.questionTitle1}}
-                    </a>
-                    <div class="flex items-center gap-2 ml-3">
-                        {{#course.questionAnswered1}}
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
-                            답변 완료
-                        </span>
-                        {{/course.questionAnswered1}}
-                        {{^course.questionAnswered1}}
-                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px]">
-                            미답변
-                        </span>
-                        {{/course.questionAnswered1}}
-                        <span class="text-[11px] text-gray-400">
-                            {{course.questionDate1}}
-                        </span>
-                    </div>
-                </div>
-                {{/course.questionTitle1}}
-
-                {{#course.questionTitle2}}
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <a href="/courseQuestionDetail?courseNo={{course.courseNo}}&questionNo={{course.questionNo2}}"
-                       class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
-                        {{course.questionTitle2}}
-                    </a>
-                    <div class="flex items-center gap-2 ml-3">
-                        {{#course.questionAnswered2}}
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
-                            답변 완료
-                        </span>
-                        {{/course.questionAnswered2}}
-                        {{^course.questionAnswered2}}
-                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px]">
-                            미답변
-                        </span>
-                        {{/course.questionAnswered2}}
-                        <span class="text-[11px] text-gray-400">
-                            {{course.questionDate2}}
-                        </span>
-                    </div>
-                </div>
-                {{/course.questionTitle2}}
-
-                {{#course.questionTitle3}}
-                <div class="flex items-center justify-between py-2">
-                    <a href="/courseQuestionDetail?courseNo={{course.courseNo}}&questionNo={{course.questionNo3}}"
-                       class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
-                        {{course.questionTitle3}}
-                    </a>
-                    <div class="flex items-center gap-2 ml-3">
-                        {{#course.questionAnswered3}}
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
-                            답변 완료
-                        </span>
-                        {{/course.questionAnswered3}}
-                        {{^course.questionAnswered3}}
-                        <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px]">
-                            미답변
-                        </span>
-                        {{/course.questionAnswered3}}
-                        <span class="text-[11px] text-gray-400">
-                            {{course.questionDate3}}
-                        </span>
-                    </div>
-                </div>
-                {{/course.questionTitle3}}
-
-                {{^course.questionTitle1}}
-                <p class="text-xs text-gray-400">
-                    등록된 질문이 없습니다. 궁금한 내용을 자유롭게 질문해 보세요.
-                </p>
-                {{/course.questionTitle1}}
-
-            </div>
-        </div>
-    </section>
+	<section class="mb-8">
+	    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 md:p-6">
+	
+	        <div class="flex items-center justify-between mb-4">
+	            <h2 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+	                <i class="fa-regular fa-comment-dots text-blue-600"></i>
+	                최근 질문(Q&A)
+	            </h2>
+	
+	            <div class="flex items-center gap-2">
+	                <a href="/courseQuestionList?courseNo={{course.courseNo}}"
+	                   class="text-xs text-blue-600 hover:underline">
+	                    전체보기
+	                </a>
+	                <a href="/courseQuestionWriteForm?courseNo={{course.courseNo}}"
+	                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full 
+	                          bg-blue-600 text-white text-xs font-medium hover:bg-blue-700">
+	                    <i class="fa-solid fa-pen"></i>
+	                    질문하기
+	                </a>
+	            </div>
+	        </div>
+	
+	        <div class="space-y-2 text-sm">
+	
+	            {{#questionList}}
+	            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+	
+	                <a href="/courseQuestionDetail?courseQuestionNo={{courseQuestionNo}}"
+	                   class="flex-1 text-gray-800 hover:text-blue-600 line-clamp-1">
+	                    {{courseQuestionTitle}}
+	                </a>
+	
+	                <div class="flex items-center gap-2 ml-3">
+	
+	                    {{#answered}}
+	                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px]">
+	                        답변 완료
+	                    </span>
+	                    {{/answered}}
+	
+	                    {{^answered}}
+	                    <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px]">
+	                        미답변
+	                    </span>
+	                    {{/answered}}
+	
+	                    <span class="text-[11px] text-gray-400">
+	                        {{createdate}}
+	                    </span>
+	                </div>
+	            </div>
+	            {{/questionList}}
+	
+	            {{^questionList}}
+	            <p class="text-xs text-gray-400">
+	                등록된 질문이 없습니다. 궁금한 내용을 자유롭게 질문해 보세요.
+	            </p>
+	            {{/questionList}}
+	
+	        </div>
+	    </div>
+	</section>
+    
 
 </main>
 

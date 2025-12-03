@@ -355,17 +355,19 @@
 
 
     <!-- 강의 홈 - 최근 질문 -->
-	<select id="selectRecentQuestions" resultType="map">
+	<select id="selectRecentQuestions" 
+	        resultType="com.example.lms.dto.StudentQuestionDTO">
 	
 	    SELECT 
-	        q.course_question_no AS questionNo,
-	        q.course_question_title AS title,
-	        q.createdate AS createdate,
+	          q.course_question_no AS questionNo
+	        , q.course_question_title AS questionTitle
+	        , q.createdate AS createdate
 	
-	        (SELECT COUNT(*)
-	         FROM tb_course_question_answer qa
-	         WHERE qa.course_question_no = q.course_question_no
-	        ) > 0 AS answered
+	        , (
+	              SELECT COUNT(*)
+	              FROM tb_course_question_answer qa
+	              WHERE qa.course_question_no = q.course_question_no
+	          ) > 0 AS answered
 	
 	    FROM tb_course_question q
 	    WHERE q.course_no = #{courseNo}
@@ -374,7 +376,7 @@
 	    LIMIT 3
 	
 	</select>
-
+	
     <!-- 학과 리스트 -->
     <select id="selectDeptList"
             resultType="com.example.lms.dto.DeptDTO">

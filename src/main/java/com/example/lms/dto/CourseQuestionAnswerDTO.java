@@ -10,9 +10,13 @@ import lombok.Data;
 
 @Data
 public class CourseQuestionAnswerDTO {
-    private int answerNo;          // PK
-    private int questionNo;        // 어떤 질문에 대한 답변인지
-    private int writerUserNo;      // 작성자(교수)
-    private String answerContent;  // 답변 내용
-    private String createdate;     // 작성 시간
+	 private int answerNo;              // PK
+	 private int courseQuestionNo;      // 어떤 질문에 대한 답변인지 (FK)
+	    
+	 private int writerUserNo;          // 작성자 번호
+	 private String writerName;         // 작성자 이름 (JOIN)
+	 private String writerRole;         // STUDENT / PROFESSOR / ADMIN
+	    
+	 private String answerContent;      // 답변 내용
+	 private String createdate;         // 작성 시간
 }
