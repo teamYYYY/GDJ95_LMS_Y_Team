@@ -62,7 +62,8 @@
 		WHERE b.user_no = #{userNo}
 		AND a.course_status = '1'
 		AND c.course_time_yoil = #{courseTimeYoil}
-	
+		ORDER BY c.course_time_start ASC
+		
 	</select>
 	
 	<!-- 2025. 12. 04. JM. 메인페이지 시간표 ( 학생이 보는 강의 시간표 ) -->
@@ -90,6 +91,7 @@
 		WHERE d.student_user_no = #{userNo}
 		AND d.enrollment_status = '0'
 		AND c.course_time_yoil = #{courseTimeYoil}
+		ORDER BY c.course_time_start ASC
 	
 	</select>
 	
