@@ -73,7 +73,10 @@ public class CourseQuestionController {
         if (loginUser == null) return "redirect:/login";
 
         CourseQuestionDTO question = service.getQuestionDetail(courseQuestionNo, loginUser);
-
+        
+        boolean isOwner = loginUser.getUserNo() == question.getWriterUserNo();
+        model.addAttribute("isOwner", isOwner);
+        
         model.addAttribute("question", question);
         model.addAttribute("courseNo", question.getCourseNo());
 
