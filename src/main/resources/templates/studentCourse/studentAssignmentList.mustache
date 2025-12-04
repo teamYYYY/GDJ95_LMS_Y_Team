@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>과제 목록</title>
+
+    <!-- 공통 리소스 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-[#F5F7FA] text-gray-800">
+
+<!-- 상단 헤더 -->
+{{> studentLayout/studentHeader }}
+
+<!-- 강의 서브 네비게이션 포함 -->
+<div class="max-w-6xl mx-auto px-4 mt-4">
+    {{> studentCourse/_studentCourseSubNav }}
+</div>
+
+<main class="max-w-4xl mx-auto px-4 py-10 space-y-8">
+
+    <!-- 상단 타이틀 -->
+    <div>
+        <p class="text-xs text-blue-600 font-semibold flex items-center gap-1 mb-1">
+            <i class="fa-solid fa-list-check"></i>
+            과제 목록
+        </p>
+        <h1 class="text-2xl font-bold text-gray-900">강의 과제 안내</h1>
+    </div>
+
+    <!-- 과제 목록 -->
+    <section class="space-y-4">
+
+        {{#list}}
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition cursor-pointer"
+             onclick="location.href='/student/assignment/detail?assignmentNo={{assignmentNo}}&courseNo={{courseNo}}'">
+
+            <!-- 제목 -->
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    {{assignmentTitle}}
+                </h2>
+
+                {{#submitted}}
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full
+                             bg-emerald-50 text-emerald-700 text-xs font-medium">
+                    <i class="fa-solid fa-check-circle"></i>
+                    제출완료
+                </span>
+                {{/submitted}}
+
+                {{^submitted}}
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full
+                             bg-red-50 text-red-600 text-xs font-medium">
+                    <i class="fa-solid fa-clock"></i>
+                    미제출
+                </span>
+                {{/submitted}}
+            </div>
+
+            <!-- 마감일 -->
+            <div class="flex items-center gap-2 text-sm mb-2">
+                <span class="px-2 py-0.5 bg-gray-100 rounded-full text-gray-700 text-xs font-medium">
+                    마감일
+                </span>
+                <span class="font-medium text-gray-800">{{assignmentDeadline}}</span>
+            </div>
+
+            <!-- 상세 이동 링크 -->
+            <a href="/student/assignment/detail?assignmentNo={{assignmentNo}}&courseNo={{courseNo}}"
+               class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mt-2 text-sm font-medium">
+                과제 상세 보기
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+        {{/list}}
+
+
+        {{^list}}
+        <div class="text-center py-20 text-gray-500 text-sm">
+            등록된 과제가 없습니다.
+        </div>
+        {{/list}}
+    </section>
+</main>
+
+{{> studentLayout/studentFooter }}
+
+</body>
+</html>

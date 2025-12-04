@@ -1,20 +1,26 @@
 package com.example.lms.service.studentCourse;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.lms.dto.AttendanceSummaryDTO;
+import com.example.lms.dto.CourseQuestionDTO;
 import com.example.lms.dto.DeptDTO;
 import com.example.lms.dto.GradeSummaryDTO;
-import com.example.lms.dto.StudentAssignmentDTO;
+import com.example.lms.dto.StudentAssignmentListDTO;
+import com.example.lms.dto.StudentAttendanceDTO;
 import com.example.lms.dto.StudentCourseDTO;
 import com.example.lms.dto.StudentCourseDetailDTO;
 import com.example.lms.dto.StudentCourseHomeDTO;
 import com.example.lms.dto.StudentCourseNoticeDTO;
 import com.example.lms.dto.StudentQuestionDTO;
 import com.example.lms.dto.StudentTimetableDTO;
+import com.example.lms.mapper.courseQuestion.CourseQuestionMapper;
 import com.example.lms.mapper.studentCourse.StudentCourseMapper;
 
 @Service
@@ -23,6 +29,48 @@ public class StudentCourseService {
     @Autowired
     private StudentCourseMapper studentCourseMapper;
     
+ // 출석 요약 (출석/지각/결석 + 출석률 + 비율)
+    public AttendanceSummaryDTO getAttendanceSummary(int courseNo, int studentUserNo) {
+
+        AttendanceSummaryDTO summary =
+                studentCourseMapper.selectAttendanceSummary(courseNo, studentUserNo);
+
+        if (summary == null) {
+            // 아무 출석 기록이 없는 경우 0으로 초기화
+            summary = new AttendanceSummaryDTO();
+            summary.setAttendanceCount(0);
+            summary.setLateCount(0);
+            summary.setAbsentCount(0);
+            summary.setAttendanceRate(0.0);
+        }
+
+        int present = summary.getAttendanceCount() == null ? 0 : summary.getAttendanceCount();
+        int late    = summary.getLateCount() == null ? 0 : summary.getLateCount();
+        int absent  = summary.getAbsentCount() == null ? 0 : summary.getAbsentCount();
+
+        int total = present + late + absent;
+
+        if (total == 0) {
+            summary.setPresentRate(0.0);
+            summary.setLateRate(0.0);
+            summary.setAbsentRate(0.0);
+        } else {
+            summary.setPresentRate((present * 100.0) / total);
+            summary.setLateRate((late * 100.0) / total);
+            summary.setAbsentRate((absent * 100.0) / total);
+        }
+
+        return summary;
+    }
+
+    // 1~15주차 전체 출석 상세 목록
+    public List<StudentAttendanceDTO> getAttendanceDetailList(int courseNo, int studentUserNo) {
+        return studentCourseMapper.selectAttendanceDetailList(courseNo, studentUserNo);
+    }
+
+    // ---------------------------------------------------------
+    // 최근 질문 조회 + 비밀글 처리
+    // ---------------------------------------------------------
     public List<StudentQuestionDTO> getRecentQuestionList(int courseNo, int studentUserNo) {
 
         List<StudentQuestionDTO> list = studentCourseMapper.selectRecentQuestions(courseNo);
@@ -35,6 +83,9 @@ public class StudentCourseService {
             boolean canView = !isPrivate || isWriter;
             q.setCanView(canView);
 
+            // 🔥 답변 여부 → answerCount > 0 로 true/false 세팅
+            q.setAnswered(q.getAnswerCount() > 0);
+
             if (!canView) {
                 q.setQuestionTitle("비밀글입니다.");
             }
@@ -43,17 +94,17 @@ public class StudentCourseService {
         return list;
     }
 
-    // 공지 목록
+    // ---------------------------------------------------------
+    // 공지 목록 + Total + 상세
+    // ---------------------------------------------------------
     public List<StudentCourseNoticeDTO> getStudentCourseNoticeList(int courseNo, int startRow, int rowPerPage) {
         return studentCourseMapper.selectStudentCourseNoticeList(courseNo, startRow, rowPerPage);
     }
 
-    // total
     public int getStudentCourseNoticeTotal(int courseNo) {
         return studentCourseMapper.selectStudentCourseNoticeTotal(courseNo);
     }
 
-    // 상세
     public StudentCourseNoticeDTO getStudentCourseNoticeDetail(int courseNoticeNo) {
 
         // 조회수 증가
@@ -62,15 +113,15 @@ public class StudentCourseService {
         // 상세 조회
         return studentCourseMapper.selectStudentCourseNoticeDetail(courseNoticeNo);
     }
-    
+
     // ---------------------------------------------------------
-    // 강의 홈 화면 (studentCourseHome)
+    // 강의 홈 화면 정보 (studentCourseHome)
     // ---------------------------------------------------------
     public StudentCourseHomeDTO getStudentCourseHome(int courseNo, int studentUserNo) {
 
         StudentCourseHomeDTO dto = new StudentCourseHomeDTO();
 
-        // 1) 기본 정보
+        // 기본 정보
         StudentCourseHomeDTO baseInfo = studentCourseMapper.selectCourseBasicInfo(courseNo);
         if (baseInfo != null) {
             dto.setCourseNo(baseInfo.getCourseNo());
@@ -83,7 +134,7 @@ public class StudentCourseService {
             dto.setCourseTimeEnd(baseInfo.getCourseTimeEnd());
         }
 
-        // 2) 최근 공지 3개
+        // 최근 공지 3개
         List<StudentCourseNoticeDTO> notices = studentCourseMapper.selectRecentNotices(courseNo);
 
         if (notices.size() > 0) {
@@ -102,17 +153,16 @@ public class StudentCourseService {
             dto.setNoticeDate3(notices.get(2).getCreatedate());
         }
 
-        // 3) 과제 요약 (미제출 or 최신)
-        StudentAssignmentDTO ass = studentCourseMapper.selectAssignmentSummary(courseNo, studentUserNo);
+        // 과제 요약 1개
+        StudentAssignmentListDTO ass = studentCourseMapper.selectAssignmentSummary(courseNo, studentUserNo);
         if (ass != null) {
             dto.setAssignmentNo(ass.getAssignmentNo());
             dto.setAssignmentTitle(ass.getAssignmentTitle());
             dto.setAssignmentDeadline(ass.getAssignmentDeadline());
             dto.setAssignmentSubmitted(ass.getSubmitted());
-            dto.setAssignmentScore(ass.getAssignmentScore());
         }
 
-        // 4) 출석 요약
+        // 출석 요약
         AttendanceSummaryDTO attend = studentCourseMapper.selectAttendanceSummary(courseNo, studentUserNo);
         if (attend != null) {
             dto.setAttendanceCount(attend.getAttendanceCount());
@@ -121,14 +171,14 @@ public class StudentCourseService {
             dto.setAttendanceRate(attend.getAttendanceRate());
         }
 
-        // 5) 성적 요약
+        // 성적 요약
         GradeSummaryDTO grade = studentCourseMapper.selectGradeSummary(courseNo, studentUserNo);
         if (grade != null) {
             dto.setGradeValue(grade.getGradeValue());
             dto.setGradeScore(grade.getGradeScore());
         }
 
-        // 6) 최근 질문 3개
+        // 최근 질문 3개
         List<StudentQuestionDTO> questions = getRecentQuestionList(courseNo, studentUserNo);
 
         if (questions.size() > 0) {
@@ -149,33 +199,33 @@ public class StudentCourseService {
             dto.setQuestionDate3(questions.get(2).getCreatedate());
             dto.setQuestionAnswered3(questions.get(2).getAnswered());
         }
-
+        
         return dto;
     }
 
     // ---------------------------------------------------------
-    // 내 수강과목 목록
+    // 내 수강과목
     // ---------------------------------------------------------
     public List<StudentCourseDTO> getMyCourseList(int studentUserNo) {
         return studentCourseMapper.selectMyCourseList(studentUserNo);
     }
 
     // ---------------------------------------------------------
-    // 학생용 강의 상세보기
+    // 강의 상세
     // ---------------------------------------------------------
     public StudentCourseDetailDTO getStudentCourseDetail(int courseNo) {
         return studentCourseMapper.selectStudentCourseDetail(courseNo);
     }
 
     // ---------------------------------------------------------
-    // 학생 시간표 조회
+    // 시간표
     // ---------------------------------------------------------
     public List<StudentTimetableDTO> getStudentTimetable(int studentUserNo) {
         return studentCourseMapper.selectStudentTimetable(studentUserNo);
     }
 
     // ---------------------------------------------------------
-    // 수강신청 목록 조회 (필터 + 페이징)
+    // 수강신청 목록 (필터 + 페이징)
     // ---------------------------------------------------------
     public List<StudentCourseDTO> getCourseListForStudentFiltered(
             int studentUserNo,
@@ -189,21 +239,78 @@ public class StudentCourseService {
                 studentUserNo, yoil, professor, deptCode, startRow, rowPerPage);
     }
 
-    // ---------------------------------------------------------
-    // 수강신청 목록 TOTAL COUNT (필터 적용)
-    // ---------------------------------------------------------
-    public int countFilteredCourseList(
-            Integer yoil,
-            String professor,
-            String deptCode) {
-
+    public int countFilteredCourseList(Integer yoil, String professor, String deptCode) {
         return studentCourseMapper.countCourseListFiltered(yoil, professor, deptCode);
     }
 
     // ---------------------------------------------------------
-    // 학과 목록 조회 (수강신청 필터용)
+    // 학과 목록 (수강신청 필터)
     // ---------------------------------------------------------
     public List<DeptDTO> getDeptList() {
         return studentCourseMapper.selectDeptList();
     }
+
+    // ---------------------------------------------------------
+    // 학생 과제 목록 조회
+    // ---------------------------------------------------------
+    public List<StudentAssignmentListDTO> getAssignmentList(int courseNo, int studentUserNo) {
+        return studentCourseMapper.selectAssignmentList(courseNo, studentUserNo);
+    }
+    
+    @Autowired
+    private CourseQuestionMapper courseQuestionMapper;
+
+    // ---------------------------------------------------------
+    // 학생용 질문 전체 리스트 + 페이징 + 비밀글 처리
+    // ---------------------------------------------------------
+    public Map<String, Object> getStudentQuestionList(
+            int courseNo, int studentUserNo, int startRow, int rowPerPage) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        // 전체 개수
+        int totalRow = courseQuestionMapper.countQuestion(courseNo);
+
+        // 페이징 계산
+        int lastPage = (totalRow == 0) ? 1 : ((totalRow - 1) / rowPerPage + 1);
+
+        int pageGroup = (startRow / rowPerPage) / 5;
+        int startPage = pageGroup * 5 + 1;
+        int endPage = Math.min(startPage + 4, lastPage);
+
+        List<Map<String, Object>> pageList = new ArrayList<>();
+        for (int i = startPage; i <= endPage; i++) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("page", i);
+            map.put("current", false);
+            pageList.add(map);
+        }
+
+        // 리스트 조회
+        List<CourseQuestionDTO> list =
+                courseQuestionMapper.selectPagedQuestionList(courseNo, startRow, rowPerPage);
+
+        int displayIndex = totalRow - startRow;
+        for (CourseQuestionDTO q : list) {
+
+            q.setIndex(displayIndex--);
+
+            boolean isPrivate = q.isPrivatePost();
+            boolean isWriter = q.getWriterUserNo() == studentUserNo;
+
+            boolean canView = !isPrivate || isWriter;
+            q.setCanView(canView);
+
+            if (!canView) {
+                q.setCourseQuestionTitle("비밀글입니다.");
+            }
+        }
+
+        result.put("list", list);
+        result.put("pageList", pageList);
+        result.put("lastPage", lastPage);
+
+        return result;
+    }
+
 }

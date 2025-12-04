@@ -163,5 +163,24 @@
             updatedate = NOW()
         WHERE answer_no = #{answerNo}
     </update>
-
+    
+	<select id="selectRecentQuestionsForStudent"
+	        resultType="com.example.lms.dto.CourseQuestionDTO">
+	    SELECT 
+	          q.course_question_no AS courseQuestionNo
+	        , q.course_question_title AS courseQuestionTitle
+	        , DATE_FORMAT(q.createdate, '%Y-%m-%d') AS createdate
+	        , q.writer_user_no AS writerUserNo
+	        , q.is_private AS privatePost
+	        , (
+	            SELECT COUNT(*) 
+	            FROM tb_course_question_answer qa
+	            WHERE qa.course_question_no = q.course_question_no
+	          ) > 0 AS answered
+	    FROM tb_course_question q
+	    WHERE q.course_no = #{courseNo}
+	    ORDER BY q.createdate DESC
+	    LIMIT 3
+	</select>
+	
 </mapper>

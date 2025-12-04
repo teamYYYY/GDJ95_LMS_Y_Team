@@ -13,7 +13,7 @@ public class AssignmentSubmissionDTO {
 
     private int assignmentSubmissionNo;        // 제출번호 PK
     private int assignmentNo;                  // 과제번호 FK
-    private int writerUserNo;                  // 학생번호 FK
+    private int writerUserNo;              // 학생번호 FK
     private String assignmentSubmissionFileUrl;// 제출 파일 URL
     private String assignmentSubmissionContent;// 제출 내용
     private Integer assignmentScore;           // 채점 점수

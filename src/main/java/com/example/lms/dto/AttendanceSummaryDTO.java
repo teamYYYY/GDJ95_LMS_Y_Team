@@ -13,4 +13,8 @@ public class AttendanceSummaryDTO {
     private Integer absentCount;      // 결석 수
     private Integer lateCount;        // 지각 수
     private Double  attendanceRate;   // 출석률 (%)
+    
+    private Double presentRate;
+    private Double lateRate;
+    private Double absentRate;
 }

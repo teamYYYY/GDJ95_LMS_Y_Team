@@ -1,6 +1,9 @@
 package com.example.lms.controller.courseQuestion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,34 +37,45 @@ public class CourseQuestionController {
 
         int rowPerPage = 10;
 
-        // 전체 개수
         int totalCount = service.getTotalQuestionCount(courseNo);
         int lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+        if (lastPage == 0) lastPage = 1;
 
         if (currentPage < 1) currentPage = 1;
         if (currentPage > lastPage) currentPage = lastPage;
 
-        // 페이징 목록
         List<CourseQuestionDTO> list =
                 service.getPagedQuestionList(courseNo, loginUser, currentPage, rowPerPage);
 
-        // 페이지 블럭 (공지랑 구조 동일)
         int pagePerBlock = 5;
         int blockStartPage = ((currentPage - 1) / pagePerBlock) * pagePerBlock + 1;
         int blockEndPage = Math.min(blockStartPage + pagePerBlock - 1, lastPage);
 
+        boolean hasPrev = blockStartPage > 1;
+        boolean hasNext = blockEndPage < lastPage;
+        int prevPage = blockStartPage - 1;
+        int nextPage = blockEndPage + 1;
+
+        List<Map<String, Object>> pageList = new ArrayList<>();
+        for (int i = blockStartPage; i <= blockEndPage; i++) {
+            Map<String, Object> page = new HashMap<>();
+            page.put("page", i);
+            page.put("current", i == currentPage);
+            pageList.add(page);
+        }
+
         model.addAttribute("questionList", list);
         model.addAttribute("courseNo", courseNo);
 
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("lastPage", lastPage);
-
-        model.addAttribute("blockStart", blockStartPage);
-        model.addAttribute("blockEnd", blockEndPage);
+        model.addAttribute("pageList", pageList);
+        model.addAttribute("hasPrev", hasPrev);
+        model.addAttribute("hasNext", hasNext);
+        if (hasPrev) model.addAttribute("prevPage", prevPage);
+        if (hasNext) model.addAttribute("nextPage", nextPage);
 
         return "courseQuestion/courseQuestionList";
     }
-
+    
     // 문의 상세
     @GetMapping("/courseQuestionDetail")
     public String detail(

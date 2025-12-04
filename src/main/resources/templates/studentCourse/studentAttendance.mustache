@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>출석 현황 | 학사관리시스템</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-[#F5F7FA] text-gray-800">
+
+{{> studentLayout/studentHeader }}
+{{> studentCourse/_studentCourseSubNav }}
+
+<main class="max-w-7xl mx-auto px-4 py-10 flex flex-col lg:flex-row gap-10">
+
+    <!-- ================================================================= -->
+    <!-- 📌 왼쪽 : 주차 카드형 출석 상세 -->
+    <!-- ================================================================= -->
+    <div class="flex-1">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-check text-blue-600"></i>
+            출석 현황
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {{#detailList}}
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200
+                        hover:shadow-xl hover:-translate-y-1 transition-all duration-200">
+
+                <!-- 주차 -->
+                <div class="text-xl font-bold text-gray-900 mb-4">
+                    {{weekNo}}주차
+                </div>
+
+                <!-- 출석 상태 뱃지 -->
+                <div>
+
+                    {{#isAttend}}
+                    <span class="px-4 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700">
+                        출석
+                    </span>
+                    {{/isAttend}}
+
+                    {{#isLate}}
+                    <span class="px-4 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-700">
+                        지각
+                    </span>
+                    {{/isLate}}
+
+                    {{#isAbsent}}
+                    <span class="px-4 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700">
+                        결석
+                    </span>
+                    {{/isAbsent}}
+
+                </div>
+
+            </div>
+            {{/detailList}}
+
+            {{^detailList}}
+            <div class="col-span-full text-center text-gray-500 py-10 bg-white rounded-xl shadow">
+                출석 정보가 없습니다.
+            </div>
+            {{/detailList}}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- 📌 오른쪽 : 출석 요약 (프리미엄 디자인) -->
+    <!-- ================================================================= -->
+    <div class="w-full lg:w-80 shrink-0">
+
+        <div class="bg-white rounded-2xl shadow-xl p-7 border border-gray-100 sticky top-10">
+
+            <!-- 헤더 -->
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-simple text-blue-600 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">출석 요약</h3>
+            </div>
+
+            <!-- 출석률 큰 표시 -->
+            <div class="text-4xl font-extrabold text-blue-600 mb-1">
+			    {{attendanceRate}}%
+			</div>
+			
+			<div class="h-4 w-full bg-gray-200 rounded-full overflow-hidden flex">
+			    <div class="bg-green-500" style="width: {{presentRate}}%;"></div>
+			    <div class="bg-yellow-400" style="width: {{lateRate}}%;"></div>
+			    <div class="bg-red-500" style="width: {{absentRate}}%;"></div>
+			</div>
+			
+			<div class="flex justify-between text-sm text-gray-700 mt-2">
+			    <span>출석 {{presentRate}}%</span>
+			    <span>지각 {{lateRate}}%</span>
+			    <span>결석 {{absentRate}}%</span>
+			</div>
+			
+			<!-- 숫자 -->
+			<div class="space-y-4 mt-8">
+			
+			    <div class="flex items-center justify-between">
+			        <span class="font-medium text-gray-700">출석</span>
+			        <span class="font-semibold text-green-600">{{attendanceCount}}</span>
+			    </div>
+			
+			    <div class="flex items-center justify-between">
+			        <span class="font-medium text-gray-700">지각</span>
+			        <span class="font-semibold text-yellow-600">{{lateCount}}</span>
+			    </div>
+			
+			    <div class="flex items-center justify-between">
+			        <span class="font-medium text-gray-700">결석</span>
+			        <span class="font-semibold text-red-600">{{absentCount}}</span>
+			    </div>
+			
+			</div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

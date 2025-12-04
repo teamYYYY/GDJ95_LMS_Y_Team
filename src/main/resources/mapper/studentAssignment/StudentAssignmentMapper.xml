@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.studentAssignment.StudentAssignmentMapper">
+
+    <!-- 학생 과제 목록 -->
+    <select id="selectAssignmentList"
+            resultType="com.example.lms.dto.StudentAssignmentListDTO">
+
+        SELECT 
+              a.assignment_no AS assignmentNo
+            , a.assignment_title AS assignmentTitle
+            , a.assignment_due_date AS assignmentDeadline
+            , a.course_no AS courseNo
+
+            , CASE 
+                WHEN s.assignment_submission_no IS NULL THEN FALSE
+                ELSE TRUE
+              END AS submitted
+
+        FROM tb_assignment a
+        LEFT JOIN tb_assignment_submission s
+            ON s.assignment_no = a.assignment_no
+           AND s.writer_user_no = #{studentUserNo}
+           AND s.assignment_submission_status = 0
+
+        WHERE a.course_no = #{courseNo}
+        ORDER BY a.assignment_no DESC
+    </select>
+
+    <!-- 과제 상세 + 내 제출 정보 -->
+    <select id="selectAssignmentDetail"
+	        resultType="com.example.lms.dto.StudentAssignmentDetailDTO">
+	
+	    SELECT 
+	          a.assignment_no AS assignmentNo
+	        , a.assignment_title AS assignmentTitle
+	        , a.assignment_description AS assignmentDescription
+	        , a.assignment_due_date AS assignmentDeadline
+	        , a.course_no AS courseNo
+	
+	        , s.assignment_submission_no AS assignmentSubmissionNo
+	        , s.assignment_submission_content AS assignmentSubmissionContent
+	        , s.assignment_submission_file_url AS assignmentSubmissionFileUrl
+	        , s.assignment_score AS assignmentScore
+	        , s.createdate AS submittedDate
+	
+	        , CASE 
+	            WHEN s.assignment_submission_no IS NULL THEN FALSE
+	            ELSE TRUE
+	          END AS submitted
+	
+	        , CASE 
+	            WHEN a.assignment_due_date &lt; NOW() THEN TRUE
+	            ELSE FALSE
+	          END AS deadlinePassed
+	
+	    FROM tb_assignment a
+	    LEFT JOIN tb_assignment_submission s
+	        ON s.assignment_no = a.assignment_no
+	       AND s.writer_user_no = #{studentUserNo}
+	       AND s.assignment_submission_status = 0
+	
+	    WHERE a.assignment_no = #{assignmentNo}
+	    LIMIT 1
+	</select>
+	    
+
+    <!-- 기존 제출 조회 -->
+    <select id="selectMySubmission"
+            resultType="com.example.lms.dto.AssignmentSubmissionDTO">
+
+        SELECT 
+              assignment_submission_no AS assignmentSubmissionNo
+            , assignment_no AS assignmentNo
+            , writer_user_no AS writerUserNo
+            , assignment_submission_file_url AS assignmentSubmissionFileUrl
+            , assignment_submission_content AS assignmentSubmissionContent
+            , assignment_score AS assignmentScore
+            , assignment_submission_status AS assignmentSubmissionStatus
+            , createdate
+            , updatedate
+        FROM tb_assignment_submission
+        WHERE assignment_no = #{assignmentNo}
+          AND writer_user_no = #{studentUserNo}
+          AND assignment_submission_status = 0
+        LIMIT 1
+    </select>
+
+    <!-- INSERT -->
+    <insert id="insertSubmission"
+            useGeneratedKeys="true"
+            keyProperty="assignmentSubmissionNo"
+            parameterType="com.example.lms.dto.AssignmentSubmissionDTO">
+
+        INSERT INTO tb_assignment_submission (
+              assignment_no
+            , writer_user_no
+            , assignment_submission_file_url
+            , assignment_submission_content
+            , assignment_submission_status
+        ) VALUES (
+              #{assignmentNo}
+            , #{writerUserNo}
+            , #{assignmentSubmissionFileUrl}
+            , #{assignmentSubmissionContent}
+            , 0
+        )
+    </insert>
+
+    <!-- UPDATE -->
+    <update id="updateSubmission"
+            parameterType="com.example.lms.dto.AssignmentSubmissionDTO">
+
+        UPDATE tb_assignment_submission
+        SET 
+              assignment_submission_file_url = #{assignmentSubmissionFileUrl}
+            , assignment_submission_content = #{assignmentSubmissionContent}
+            , updatedate = NOW()
+        WHERE assignment_submission_no = #{assignmentSubmissionNo}
+          AND writer_user_no = #{writerUserNo}
+    </update>
+
+</mapper>

@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.lms.mapper.studentCourse.StudentCourseMapper">
-	
-	<!-- 학생용 공지 목록 -->
+
+    <!-- 학생용 공지 목록 -->
     <select id="selectStudentCourseNoticeList"
             resultType="com.example.lms.dto.StudentCourseNoticeDTO">
         SELECT
@@ -21,7 +21,6 @@
         LIMIT #{startRow}, #{rowPerPage}
     </select>
 
-
     <!-- 전체 개수 -->
     <select id="selectStudentCourseNoticeTotal" resultType="int">
         SELECT COUNT(*) 
@@ -29,8 +28,7 @@
         WHERE course_no = #{courseNo}
     </select>
 
-
-    <!-- 학생용 공지 상세 -->
+    <!-- 공지 상세 -->
     <select id="selectStudentCourseNoticeDetail"
             resultType="com.example.lms.dto.StudentCourseNoticeDTO">
         SELECT
@@ -46,14 +44,13 @@
         WHERE n.course_notice_no = #{courseNoticeNo}
     </select>
 
-
     <!-- 조회수 증가 -->
     <update id="updateStudentCourseNoticeViewCount">
         UPDATE tb_course_notice
         SET course_notice_view_count = course_notice_view_count + 1
         WHERE course_notice_no = #{courseNoticeNo}
     </update>
-		
+
     <!-- 내 수강 과목 목록 -->
     <select id="selectMyCourseList"
             resultType="com.example.lms.dto.StudentCourseDTO">
@@ -78,7 +75,6 @@
           AND e.enrollment_status = 0
         ORDER BY c.course_no DESC
     </select>
-
 
     <!-- 수강신청 리스트 (필터 + 페이징) -->
     <select id="selectCourseListForStudentFiltered"
@@ -120,8 +116,7 @@
         LIMIT #{startRow}, #{rowPerPage}
     </select>
 
-
-    <!-- 수강신청 필터 COUNT -->
+    <!-- 필터 COUNT -->
     <select id="countCourseListFiltered" resultType="int">
         SELECT COUNT(*)
         FROM tb_course c
@@ -141,7 +136,6 @@
             AND d.dept_code = #{deptCode}
         </if>
     </select>
-
 
     <!-- 전체 강의 목록 -->
     <select id="selectCourseListForStudent"
@@ -185,14 +179,12 @@
         LIMIT #{startRow}, #{rowPerPage}
     </select>
 
-
     <!-- 전체 강의 TOTAL COUNT -->
     <select id="countCourseList" resultType="int">
         SELECT COUNT(*) FROM tb_course
     </select>
 
-
-    <!-- 학생 시간표 조회 -->
+    <!-- 시간표 -->
     <select id="selectStudentTimetable"
             resultType="com.example.lms.dto.StudentTimetableDTO">
 
@@ -212,8 +204,7 @@
         ORDER BY t.course_time_yoil, t.course_time_start
     </select>
 
-
-    <!-- 강의 상세 정보 -->
+    <!-- 강의 상세 -->
     <select id="selectStudentCourseDetail"
             resultType="com.example.lms.dto.StudentCourseDetailDTO">
 
@@ -235,7 +226,6 @@
         WHERE c.course_no = #{courseNo}
     </select>
 
-
     <!-- 강의 시간표 리스트 -->
     <select id="selectCourseTimeList"
             resultType="com.example.lms.dto.CourseTimeDTO">
@@ -250,8 +240,7 @@
         ORDER BY course_time_yoil, course_time_start
     </select>
 
-
-    <!-- 강의 홈 - 기본 정보 -->
+    <!-- 강의 홈 기본 정보 -->
     <select id="selectCourseBasicInfo"
             resultType="com.example.lms.dto.StudentCourseHomeDTO">
 
@@ -271,7 +260,6 @@
         LIMIT 1
     </select>
 
-
     <!-- 강의 홈 - 최근 공지 -->
     <select id="selectRecentNotices"
             resultType="com.example.lms.dto.StudentCourseNoticeDTO">
@@ -286,10 +274,9 @@
         LIMIT 3
     </select>
 
-
     <!-- 강의 홈 - 과제 요약 -->
     <select id="selectAssignmentSummary"
-	        resultType="com.example.lms.dto.StudentAssignmentDTO">
+	        resultType="com.example.lms.dto.StudentAssignmentListDTO">
 	
 	    SELECT
 	          a.assignment_no AS assignmentNo
@@ -323,22 +310,21 @@
     <select id="selectAttendanceSummary"
 	        resultType="com.example.lms.dto.AttendanceSummaryDTO">
 	
-	    SELECT
-	          SUM(CASE WHEN a.attendance_status = 0 THEN 1 ELSE 0 END) AS attendanceCount
-	        , SUM(CASE WHEN a.attendance_status = 1 THEN 1 ELSE 0 END) AS absentCount
-	        , SUM(CASE WHEN a.attendance_status = 2 THEN 1 ELSE 0 END) AS lateCount
-	
-	        , (
-	            SUM(CASE WHEN a.attendance_status = 0 THEN 1 ELSE 0 END)
-	            / NULLIF(COUNT(*), 0)
-	          ) * 100 AS attendanceRate
-	
-	    FROM tb_attendance a
-	    WHERE a.course_no = #{courseNo}
-	      AND a.student_user_no = #{studentUserNo}
+	    SELECT 
+		    SUM(CASE WHEN attendance_status = 1 THEN 1 ELSE 0 END) AS presentCount,
+		    SUM(CASE WHEN attendance_status = 2 THEN 1 ELSE 0 END) AS lateCount,
+		    SUM(CASE WHEN attendance_status = 0 THEN 1 ELSE 0 END) AS absentCount,
+		    ROUND(
+		        (
+		            SUM(CASE WHEN attendance_status = 1 THEN 1 ELSE 0 END) +
+		            SUM(CASE WHEN attendance_status = 2 THEN 1 ELSE 0 END) * 0.5
+		        ) / NULLIF(COUNT(*),0) * 100 , 1
+		    ) AS attendanceRate
+		FROM tb_attendance
+		WHERE student_user_no = #{studentUserNo}
+		  AND course_no = #{courseNo};
+
 	</select>
-
-
 
     <!-- 강의 홈 - 성적 요약 -->
     <select id="selectGradeSummary"
@@ -352,7 +338,6 @@
           AND student_user_no = #{studentUserNo}
         LIMIT 1
     </select>
-
 
     <!-- 강의 홈 - 최근 질문 -->
 	<select id="selectRecentQuestions"
@@ -378,7 +363,6 @@
 	    LIMIT 3
 	</select>
 
-	
     <!-- 학과 리스트 -->
     <select id="selectDeptList"
             resultType="com.example.lms.dto.DeptDTO">
@@ -389,5 +373,60 @@
         FROM tb_dept
         ORDER BY dept_name
     </select>
+
+
+    <!-- 학생용 과제 목록 -->
+    <select id="selectAssignmentList"
+            resultType="com.example.lms.dto.StudentAssignmentListDTO">
+
+        SELECT
+              a.assignment_no AS assignmentNo
+            , a.assignment_title AS assignmentTitle
+            , a.assignment_due_date AS assignmentDeadline
+
+            , (
+                SELECT COUNT(*)
+                FROM tb_assignment_submission s
+                WHERE s.assignment_no = a.assignment_no
+                  AND s.writer_user_no = #{studentUserNo}
+                  AND s.assignment_submission_status = 0
+              ) > 0 AS submitted
+
+            , (
+                SELECT s.assignment_score
+                FROM tb_assignment_submission s
+                WHERE s.assignment_no = a.assignment_no
+                  AND s.writer_user_no = #{studentUserNo}
+                  AND s.assignment_submission_status = 0
+                LIMIT 1
+              ) AS assignmentScore
+
+        FROM tb_assignment a
+        WHERE a.course_no = #{courseNo}
+        ORDER BY a.assignment_due_date ASC
+
+    </select>
+	
+	<!-- 학생용 출석 상세 리스트(15주차 기준) -->
+	<select id="selectAttendanceDetailList"
+	        resultType="com.example.lms.dto.StudentAttendanceDTO">
+	
+	    SELECT 
+	        t.week AS weekNo,
+	        COALESCE(a.attendance_status, -1) AS attendanceStatus 
+	    FROM (
+	        SELECT 1 AS week UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL
+	        SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL
+	        SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL
+	        SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL
+	        SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
+	    ) t
+	    LEFT JOIN tb_attendance a
+	        ON a.week_no = t.week
+	       AND a.course_no = #{courseNo}
+	       AND a.student_user_no = #{studentUserNo}
+	    ORDER BY t.week;
+	
+	</select>
 
 </mapper>

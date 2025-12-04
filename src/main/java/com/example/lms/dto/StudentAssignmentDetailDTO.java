@@ -1,0 +1,30 @@
+package com.example.lms.dto;
+
+import lombok.Data;
+import java.time.LocalDateTime;
+
+@Data
+public class StudentAssignmentDetailDTO {
+
+    // 과제 기본 정보
+    private int assignmentNo;
+    private String assignmentTitle;
+    private String assignmentDescription;
+
+    // DATETIME → LocalDateTime으로 받기
+    private LocalDateTime assignmentDeadline;
+
+    private Integer courseNo;
+
+    // 제출 정보
+    private Integer assignmentSubmissionNo;
+    private String assignmentSubmissionContent;
+    private String assignmentSubmissionFileUrl;
+    private Integer assignmentScore;
+
+    private LocalDateTime submittedDate;
+
+    // 상태 값
+    private Boolean submitted;       // 제출 여부
+    private Boolean deadlinePassed;  // 마감일 지났는지 여부
+}

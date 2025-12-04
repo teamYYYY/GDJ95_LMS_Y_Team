@@ -10,6 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.lms.dto.AttendanceSummaryDTO;
+import com.example.lms.dto.CourseQuestionDTO;
+import com.example.lms.dto.StudentAttendanceDTO;
 import com.example.lms.dto.StudentCourseDTO;
 import com.example.lms.dto.StudentCourseDetailDTO;
 import com.example.lms.dto.StudentCourseHomeDTO;
@@ -81,6 +84,8 @@ public class StudentCourseController {
                 studentCourseService.getRecentQuestionList(courseNo, loginUser.getUserNo());
 
         model.addAttribute("questionList", questionList);
+        System.out.println("🔥 디버그: courseNo=" + courseNo);
+        System.out.println("🔥 디버그: loginUser=" + loginUser.getUserNo());
 
         return "studentCourse/studentCourseHome";
     }
@@ -167,7 +172,6 @@ public class StudentCourseController {
 
         return "studentCourse/studentCourseNoticeDetail";
     }
-
 
     // ---------------------------------------------------------
     // 내 수강과목 목록
@@ -260,4 +264,70 @@ public class StudentCourseController {
 
         return "enrollment/studentTimetable";
     }
+    // ---------------------------------------------------------
+    // ★★★ 학생용 문의사항 전체 목록 ★★★
+    // (기존 /courseQuestionList 와 충돌 prevented!)
+    // ---------------------------------------------------------
+    @GetMapping("/studentCourseQuestionList")
+    public String studentCourseQuestionList(
+            @RequestParam("courseNo") int courseNo,
+            @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
+            HttpSession session,
+            Model model) {
+
+        // 로그인 체크
+        SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+        if (loginUser == null) return "redirect:/login";
+        int studentUserNo = loginUser.getUserNo();
+
+        // 강의 정보 + 네비 표시
+        loadCourseInfo(courseNo, studentUserNo, model);
+        setActiveNav(model, "qna");
+
+        // 페이징 설정
+        int rowPerPage = 10;
+        int startRow = (currentPage - 1) * rowPerPage;
+
+        // 서비스 호출
+        Map<String, Object> result =
+                studentCourseService.getStudentQuestionList(courseNo, studentUserNo, startRow, rowPerPage);
+
+        // 리스트 + 페이징 데이터 전달
+        model.addAttribute("questionList", result.get("list"));
+        model.addAttribute("pageList", result.get("pageList"));
+
+        int lastPage = (int) result.get("lastPage");
+
+        model.addAttribute("hasPrev", currentPage > 1);
+        model.addAttribute("hasNext", currentPage < lastPage);
+        model.addAttribute("prevPage", currentPage - 1);
+        model.addAttribute("nextPage", currentPage + 1);
+        model.addAttribute("currentPage", currentPage);
+
+        return "studentCourse/studentCourseQuestionList";
+    }
+    
+    @GetMapping("/student/attendance")
+    public String attendancePage(
+            @RequestParam("courseNo") int courseNo,
+            HttpSession session,
+            Model model) {
+
+        SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+        int studentUserNo = loginUser.getUserNo();
+
+        // 출석 상세 + 요약 둘 다
+        List<StudentAttendanceDTO> detailList =
+                studentCourseService.getAttendanceDetailList(courseNo, studentUserNo);
+
+        AttendanceSummaryDTO summary =
+                studentCourseService.getAttendanceSummary(courseNo, studentUserNo);
+
+        model.addAttribute("detailList", detailList);
+        model.addAttribute("summary", summary);
+        model.addAttribute("courseNo", courseNo);
+
+        return "studentCourse/studentAttendance";
+    }
+
 }
