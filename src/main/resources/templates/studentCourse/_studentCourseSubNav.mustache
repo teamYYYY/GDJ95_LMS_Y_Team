@@ -2,55 +2,55 @@
 <nav class="bg-white shadow-sm border border-gray-200 rounded-xl mb-10 mt-6">
     <ul class="flex flex-wrap px-2">
 
+        <!-- 강의 홈 -->
         <li>
-            <a href="/studentCourseHome?courseNo={{course.courseNo}}"
+            <a href="/studentCourseHome?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_home}}
                       hover:bg-blue-50 hover:text-blue-600">
                 강의 홈
             </a>
         </li>
 
+        <!-- 공지사항 -->
         <li>
-            <a href="/studentCourseNoticeList?courseNo={{course.courseNo}}"
+            <a href="/studentCourseNoticeList?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_notice}}
                       hover:bg-blue-50 hover:text-blue-600">
                 공지
             </a>
         </li>
 
+        <!-- 과제 -->
         <li>
-            <a href="/assignmentList?courseNo={{course.courseNo}}"
+            <a href="/assignmentList?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_assignment}}
                       hover:bg-blue-50 hover:text-blue-600">
                 과제
             </a>
         </li>
 
+        <!-- 출석 -->
         <li>
-            <a href="/studentAttendance?courseNo={{course.courseNo}}"
+            <a href="/studentAttendance?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_attendance}}
                       hover:bg-blue-50 hover:text-blue-600">
                 출석
             </a>
         </li>
 
+        <!-- 성적 -->
         <li>
-            <a href="/studentGrade?courseNo={{course.courseNo}}"
+            <a href="/studentGrade?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_grade}}
                       hover:bg-blue-50 hover:text-blue-600">
                 성적
             </a>
         </li>
 
+        <!-- 강의 Q&A -->
         <li>
-            <a href="/courseQuestionList?courseNo={{course.courseNo}}"
+            <a href="/courseQuestionList?courseNo={{courseNo}}"
                class="block px-6 py-3 text-sm font-medium rounded-lg
-                      {{nav_qna}}
                       hover:bg-blue-50 hover:text-blue-600">
                 질문(Q&A)
             </a>
