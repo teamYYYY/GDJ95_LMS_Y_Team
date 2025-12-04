@@ -29,6 +29,9 @@ public class UniversityNoticeDTO {
     
     // 뷰단 순위 스타일땜에 추가
     private String priorityColorClass; // 예: "text-red-600"
+    private Boolean is_10;
+    private Boolean is_20;
+    private Boolean is_30;
     
     // 작성자 이름 DTO에 담아야해서 추가함
     private String universityWriterUserName; // 작성자 이름

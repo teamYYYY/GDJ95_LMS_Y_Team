@@ -46,13 +46,6 @@ public class LoginController {
         return "/login/login"; 
     }
 	
-    // 메인 페이지 GET
-	@GetMapping("/main")
-    public String main() {
-
-        return "/main/main"; 
-    }
-	
 	// 로그인 폼
 	@PostMapping("/loginForm")
 	public String loginForm( @RequestParam String userId, @RequestParam String userPassword, HttpSession session, RedirectAttributes redirectAttributes) {

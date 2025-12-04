@@ -382,15 +382,17 @@
 	
 	<script>
     // ----------------------------------------------------------------------
-    // 0. 전역 상태 변수 (유지)
+    // 0. 전역 상태 변수 (추가)
     // ----------------------------------------------------------------------
     /**
      * 상세 모달이 목록 모달에서 열렸는지 여부를 저장하는 플래그입니다.
+     * true: 목록 모달 -> 상세 모달 (닫을 때 목록 모달로 복귀)
+     * false: 메인 페이지 -> 상세 모달 (닫을 때 메인 페이지로 복귀)
      */
     let isOpenedFromListModal = false;
 
     // ----------------------------------------------------------------------
-    // 1. 공통 모달 제어 함수 (유지)
+    // 1. 공통 모달 제어 함수 (수정됨)
     // ----------------------------------------------------------------------
 
     /**
@@ -414,7 +416,7 @@
     }
 
     /**
-     * 공지사항 상세 모달을 닫습니다. (유지)
+     * 공지사항 상세 모달을 닫습니다. (로직 간소화 및 플래그 사용)
      */
     function closeNoticeDetailModal() {
         document.getElementById('noticeDetailModal').classList.add('hidden');
@@ -433,7 +435,7 @@
     }
 
     // ----------------------------------------------------------------------
-    // 2. 공지사항 데이터 로드 및 렌더링 함수 (페이징 로직 전면 수정)
+    // 2. 공지사항 데이터 로드 및 렌더링 함수 (유지)
     // ----------------------------------------------------------------------
 
     /**
@@ -455,24 +457,14 @@
      */
     function loadNoticeList(pageNo, condition = "") {
         const tableBody = document.getElementById('noticeListTableBody');
-        // condition이 빈 문자열이 아니면 검색 API 호출
-        const apiUrl = condition ? '/searchMainUniversityNotice' : '/getMainUniversityNoticeList'; 
+        const apiUrl = condition ? '/searchMainUniversityNotice' : '/getMainUniversityNoticeList';
         
         tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-blue-500"><i class="fa-solid fa-spinner fa-spin"></i> 데이터를 불러오는 중...</td></tr>`;
 
         const params = new URLSearchParams();
         params.append('currentPage', pageNo);
         if (condition) {
-            // 서버 변수명 (searchUniversityNoticeCondition)을 사용하여 파라미터 전달
-            // 이쪽에서 페이지 파라미터도 맞춰줘야함
-            params.append('currentPage', pageNo);
-            params.append('searchUniversityNoticeCondition', condition); 
-        } else {
-        	
-        	// 일반 목록 API: page 사용 (컨트롤러 파라미터 이름이 page임!)
-            params.append('page', pageNo);
-            // limit은 기본 10이지만 명시적으로 넣어도 됨
-            params.append('limit', 10);
+            params.append('searchUniversityNoticeCondition', condition);
         }
 
         fetch(`${apiUrl}?${params.toString()}`)
@@ -507,12 +499,7 @@
                     
                     tableBody.innerHTML = html;
                     document.getElementById('listTotalCount').textContent = data.totalCount;
-
-                    // 서버 응답에서 검색 조건을 가져옵니다. (없으면 초기 condition 사용)
-                    const finalCondition = data.searchUniversityNoticeCondition || condition;
-                    const finalTotalPages = data.totalPages || 1;
-                    
-                    renderPagination(data.currentPage, finalTotalPages, finalCondition); 
+                    renderPagination(data.currentPage, data.totalPages, condition);
 
                 } else {
                     tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">공지사항 목록을 불러오는 데 실패했습니다.</td></tr>`;
@@ -528,14 +515,12 @@
      * 검색 버튼 클릭 또는 엔터 키 입력 시 호출됩니다. (유지)
      */
     function searchNotice(pageNo) {
-        // 검색창의 값에서 공백을 제거하고, 값이 없으면 빈 문자열 ""을 사용합니다.
-        const condition = document.getElementById('searchInput').value.trim() || "";
+        const condition = document.getElementById('searchInput').value.trim();
         loadNoticeList(pageNo, condition);
     }
     
     /**
-     * 페이징 버튼을 렌더링하고 동적 이벤트 리스너를 연결합니다. 
-     * ⭐️ 최종 수정: 컨테이너 자체에 data-condition을 설정하여 DOM 구조 안정화 및 이벤트 오류 방지
+     * 페이징 버튼을 렌더링합니다. (유지)
      */
     function renderPagination(currentPage, totalPages, condition) {
         const container = document.getElementById('paginationContainer');
@@ -544,65 +529,40 @@
         const currentGroup = Math.ceil(currentPage / groupSize);
         const startPage = (currentGroup - 1) * groupSize + 1;
         const endPage = Math.min(startPage + groupSize - 1, totalPages);
-        
-        // totalPages가 1 이하인 경우, 페이징을 숨깁니다.
-        if (totalPages <= 1) {
-            container.innerHTML = '';
-            container.removeAttribute('data-condition');
-            return;
-        }
-        
-        // ⭐️ 핵심 수정 1: 컨테이너 DOM 자체에 data-condition 속성을 설정합니다.
-        // 큰따옴표가 포함될 경우를 대비해 HTML 엔티티로 이스케이프합니다.
-        container.setAttribute('data-condition', condition.replace(/"/g, '&quot;'));
-        
-        // 이전 페이지 그룹 버튼
+
+        const pageClick = (page) => `loadNoticeList(${page}, '${condition.replace(/'/g, "\\'")}')`;
+
         if (startPage > 1) {
-            html += `<button class="prev-page px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600" data-page="${startPage - 1}"><i class="fa-solid fa-chevron-left"></i></button>`;
-        }
-        
-        // 페이지 번호 버튼
-        for (let i = startPage; i <= endPage; i++) {
-            const activeClass = i === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100';
-            // onclick 대신 class와 data-page 속성만 사용하여 안정적인 이벤트 처리를 준비합니다.
-            html += `<button class="page-btn px-3 py-1.5 text-sm rounded border border-gray-300 ${activeClass}" data-page="${i}">${i}</button>`;
+            html += `<button onclick="${pageClick(startPage - 1)}" class="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600"><i class="fa-solid fa-chevron-left"></i></button>`;
         }
 
-        // 다음 페이지 그룹 버튼
-        if (endPage < totalPages) {
-            html += `<button class="next-page px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600" data-page="${endPage + 1}"><i class="fa-solid fa-chevron-right"></i></button>`;
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100';
+            html += `<button onclick="${pageClick(i)}" class="px-3 py-1.5 text-sm rounded border border-gray-300 ${activeClass}">${i}</button>`;
         }
-        
-        // ⭐️ 핵심 수정 2: 버튼들만 container.innerHTML에 삽입합니다. (추가 div 제거)
+
+        if (endPage < totalPages) {
+            html += `<button onclick="${pageClick(endPage + 1)}" class="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600"><i class="fa-solid fa-chevron-right"></i></button>`;
+        }
+
         container.innerHTML = html;
-        
-        // ⭐️ 핵심 수정 3: 이벤트 리스너 동적 연결 (새로 삽입된 버튼에 이벤트를 다시 연결)
-        container.querySelectorAll('.page-btn, .prev-page, .next-page').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const page = parseInt(this.getAttribute('data-page'));
-                
-                // data-condition을 컨테이너(paginationContainer)에서 직접 가져옵니다.
-                const condAttribute = container.getAttribute('data-condition');
-                // HTML 엔티티를 다시 문자열로 디코딩하여 사용
-                const cond = condAttribute ? condAttribute.replace(/&quot;/g, '"') : '';
-                
-                loadNoticeList(page, cond);
-            });
-        });
     }
 
     /**
-     * 공지사항 상세 정보를 AJAX로 불러와 상세 모달을 띄웁니다. (유지)
+     * 공지사항 상세 정보를 AJAX로 불러와 상세 모달을 띄웁니다. (플래그 설정 추가)
      */
     function openNoticeDetailModal(noticeNo) {
         const listModal = document.getElementById('noticeListModal');
         
+        // ⭐️ 플래그 설정: 목록 모달이 현재 보이는 상태였다면 true로 설정
         isOpenedFromListModal = !listModal.classList.contains('hidden');
         
+        // 목록 모달이 열려있는 상태라면 숨깁니다.
         if (isOpenedFromListModal) {
              listModal.classList.add('hidden');
         }
         
+        // 배경 스크롤 방지 및 backdrop 표시 
         document.body.style.overflow = 'hidden'; 
         document.getElementById('noticeModalBackdrop').classList.remove('hidden'); 
 
