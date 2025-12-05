@@ -3,37 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강의 관리</title>
+    <title>출석 관리 | 주차 선택</title>
 
-    <link rel="stylesheet" as="style" crossorigin 
-        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
-     <style>
-        body {
-            font-family: Pretendard, sans-serif;
-        }
-        .section-box {
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: Pretendard, sans-serif; background:#F5F7FA; }
+
+        .week-card {
             background: white;
             border: 1px solid #E5E7EB;
             border-radius: 14px;
-            padding: 24px;
+            height: 6rem; /* 8rem -> 6rem으로 크기 감소 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px; /* 18px -> 16px로 크기 감소 */
+            font-weight: 600;
+            color: #374151;
+            transition: 0.25s;
         }
-        .btn-primary {
-            background-color: #1E3A8A;
+        .week-card:hover {
+            background: #EFF6FF;
+            border-color: #3B82F6;
+            color: #1D4ED8;
+            transform: translateY(-3px);
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
         }
-        .btn-primary:hover {
-            background-color: #1E40AF;
-        }
-        .menu-card {
-            border: 1px solid #E5E7EB;
-            background: #FAFAFA;
-        }
-        .menu-card:hover {
-            background: #F0F4FF;
-            border-color: #CBD5E1;
+        .week-card i {
+            font-size: 24px; /* 26px -> 24px로 크기 감소 */
+            margin-bottom: 4px; /* 6px -> 4px로 간격 감소 */
         }
     </style>
 </head>
@@ -44,76 +48,31 @@
 
     <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-6">
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-check text-blue-600"></i>
+                출석 관리 – 주차 선택
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">원하는 주차를 선택하여 출석을 관리하세요.</p>
+        </div>
 
-            <!-- 제목 -->
-            <div class="flex justify-between items-center pb-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800">강의 관리</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
 
-                <a href="/addCourse"
-                   class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium 
-                          hover:bg-blue-700 transition shadow-md">
-                    <i class="fa-solid fa-plus mr-2"></i> 강의 등록
+            {{#weekList}}
+                <a href="/courseAttendList?courseNo={{courseNo}}&weekNo={{.}}" class="week-card">
+                    <i class="fa-solid fa-calendar-week"></i>
+                    {{.}}주차
                 </a>
-            </div>
+            {{/weekList}}
 
-
-            <!-- 테이블 -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
-
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">년도</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학기</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">강의명</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">정원</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="bg-white divide-y divide-gray-200">
-
-                        {{#list}}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{courseNo}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{courseYear}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{courseSemester}}</td>
-
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <a href="/courseDashboard?courseNo={{courseNo}}"
-                                   class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                    {{courseName}}
-                                </a>
-                            </td>
-
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{courseCapacity}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{{courseStatus}}</td>
-
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-3">
-                                <a href="/removeCourse?courseNo={{courseNo}}"
-                                   onclick="return confirm('정말 삭제할까요?');"
-                                   class="text-red-600 hover:text-red-900 font-medium">삭제
-                                </a>
-                            </td>
-                        </tr>
-                        {{/list}}
-
-                        {{^list}}
-                        <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                                등록된 강의가 없습니다.
-                            </td>
-                        </tr>
-                        {{/list}}
-                    </tbody>
-
-                </table>
-            </div>
+            {{^weekList}}
+                <div class="col-span-4 text-center py-10 bg-white border rounded-lg text-gray-500">
+                    등록된 주차가 없습니다.
+                </div>
+            {{/weekList}}
 
         </div>
+
     </main>
 
     {{> profLayout/profFooter }}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.prof.ProfCourseGradeMapper">
+
+    <!-- 학생 성적 입력폼 조회 -->
+    <select id="selectGradeData" resultType="com.example.lms.dto.ProfCourseGradeDTO">
+        SELECT 
+            e.course_no AS courseNo,
+            e.student_user_no AS studentUserNo,
+
+            /* 출석률 */
+            COALESCE((
+                SELECT ROUND(
+                    (15 - SUM(
+                        CASE 
+                            WHEN a.attendance_status = 1 THEN 1
+                            WHEN a.attendance_status = 2 THEN 0.5
+                            ELSE 0
+                        END
+                    )) / 15 * 100 ,1)
+                FROM tb_attendance a
+                WHERE a.course_no = e.course_no
+                  AND a.student_user_no = e.student_user_no
+            ), 100.0) AS attendanceRate,
+
+            /* 기존 시험 점수 */
+            (SELECT grade_score
+             FROM tb_grade 
+             WHERE course_no = e.course_no AND student_user_no = e.student_user_no) AS examScore,
+
+            /* 기존 저장된 과제 점수 */
+            (SELECT grade_assignment_score
+             FROM tb_grade 
+             WHERE course_no = e.course_no AND student_user_no = e.student_user_no) AS assignmentScore,
+
+            /* 기존 최종 점수 */
+            (SELECT grade_final_score
+             FROM tb_grade 
+             WHERE course_no = e.course_no AND student_user_no = e.student_user_no) AS finalScore,
+
+            /* 기존 등급 */
+            (SELECT grade_value
+             FROM tb_grade 
+             WHERE course_no = e.course_no AND student_user_no = e.student_user_no) AS gradeValue,
+
+            100 AS examMaxScore
+
+        FROM tb_enrollment e
+        WHERE e.course_no = #{courseNo}
+          AND e.student_user_no = #{studentUserNo}
+    </select>
+
+    <!-- 성적 존재 확인 -->
+    <select id="existsGrade" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_grade
+        WHERE student_user_no = #{studentUserNo}
+          AND course_no = #{courseNo}
+    </select>
+
+    <!-- INSERT -->
+    <insert id="insertGrade">
+        INSERT INTO tb_grade(
+            student_user_no, course_no,
+            grade_score, grade_assignment_score,
+            grade_value, grade_final_score,
+            createdate
+        )
+        VALUES(
+            #{studentUserNo}, #{courseNo},
+            #{examScore}, #{assignmentScore},
+            #{gradeValue}, #{finalScore},
+            NOW()
+        );
+    </insert>
+
+    <!-- UPDATE -->
+    <update id="updateGrade">
+        UPDATE tb_grade
+        SET grade_score = #{examScore},
+            grade_assignment_score = #{assignmentScore},
+            grade_value = #{gradeValue},
+            grade_final_score = #{finalScore}
+        WHERE student_user_no = #{studentUserNo}
+          AND course_no = #{courseNo}
+    </update>
+
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.prof.ProfCourseMapper">
+	
+	<!-- 교수별 강의 리스트 -->
+	<select id="selectCourseListByProf" resultType="com.example.lms.dto.ProfCourseDTO">
+		SELECT
+	        c.course_no        AS courseNo,
+	        c.course_name      AS courseName,
+	        c.course_year      AS courseYear,
+	        c.course_semester  AS courseSemester,
+	        c.course_capacity  AS courseCapacity,
+	        c.course_status    AS courseStatus,
+	        t.course_time_yoil  AS courseTimeYoil,
+	        t.course_time_start AS courseTimeStart,
+	        t.course_time_end   AS courseTimeEnd
+	
+	    FROM tb_course c
+	    LEFT JOIN tb_course_time t
+	        ON c.course_no = t.course_no
+	    WHERE c.professor_user_no = #{professorUserNo}
+	    ORDER BY c.course_year DESC,
+	             c.course_semester DESC,
+	             t.course_time_yoil,
+	             t.course_time_start
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="insertCourse" parameterType="com.example.lms.dto.ProfCourseDTO"
+	        useGeneratedKeys="true" keyColumn="course_no" keyProperty="courseNo">
+		INSERT INTO tb_course(
+			professor_user_no,
+	        course_year,
+	        course_semester,
+	        course_name,
+	        course_description,
+	        course_capacity,
+	        course_score,
+	        course_classroom,
+	        course_status,
+	        dept_code,
+	        createdate, updatedate
+		) VALUES (
+			#{professorUserNo},
+	        #{courseYear},
+	        #{courseSemester},
+	        #{courseName},
+	        #{courseDescription},
+	        #{courseCapacity},
+	        #{courseScore},
+	        #{courseClassroom},
+	        #{courseStatus},
+	        #{deptCode},
+	        NOW(), NOW()
+		)
+	</insert>
+	
+	<!-- 강의 시간 등록 -->
+	<insert id="insertCourseTime" parameterType="com.example.lms.dto.ProfCourseTimeDTO">
+		INSERT INTO tb_course_time (
+	        professor_user_no,
+	        course_no,
+	        course_time_yoil,
+	        course_time_start,
+	        course_time_end
+	    ) VALUES (
+	        #{professorUserNo},
+	        #{courseNo},
+	        #{courseTimeYoil},
+	        #{courseTimeStart},
+	        #{courseTimeEnd}
+	    )
+	</insert>
+	
+	<!-- 시간 중복 체크 -->
+	<select id="checkDuplicateTime" resultType="int">
+		<![CDATA[
+		    SELECT COUNT(*)
+		    FROM tb_course_time t
+		    JOIN tb_course c ON t.course_no = c.course_no
+		    WHERE t.course_time_yoil = #{yoil}
+		      AND t.course_time_start <= #{end}
+		      AND t.course_time_end   >= #{start}
+		      AND (
+		            c.professor_user_no = #{professorUserNo}
+		            OR
+		            (c.course_classroom = #{classroom}
+		             AND c.professor_user_no != #{professorUserNo})
+		      )
+		      AND c.course_no != #{courseNo}  -- ★ 자기 자신은 제외
+		]]>
+	</select>
+
+	
+	<!-- 대시보드 (강의 + 학과 + 강의 시간) -->
+    <select id="selectCourseDetail" resultType="com.example.lms.dto.ProfCourseDTO">
+        SELECT 
+            c.course_no          AS courseNo,
+            c.professor_user_no  AS professorUserNo,
+            c.course_year        AS courseYear,
+            c.course_semester    AS courseSemester,
+            c.course_name        AS courseName,
+            c.course_description AS courseDescription,
+            c.course_capacity    AS courseCapacity,
+            c.course_score       AS courseScore,
+            c.course_classroom   AS courseClassroom,
+            c.course_status      AS courseStatus,
+            c.dept_code          AS deptCode,
+            d.dept_name          AS deptName,
+            t.course_time_yoil   AS courseTimeYoil,
+            t.course_time_start  AS courseTimeStart,
+            t.course_time_end    AS courseTimeEnd,
+            c.createdate         AS createdate,
+            c.updatedate         AS updatedate
+        FROM tb_course c
+        JOIN tb_dept d 
+          ON c.dept_code = d.dept_code
+        LEFT JOIN tb_course_time t
+          ON c.course_no = t.course_no
+        WHERE c.course_no = #{courseNo}
+        ORDER BY t.course_time_start ASC
+    </select>
+	
+	<!-- 수정 -->
+    <update id="updateCourse" parameterType="com.example.lms.dto.ProfCourseDTO">
+        UPDATE tb_course
+        SET
+            course_year        = #{courseYear},
+            course_semester    = #{courseSemester},
+            course_name        = #{courseName},
+            course_description = #{courseDescription},
+            course_capacity    = #{courseCapacity},
+            course_score       = #{courseScore},
+            course_classroom   = #{courseClassroom},
+            course_status      = #{courseStatus},
+            dept_code          = #{deptCode},
+            updatedate         = NOW()
+        WHERE course_no = #{courseNo}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deleteCourse">
+        DELETE FROM tb_course
+        WHERE course_no = #{courseNo}
+    </delete>
+    
+    <!-- 강의 시간 삭제 -->
+    <delete id="deleteCourseTime">
+	    DELETE FROM tb_course_time
+	    WHERE course_no = #{courseNo}
+	</delete>
+	
+	<!-- 학과 목록 -->
+	<select id="selectDeptList" resultType="com.example.lms.dto.DeptDTO">
+	    SELECT 
+	        dept_code AS deptCode,
+	        dept_name AS deptName
+	    FROM tb_dept
+	    ORDER BY dept_code ASC
+	</select>
+</mapper>
