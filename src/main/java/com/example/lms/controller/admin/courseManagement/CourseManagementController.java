@@ -109,7 +109,7 @@ public class CourseManagementController {
 
             log.warn("접근 불가 권한 코드: {}", authCd);
             model.addAttribute("errorMessage", "해당 메뉴에 접근할 권한이 없습니다.");
-            return "common/error";
+            return "/common/error";
         }
     }
 
@@ -180,7 +180,7 @@ public class CourseManagementController {
 
             log.warn("접근 불가 권한 코드: {}", authCd);
             model.addAttribute("errorMessage", "해당 메뉴에 접근할 권한이 없습니다.");
-            return "common/error";
+            return "/common/error";
         }
     }
     

@@ -40,7 +40,7 @@ public class LoginController {
 		// 이미 로그인된 경우 메인으로 리다이렉트
         if (session.getAttribute("loginUser") != null) {
         
-        	return "redirect:/main/main";
+        	return "redirect:/main";
         }
         
         return "/login/login"; 
