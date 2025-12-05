@@ -400,35 +400,6 @@
 
 <!-- 스크립트 부분 -->
 
-
-<script>
-	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
-	function formatDate(isoString) {
-	    if (!isoString) return '-';
-	
-	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
-	    const date = new Date(isoString);
-	
-	    // 한국식 날짜 형식으로 예쁘게 (예: 2025-12-02 11:48:15 또는 2025.12.02 11:48)
-	    // 원하는 스타일에 따라 아래 두 줄 중 하나만 선택하세요!
-	
-	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
-	    return date.toLocaleString('ko-KR', {
-	        year: 'numeric',
-	        month: '2-digit',
-	        day: '2-digit',
-	        hour: '2-digit',
-	        minute: '2-digit',
-	        second: '2-digit',
-	        hour12: false
-	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
-	
-	    // 2. 점으로 구분 + 시간만 (좀 더 깔끔한 스타일 원하면 이거 추천)
-	    // return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
-	}
-</script>
-
-
 <script>
     // 전역 변수 설정
     const batchModal = document.getElementById('batchUploadModal');
@@ -602,7 +573,7 @@
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.deptName || '-'}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">${user.authName}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-center text-sm ${statusClass}">${statusName}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(user.createDate)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.createDate}</td>
                     </tr>
                 `;
             });

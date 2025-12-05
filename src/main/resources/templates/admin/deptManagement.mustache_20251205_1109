@@ -242,7 +242,6 @@
                     </div>
                 </div>
             </form>
-            
         </div>
     </div>
 </div>
@@ -339,7 +338,7 @@
 
     const $registerBtns = $('#registerButtons');
     const $detailBtns = $('#detailButtons');
-    const $editBtns = $('#editButtons');
+    const $editBtns = $('#editBtns');
 
     // Hidden Fields
     const $originalDeptCodeInput = $('#originalDeptCode');
@@ -538,10 +537,9 @@
 
         toggleInputState(false);
 
-     	// FIX: 등록 버튼 표시 (flex 명시)
-        $registerBtns.removeClass('hidden').addClass('flex'); 
-        $detailBtns.addClass('hidden').removeClass('flex');
-        $editBtns.addClass('hidden').removeClass('flex');
+        $registerBtns.removeClass('hidden');
+        $detailBtns.addClass('hidden');
+        $editBtns.addClass('hidden');
 
         $deptCrudModal.removeClass('hidden').addClass('flex');
     }
@@ -563,10 +561,9 @@
 
                     toggleInputState(true);
 
-                    // FIX: 상세 버튼 표시 (flex 명시)
-                    $detailBtns.removeClass('hidden').addClass('flex');
-                    $registerBtns.addClass('hidden').removeClass('flex');
-                    $editBtns.addClass('hidden').removeClass('flex');
+                    $detailBtns.removeClass('hidden');
+                    $registerBtns.addClass('hidden');
+                    $editBtns.addClass('hidden');
                     $deptCrudModal.removeClass('hidden').addClass('flex');
                 } else {
                     alert('학과 정보를 불러오는 데 실패했습니다: ' + response.message);
@@ -584,10 +581,9 @@
 
         toggleInputState(false);
 
-     	// editButtons를 보이고, 나머지 버튼은 숨깁니다.
-        $editBtns.removeClass('hidden').addClass('flex'); 
-        $detailBtns.addClass('hidden').removeClass('flex');
-        $registerBtns.addClass('hidden').removeClass('flex');
+        $editBtns.removeClass('hidden');
+        $detailBtns.addClass('hidden');
+        $registerBtns.addClass('hidden');
     }
 
     window.cancelDetailEditMode = function() {
@@ -598,9 +594,8 @@
 
         toggleInputState(true);
 
-     	// FIX: 상세 버튼으로 돌아가기 (flex 명시)
-        $detailBtns.removeClass('hidden').addClass('flex');
-        $editBtns.addClass('hidden').removeClass('flex');
+        $detailBtns.removeClass('hidden');
+        $editBtns.addClass('hidden');
     }
 
     // 유틸리티 함수 (체크박스 상태)

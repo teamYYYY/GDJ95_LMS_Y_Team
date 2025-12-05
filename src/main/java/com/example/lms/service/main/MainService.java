@@ -83,4 +83,10 @@ public class MainService {
 			
 			return mainMapper.mainCourseTimeTableByStudent(mainDTO);
 		}
+		
+		// 메인페이지 졸업증명서 발급
+		public List<MainDTO> certificateOfGraduationList(Integer userNo) {
+
+			return mainMapper.certificateOfGraduationList(userNo);
+		}
 }

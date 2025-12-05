@@ -313,8 +313,45 @@
         </div>
     </div>
 </div>
+
+
+<footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        	<p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        	<p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+</footer>
+
     
     <!-- 스크립트 부분 -->
+    
+    
+<script>
+	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
+	function formatDate(isoString) {
+	    if (!isoString) return '-';
+	
+	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
+	    const date = new Date(isoString);
+	
+	    // 한국식 날짜 형식으로 예쁘게 (예: 2025-12-02 11:48:15 또는 2025.12.02 11:48)
+	    // 원하는 스타일에 따라 아래 두 줄 중 하나만 선택하세요!
+	
+	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
+	    return date.toLocaleString('ko-KR', {
+	        year: 'numeric',
+	        month: '2-digit',
+	        day: '2-digit',
+	        hour: '2-digit',
+	        minute: '2-digit',
+	        second: '2-digit',
+	        hour12: false
+	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
+	
+	    // 2. 점으로 구분 + 시간만 (좀 더 깔끔한 스타일 원하면 이거 추천)
+	    // return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+	}
+</script>
+    
+    
     
  <script>
     // 전역 변수 설정
@@ -423,8 +460,8 @@
                             ${auth.authCode}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${auth.authName}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailUpdatedate || '-'}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailCreatedate}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(auth.authDetailUpdatedate) || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(auth.authDetailCreatedate)}</td>
                     </tr>
                 `;
             });
@@ -755,6 +792,14 @@
         // 2. 검색 버튼 클릭 이벤트 처리
         searchBtn.addEventListener('click', function() {
              searchAndRenderAuth(1); 
+        });
+        
+     	// 검색 조건 입력 필드에서 Enter 키 입력 처리 (새로 추가된 부분)
+        searchConditionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 기본 폼 제출 동작 방지
+                searchAndRenderAuth(1); // 첫 페이지로 검색 실행
+            }
         });
 
         // 3. 선택 항목 삭제 버튼 클릭 이벤트 처리

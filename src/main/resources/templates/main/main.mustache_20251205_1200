@@ -400,10 +400,7 @@
 			                {{/universityNoticePriorityCode}}
 			                
 			            </div>
-			            <!-- 이걸로 변경 -->
-						<span class="text-xs text-gray-400 notice-date" data-raw-date="{{universityNoticeUpdatedate}}">
-						    {{universityNoticeUpdatedate}}
-						</span>
+			            <span class="text-xs text-gray-400">{{universityNoticeUpdatedate}}</span>
 			        </div>
 			        
 			        <h3 class="text-gray-800 font-medium mb-4">{{universityNoticeTitle}}</h3>
@@ -1158,15 +1155,6 @@
             });
         }
     });
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.notice-date[data-raw-date]').forEach(el => {
-        const raw = el.getAttribute('data-raw-date');
-        el.textContent = formatDate(raw);
-    });
-});
 </script>
 
 </body>

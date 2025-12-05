@@ -27,7 +27,7 @@
 			a.university_notice_priority_code AS universityNoticePriorityCode,
 			b.university_notice_priority_name AS universityNoticePriorityName,
 			a.university_notice_view_cnt AS universityNoticeViewCnt,
-			a.university_notice_updatedate AS universityNoticeUpdatedate
+			DATE_FORMAT(a.university_notice_updatedate, '%Y-%m-%d %H:%i:%s') AS universityNoticeUpdatedate
 		FROM
 			tb_notice a
 		INNER JOIN tb_university_notice_priority b
@@ -106,5 +106,21 @@
 			university_notice_no = #{unitversityNoticeNo}
 	
 	</update>
+	
+	<!-- 2025. 12. 05. JM. 메인페이지 졸업증명서 발급 이름, 생년월일, 학번, 학과, 학위명(학사), 입학일, 졸업일(2월28일로고정),-->
+	<select id="certificateOfGraduationList" parameterType="int" resultType="com.example.lms.dto.MainDTO">
+
+		SELECT
+			a.user_name as userName,
+			a.user_birth as userBirth,
+			a.user_id as userId,
+			b.dept_name as deptName,
+			a.user_createdate as userCreatedate
+		FROM tb_sysuser a,
+		INNER JOIN tb_dept b
+		ON a.dept_code = b.dept_code
+		WHERE user_no = #{userNo}
+
+	</select>
 	
 </mapper>

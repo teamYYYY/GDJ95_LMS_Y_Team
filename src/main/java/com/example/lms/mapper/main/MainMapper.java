@@ -30,5 +30,7 @@ public interface MainMapper {
 	
 	// 메인페이지 공지사항 조회시 ( 조회 카운트 증가 처리 )
 	Integer increaseUniversityNoticeViewCnt(Integer universityNoticeNo);
-
+	
+	// 메인페이지 메인페이지 졸업증명서 발급 이름, 생년월일, 학번, 학과, 학위명(학사), 입학일, 졸업일(2월28일로고정),
+	List<MainDTO> certificateOfGraduationList(Integer userNo);
 }

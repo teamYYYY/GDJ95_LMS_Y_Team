@@ -1,6 +1,8 @@
 package com.example.lms.controller.main;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +82,8 @@ public class MainController {
 			    notice.setIs_30(Integer.valueOf(30).equals(code)); //일반공지
 			}
 			
+			
+			
 			// 메인 페이지 시간표
 			MainDTO mainCourseTimeParams = new MainDTO();
 			mainCourseTimeParams.setUserNo(userNo);
@@ -116,7 +120,7 @@ public class MainController {
 		///////////////////////////////////////////////////////////////////////////////////
 		
 		// ================================================================================
-	    // 1. 학교 공지사항 목록 조회 (모달 진입 시 AJAX 호출)
+	    // 학교 공지사항 목록 조회 (모달 진입 시 AJAX 호출)
 	    // ================================================================================
 	    /**
 	     * 공지사항 목록 모달에 표시할 데이터를 조회합니다. (AJAX)
@@ -159,7 +163,7 @@ public class MainController {
 	    }
 
 	    // ================================================================================
-	    // 3. 학교 공지사항 상세 정보 조회 (AJAX)
+	    // 학교 공지사항 상세 정보 조회 (AJAX)
 	    // ================================================================================
 	    /**
 	     * 특정 공지사항의 상세 정보를 조회합니다. (AJAX)
@@ -190,7 +194,7 @@ public class MainController {
 	    }
 	    
 	    // ================================================================================
-	    // 5. 학교 공지사항 검색 조회 (AJAX - 리스트 갱신용)
+	    // 학교 공지사항 검색 조회 (AJAX - 리스트 갱신용)
 	    // ================================================================================
 	    /**
 	     * 검색 조건에 따라 공지사항 리스트를 조회하고 페이징 정보를 반환합니다. (AJAX)
@@ -234,5 +238,71 @@ public class MainController {
 
 	        return response;
 	    }
+	    
+	    /**
+	     * 클라이언트(FullCalendar)에서 선택한 날짜에 해당하는 시간표 데이터를 JSON으로 반환합니다.
+	     * 엔드포인트: /api/schedule?date=YYYY-MM-DD
+	     */
+	    @GetMapping("/api/schedule") // JavaScript의 fetch(ajaxUrl) 경로와 일치해야 합니다.
+	    @ResponseBody
+	    public Map<String, Object> getDynamicMainCourseTime(
+	            @RequestParam("date") String dateString, // 클라이언트가 보낸 'YYYY-MM-DD' 날짜 문자열
+	            HttpSession session
+	    ) {
+	        Map<String, Object> resultMap = new HashMap<>();
 
+	        try {
+	            // 1. 세션에서 사용자 정보 불러오기
+	            SysUserDTO loginSysUserDTO = (SysUserDTO) session.getAttribute("loginUser");
+
+	            Integer userNo = loginSysUserDTO.getUserNo();
+	            String authCode = loginSysUserDTO.getAuthCode();
+
+	            // 2. 전달된 날짜 문자열을 LocalDate로 변환하고 요일(DayOfWeek) 계산
+	            LocalDate selectedDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
+	            DayOfWeek dayOfWeek = selectedDate.getDayOfWeek();
+	            
+	            // 3. 시간표 조회를 위한 요일 번호 설정 (월=1, 화=2, ..., 금=5)
+	            Integer courseTimeYoil = null; 
+	            
+	            // DayOfWeek.getValue()는 월요일(1)부터 일요일(7)까지의 값을 반환합니다.
+	            // 금요일(5)까지만 시간표 조회가 필요하다고 가정합니다.
+	            if (dayOfWeek.getValue() >= DayOfWeek.MONDAY.getValue() && 
+	                dayOfWeek.getValue() <= DayOfWeek.FRIDAY.getValue()) {
+	                
+	                // 월(1) ~ 금(5) 값 그대로 사용
+	                courseTimeYoil = dayOfWeek.getValue(); 
+	            }
+	            
+	            // 4. 시간표 조회
+	            List<MainDTO> mainCourseTimeTable = new ArrayList<>();
+	            boolean hasSchedule = false;
+
+	            // 주말이 아닌 경우에만 시간표를 조회합니다.
+	            if (courseTimeYoil != null) {
+	            	
+	                MainDTO mainCourseTimeParams = new MainDTO();
+	                mainCourseTimeParams.setUserNo(userNo);
+	                mainCourseTimeParams.setAuthCode(authCode);
+	                mainCourseTimeParams.setCourseTimeYoil(courseTimeYoil); 
+	                
+	                // 메인 서비스 호출
+	                mainCourseTimeTable = mainService.getMainCourseTimeTable(mainCourseTimeParams);
+	                hasSchedule = !mainCourseTimeTable.isEmpty();
+	            }
+
+	            // 5. 결과 Map에 담아 반환
+	            resultMap.put("date", dateString);
+	            resultMap.put("hasSchedule", hasSchedule);
+	            resultMap.put("mainCourseTimeTable", mainCourseTimeTable);
+	            
+	        } catch (Exception e) {
+	            // 날짜 파싱 오류, DB 오류 등 예외 처리
+	            System.err.println("시간표 조회 중 오류 발생: " + e.getMessage());
+	            resultMap.put("hasSchedule", false);
+	            resultMap.put("errorMessage", "서버 처리 중 오류가 발생했습니다.");
+	        }
+
+	        return resultMap;
+	    }
 }

@@ -30,165 +30,107 @@
     
     <!-- 캘린더 스타일추가 -->
 	<style>
-        /* Pretendard 폰트 설정 (Tailwind 기본 폰트 재정의) */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #f7f7f9;
-        }
+    /* ----------------------------------------------------- */
+    /* 폰트, 주말 색상, 이벤트 스타일 (최종 수정) */
+    /* ----------------------------------------------------- */
+    
+    /* 1. 폰트 및 기본 스타일 조정 (유지) */
+    /* 둥글고 친화적인 폰트 적용 */
+    #academicCalendar, .fc-header-toolbar, #calendarTitle {
+        font-family: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', sans-serif !important;
+    }
+    
+    /* 캘린더 날짜 셀의 높이 조정 (이벤트가 잘 보이도록) */
+    #academicCalendar .fc-daygrid-day {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        height: 100px; 
+    }
+    
+    /* 2. ⭐️ 그리드 테두리 스타일링 (유지) */
+    
+    /* 캘린더 전체 Border 제거 (투박한 바깥쪽 테두리 제거) */
+    #academicCalendar .fc-daygrid-container,
+    #academicCalendar .fc-scrollgrid {
+        border: none !important;
+    }
+    
+    /* 요일 헤더가 숨겨져 있으므로, 그리드 상단의 불필요한 테두리 제거 */
+    #academicCalendar .fc-daygrid-day-top {
+        border-top: none !important;
+    }
+    
+    /* 날짜 셀의 오른쪽/아래쪽 테두리 스타일을 얇고 연한 색으로 통일 */
+    #academicCalendar .fc-daygrid-day {
+        border-right: 1px solid #E5E7EB; /* border-gray-200 */
+        border-bottom: 1px solid #E5E7EB; /* border-gray-200 */
+    }
+    
+    /* 맨 왼쪽 날짜 셀의 왼쪽 테두리 추가 (테이블 전체 틀 유지) */
+    #academicCalendar .fc-daygrid-body table {
+        border-left: 1px solid #E5E7EB;
+    }
+    
+    /* 마지막 행의 아래쪽 테두리 스타일 제거 (깔끔하게 마무리) */
+    #academicCalendar .fc-daygrid-body tr:last-child .fc-daygrid-day {
+        border-bottom: none !important;
+    }
+    
+    /* 3. 날짜 및 주말 색상 조정 (공휴일 스타일 추가) */
+    .fc-daygrid-day-number {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #4B5563; 
+    }
+    
+    /* 🚩 일요일 날짜 (숫자) 색상: 빨강 */
+    .fc-day-sun .fc-daygrid-day-number {
+        color: #EF4444 !important; /* red-500 */
+    }
+    /* 🟦 토요일 날짜 (숫자) 색상: 파랑 */
+    .fc-day-sat .fc-daygrid-day-number {
+        color: #3B82F6 !important; /* blue-600 */
+    }
 
-        /* ----------------------------------------------------- */
-        /* 캘린더 스타일 (사용자 요청 반영) */
-        /* ----------------------------------------------------- */
-        
-        /* 1. 폰트 및 기본 스타일 조정 */
-        /* 둥글고 친화적인 폰트 적용 */
-        #academicCalendar, .fc-header-toolbar, #calendarTitle {
-            font-family: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', sans-serif !important;
-        }
-        
-        /* 캘린더 컨테이너 최소 높이 보장 (달력이 안 보이는 문제 해결) */
-        #academicCalendar {
-            min-height: 350px; 
-            width: 100%;
-        }
-
-        /* 캘린더 날짜 셀의 높이 조정 (이벤트가 잘 보이도록) */
-        #academicCalendar .fc-daygrid-day {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            height: 100px; /* 고정 높이 */
-            vertical-align: top; /* 내용을 위쪽으로 정렬 */
-        }
-        
-        /* 2. 그리드 테두리 스타일링 */
-        
-        /* 캘린더 전체 Border 제거 (투박한 바깥쪽 테두리 제거) */
-        #academicCalendar .fc-daygrid-container,
-        #academicCalendar .fc-scrollgrid {
-            border: none !important;
-        }
-        
-        /* 요일 헤더가 숨겨져 있으므로, 그리드 상단의 불필요한 테두리 제거 */
-        #academicCalendar .fc-daygrid-day-top {
-            border-top: none !important;
-        }
-        
-        /* 날짜 셀의 오른쪽/아래쪽 테두리 스타일을 얇고 연한 색으로 통일 */
-        #academicCalendar .fc-daygrid-day {
-            border-right: 1px solid #E5E7EB; /* border-gray-200 */
-            border-bottom: 1px solid #E5E7EB; /* border-gray-200 */
-        }
-        
-        /* 맨 왼쪽 날짜 셀의 왼쪽 테두리 추가 (테이블 전체 틀 유지) */
-        #academicCalendar .fc-daygrid-body table {
-            border-left: 1px solid #E5E7EB;
-        }
-        
-        /* 마지막 행의 아래쪽 테두리 스타일 제거 (깔끔하게 마무리) */
-        #academicCalendar .fc-daygrid-body tr:last-child .fc-daygrid-day {
-            border-bottom: none !important;
-        }
-        
-        /* 3. 날짜 및 주말 색상 조정 (공휴일 스타일 추가) */
-        .fc-daygrid-day-number {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #4B5563; 
-        }
-        
-        /* 🚩 일요일 날짜 (숫자) 색상: 빨강 */
-        .fc-day-sun .fc-daygrid-day-number {
-            color: #EF4444 !important; /* red-500 */
-        }
-        /* 🟦 토요일 날짜 (숫자) 색상: 파랑 */
-        .fc-day-sat .fc-daygrid-day-number {
-            color: #3B82F6 !important; /* blue-600 */
-        }
-
-        /* 🔴 공휴일 날짜 텍스트를 빨간색으로 지정 */
-        .holiday-date .fc-daygrid-day-number {
-            color: #EF4444 !important; /* red-500 */
-            font-weight: 700 !important; /* 공휴일은 더욱 강조 */
-        }
-        
-        /* 오늘 날짜 강조 스타일 */
-        #academicCalendar .fc-day-today {
-            background-color: #EFF6FF !important; /* blue-50 */
-            border: 1px solid #60A5FA !important; /* blue-400 */
-            border-radius: 0.5rem;
-        }
-        
-        /* 4. 공휴일 및 학사 일정 이벤트 스타일 */
-        #academicCalendar .fc-event {
-            border-radius: 0.25rem;
-            font-size: 0.7rem;
-            padding: 0 0.2rem;
-            line-height: 1.25;
-            white-space: normal;
-            font-weight: 600;
-            cursor: pointer; 
-            border: none !important; /* 이벤트 자체 테두리 제거 */
-        }
-        
-        /* 🔴 공휴일 이벤트 스타일 (빨간색 배경/글자) */
-        .holiday-event {
-            border: none !important;
-        }
-        
-        /* 5. 기타 그리드 스타일 */
-        #academicCalendar .fc-daygrid-body {
-            padding-top: 5px; 
-        }
-        #academicCalendar .fc-daygrid-body table {
-            height: auto !important;
-        }
-        
-        /* 날짜 셀에 커서 포인터 적용 (클릭 가능 시각적 표시) */
-        #academicCalendar .fc-daygrid-day-frame {
-            cursor: pointer;
-        }
-        
-        /* 🔴 선택된 날짜 스타일 */
-        #academicCalendar .selected-day {
-            /* 기존 오늘 날짜와 구분되도록 다른 색상 사용 */
-            background-color: #E0F2FE !important; /* light-blue-100 */
-            border: 1px solid #0EA5E9 !important; /* sky-500 */
-            border-radius: 0.5rem;
-        }
-
-        /* 캘린더 날짜 숫자 컨테이너 스타일링 (dayCellContent와 연동) */
-        .fc-daygrid-day-number > span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.75rem; /* w-7 */
-            height: 1.75rem; /* h-7 */
-            margin: 0 auto; /* mx-auto */
-            border-radius: 9999px;
-            margin-bottom: 4px; /* 날짜 숫자 아래에 여백 추가 */
-        }
-        
-        /* 선택된 날짜의 날짜 숫자 자체에 선택 표시 */
-        #academicCalendar .selected-day .fc-daygrid-day-number > span {
-            background-color: #bfdbfe; /* blue-200 */
-            color: #1d4ed8; /* blue-700 */
-            font-weight: 700;
-        }
-        
-        /* 스크롤바 커스터마이징 */
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1; /* gray-300 */
-            border-radius: 9999px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background-color: #f8f8f8;
-        }
-    </style>
+    /* 🔴 [추가된 부분]: 공휴일 날짜 텍스트를 빨간색으로 지정 */
+    /* FullCalendar 설정에서 해당 날짜 셀에 'holiday-date' 클래스가 추가되었다고 가정 */
+    .holiday-date .fc-daygrid-day-number {
+        color: #EF4444 !important; /* red-500 */
+        font-weight: 700 !important; /* 공휴일은 더욱 강조 */
+    }
+    
+    /* 오늘 날짜 강조 스타일 */
+    #academicCalendar .fc-day-today {
+        background-color: #EFF6FF !important; 
+        border: 1px solid #60A5FA !important; 
+        border-radius: 0.5rem;
+    }
+    
+    /* 4. 공휴일 및 학사 일정 이벤트 스타일 (유지) */
+    #academicCalendar .fc-event {
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        padding: 0 0.2rem;
+        line-height: 1.25;
+        white-space: normal;
+        font-weight: 600;
+        cursor: pointer; 
+        border: none !important; /* 이벤트 자체 테두리 제거 */
+    }
+    
+    /* 🔴 공휴일 이벤트 스타일 (빨간색 배경/글자) */
+    .holiday-event {
+        border: none !important;
+    }
+    
+    /* 5. 기타 그리드 스타일 (유지) */
+    #academicCalendar .fc-daygrid-body {
+        padding-top: 5px; 
+    }
+    #academicCalendar .fc-daygrid-body table {
+        height: auto !important;
+    }
+</style>
     
 </head>
 <body class="text-gray-800">
@@ -251,50 +193,73 @@
             
             <!-- 캘린더 부분 -->
             
-            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <div class="mb-4">
-                    <h3 class="text-lg font-bold text-gray-800">학사 일정</h3>
-                    <p class="text-sm text-gray-500">이번 달 주요 일정을 확인하세요</p>
-                </div>
-                
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <button id="prevMonthBtn" class="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600"><i class="fa-solid fa-chevron-left"></i></button>
-                        
-                        <span id="calendarTitle" class="font-semibold text-gray-700">로딩 중...</span>
-                        
-                        <button id="nextMonthBtn" class="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                    
-                    <!-- FullCalendar의 요일 헤더를 숨겼으므로, 수동으로 요일 표시 -->
-                    <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-400 border-b pb-2">
-                        <span class="text-red-500">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="text-blue-600">토</span>
-                    </div>
-                </div>
-                
-                <div id="academicCalendar"></div>
-            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+			    <div class="mb-4">
+			        <h2 class="text-lg font-bold text-gray-800">학사 일정</h2>
+			        <p class="text-sm text-gray-500">이번 달 주요 일정을 확인하세요</p>
+			    </div>
+			    
+			    <div class="mb-4">
+			        <div class="flex justify-between items-center mb-4">
+			            <button id="prevMonthBtn" class="text-gray-400 hover:text-gray-600 px-2 py-1"><i class="fa-solid fa-chevron-left"></i></button>
+			            
+			            <span id="calendarTitle" class="font-semibold text-gray-700">로딩 중...</span>
+			            
+			            <button id="nextMonthBtn" class="text-gray-400 hover:text-gray-600 px-2 py-1"><i class="fa-solid fa-chevron-right"></i></button>
+			        </div>
+			        
+			        <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-400 border-b pb-2">
+					    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+					</div>
+			    </div>
+			    
+			    <div id="academicCalendar">
+			        </div>
+			</div>
 
 			<!-- 시간표 부분 -->
 
-            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                
-                <div class="mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <i class="fa-regular fa-clock text-blue-500"></i> 오늘의 시간표
-                    </h3>
-                    <p class="text-sm text-gray-500 today-date-display">
-                        로딩 중...
-                    </p> 
-                </div>
-            
-                <div class="schedule-content space-y-3 max-h-[400px] overflow-y-auto custom-scroll pr-1">
-                    <!-- 시간표 로딩 메시지 또는 실제 내용이 여기에 들어갑니다. -->
-                    <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
-                        <i class="fa-solid fa-spinner fa-spin mr-2"></i> 시간표 로딩 중...
-                    </div>
-                </div>
-            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+			    
+			    <!-- 시간표 캘린더와 동적으로 같이 움직임 -->
+			    
+			    <div class="mb-4">
+				    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+				        <i class="fa-regular fa-clock text-blue-500"></i> 오늘의 시간표
+				    </h2>
+				    <p class="text-sm text-gray-500 today-date-display">
+				        로딩 중...
+				    </p> 
+				</div>
+			
+			    <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scroll pr-1">
+			        
+			        {{#hasSchedule}}
+			            {{#mainCourseTimeTable}}
+			            <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+			                <div class="flex justify-between items-start mb-1">
+			                    <h3 class="font-bold text-gray-800 group-hover:text-blue-600">{{courseName}}</h3>
+			                    <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded font-medium">{{professorUserName}}</span>
+			                </div>
+			                <div class="text-sm text-gray-500 flex flex-col gap-1">
+			                    <div class="flex items-center gap-2">
+			                        <i class="fa-regular fa-clock text-xs"></i> {{courseTimeStart}} - {{courseTimeEnd}}
+			                    </div>
+			                    <div class="flex items-center gap-2">
+			                        <i class="fa-solid fa-location-dot text-xs"></i> {{courseClassroom}}
+			                    </div>
+			                </div>
+			            </div>
+			            {{/mainCourseTimeTable}}
+			        {{/hasSchedule}}
+			        
+			        {{^hasSchedule}}
+			        <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
+			            금일 일정은 없습니다. 여유로운 하루를 보내세요!
+			        </div>
+			        {{/hasSchedule}}
+			    </div>
+			</div>
 
 			<!-- 사용자 프로파일 카드 세션 -->
 			
@@ -400,10 +365,7 @@
 			                {{/universityNoticePriorityCode}}
 			                
 			            </div>
-			            <!-- 이걸로 변경 -->
-						<span class="text-xs text-gray-400 notice-date" data-raw-date="{{universityNoticeUpdatedate}}">
-						    {{universityNoticeUpdatedate}}
-						</span>
+			            <span class="text-xs text-gray-400">{{universityNoticeUpdatedate}}</span>
 			        </div>
 			        
 			        <h3 class="text-gray-800 font-medium mb-4">{{universityNoticeTitle}}</h3>
@@ -432,7 +394,7 @@
     </main>
 
     <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
-        <p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        <p>&copy; 2025 학사관리시스템. All rights reserved.</p>
         <p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
     </footer>
     
@@ -538,202 +500,64 @@
 		    return 'bg-gray-200 text-gray-600'; // 기본값
 		}
 	</script>
-	
-	
-	<!-- 공지사항 날짜 포맷팅 -->
-	<script>
-	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
-	function formatDate(isoString) {
-	    if (!isoString) return '-';
-	
-	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
-	    const safeString = isoString.replace(' ', 'T');
-    	const date = new Date(safeString);
-	
-    	if (isNaN(date.getTime())) return isoString.replace('T', ' ');
-    	
-	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
-	    return date.toLocaleString('ko-KR', {
-	        year: 'numeric',
-	        month: '2-digit',
-	        day: '2-digit',
-	        hour: '2-digit',
-	        minute: '2-digit',
-	        second: '2-digit',
-	        hour12: false
-	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
-	}
-	</script>
-	
-	
     
 	
 	<!-- 캘린더 태그 스타일 스크립트 -->
 	<script>
-    // 🔴 [헬퍼 함수]: Date 객체를 로컬 시간 기준으로 'YYYY-MM-DD' 문자열로 변환
+    // 🔴 [추가]: Date 객체를 로컬 시간 기준으로 'YYYY-MM-DD' 문자열로 변환하는 헬퍼 함수
     function toDateStringLocal(date) {
         const y = date.getFullYear();
+        // getMonth()는 0부터 시작하므로 +1, 두 자리로 패딩
         const m = String(date.getMonth() + 1).padStart(2, '0');
+        // getDate()는 로컬 날짜를 반환, 두 자리로 패딩
         const d = String(date.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
-    }
-    
-    // 🔴 [헬퍼 함수]: 날짜 포맷팅 함수 (요일 포함)
-    function getFormattedDateWithWeekday(date) {
-        var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
-        // 'YYYY년 M월 D일 (요일)' 형식으로 변환
-        return date.toLocaleDateString('ko-KR', options).replace(/\s*\(.\)/, function(match) {
-            return ' (' + match.trim().slice(-2, -1) + ')';
-        });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('academicCalendar');
         var todayDateDisplay = document.querySelector('.today-date-display');
-        var scheduleContentArea = document.querySelector('.schedule-content'); // 클래스로 변경
         var calendarTitle = document.getElementById('calendarTitle');
         var prevMonthBtn = document.getElementById('prevMonthBtn');
         var nextMonthBtn = document.getElementById('nextMonthBtn');
         
-        let currentSelectedDayEl = null;
-
-
         // 월 제목을 'YYYY년 M월' 형태로 포맷팅하는 함수 (한글)
         function formatMonthTitle(date) {
              const year = date.getFullYear();
              const month = date.getMonth() + 1;
              return `${year}년 ${month}월`;
         }
-        
-        // 캘린더 이벤트 클릭 시 호출될 함수
+
+        // 날짜 포맷팅 함수 (오늘의 시간표: 한국어 유지)
+        function getFormattedDate(date) {
+            var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+            return date.toLocaleDateString('ko-KR', options).replace(/\s*\(.\)/, function(match) {
+                return ' (' + match.trim().slice(-2, -1) + ')';
+            });
+        }
+
+        // 캘린더 이벤트 클릭 시 호출될 함수 (유지)
         function showEventDetails(info) {
-             // alert 사용 대신 임시 모달 메시지로 대체
-             const eventMessage = `[${info.event.title}] \n기간: ${info.event.startStr} ~ ${info.event.endStr || info.event.startStr}\n 상세 정보를 보려면 API 호출이 필요합니다.`;
-             console.log(eventMessage);
-             // 실제 서비스에서는 커스텀 모달 UI를 사용해야 합니다.
-        }
-        
-        // 🔴 [핵심]: 시간표 데이터를 서버에서 가져와 DOM을 업데이트하는 함수
-        function fetchSchedule(dateStr, dayEl) {
-            
-            // 1. 선택된 날짜 스타일 업데이트
-            if (currentSelectedDayEl) {
-                currentSelectedDayEl.classList.remove('selected-day');
-            }
-            if (dayEl) {
-                dayEl.classList.add('selected-day');
-                currentSelectedDayEl = dayEl;
-            }
-
-            // 2. '오늘의 시간표' 영역 날짜 업데이트
-            const selectedDate = new Date(dateStr);
-            todayDateDisplay.textContent = getFormattedDateWithWeekday(selectedDate);
-            
-            // 3. AJAX 요청 및 DOM 업데이트 (로딩 상태 표시)
-            scheduleContentArea.innerHTML = `
-                <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
-                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> 시간표 로딩 중...
-                </div>`; 
-
-            const ajaxUrl = `/api/schedule?date=${dateStr}`; 
-            let attempt = 0;
-            const maxAttempts = 3;
-
-            // 지수 백오프를 사용한 재시도 로직
-            const fetchData = async () => {
-                while (attempt < maxAttempts) {
-                    try {
-                        const response = await fetch(ajaxUrl);
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        const text = await response.text();
-                        try {
-                            return JSON.parse(text);
-                        } catch (e) {
-                            throw new Error('Invalid JSON response from server');
-                        }
-
-                    } catch (error) {
-                        attempt++;
-                        if (attempt >= maxAttempts) {
-                            throw error;
-                        }
-                        const delay = Math.pow(2, attempt) * 1000;
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        // console.log(`Retry attempt ${attempt} after ${delay / 1000}s...`); // 로그 제거
-                    }
-                }
-            };
-            
-            fetchData()
-                .then(data => {
-                    // 4. 데이터 기반으로 시간표 영역 HTML 생성 및 삽입
-                    let scheduleHtml = '';
-                    
-                    if (data.hasSchedule && data.mainCourseTimeTable && data.mainCourseTimeTable.length > 0) {
-                        data.mainCourseTimeTable.forEach(course => {
-                            // 실제 DTO 필드를 사용하여 HTML 구성
-                            const courseName = course.courseName || '강의명 없음';
-                            const professorUserName = course.professorUserName || '미정';
-                            const courseTimeStart = course.courseTimeStart || '';
-                            const courseTimeEnd = course.courseTimeEnd || '';
-                            const courseClassroom = course.courseClassroom || '장소 미정';
-                            
-                            scheduleHtml += `
-                                <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
-                                    <div class="flex justify-between items-start mb-1">
-                                        <h3 class="font-bold text-gray-800 group-hover:text-blue-600">${courseName}</h3>
-                                        <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded font-medium">${professorUserName}</span>
-                                    </div>
-                                    <div class="text-sm text-gray-500 flex flex-col gap-1">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fa-regular fa-clock text-xs"></i> ${courseTimeStart} ${courseTimeStart && courseTimeEnd ? '-' : ''} ${courseTimeEnd}
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <i class="fa-solid fa-location-dot text-xs"></i> ${courseClassroom}
-                                        </div>
-                                    </div>
-                                </div>`;
-                        });
-                    } else if (data.errorMessage) {
-                         scheduleHtml = `
-                            <div class="p-4 text-center text-red-500 border border-dashed rounded-lg">
-                                <i class="fa-solid fa-exclamation-triangle mr-2"></i> ${data.errorMessage}
-                            </div>`;
-                    } else {
-                        scheduleHtml = `
-                            <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
-                                금일 일정은 없습니다. 여유로운 하루를 보내세요!
-                            </div>`;
-                    }
-                    scheduleContentArea.innerHTML = scheduleHtml;
-                })
-                .catch(error => {
-                    console.error('시간표를 가져오는 중 오류 발생:', error);
-                    scheduleContentArea.innerHTML = `
-                        <div class="p-4 text-center text-red-500 border border-dashed rounded-lg">
-                            <i class="fa-solid fa-exclamation-triangle mr-2"></i> 시간표 로드 실패: ${error.message}
-                        </div>`;
-                });
+             alert(`[${info.event.title}] \n기간: ${info.event.startStr} ~ ${info.event.endStr || info.event.startStr}\n 상세 정보를 보려면 API 호출이 필요합니다.`);
         }
 
-
-        // 캘린더 이벤트 데이터
+        // 캘린더 이벤트 데이터 (유지)
         const allEvents = [
+            // 기존 학사 일정
             { title: '수강 신청 시작', start: '2025-11-20', display: 'background', color: '#BDE0FE' },
             { title: '중간고사', start: '2025-11-24', end: '2025-11-28' , color: '#FDBA74'},
+            
+            // 🔴 2025년 12월 ~ 2026년 공휴일 (유지)
+            // 참고: 설날 연휴, 추석 연휴처럼 end가 있는 이벤트는 해당 날짜까지 빨간색이 적용되도록 합니다.
             { title: '크리스마스', start: '2025-12-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' }, 
             { title: '신정', start: '2026-01-01', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' }, 
-            { title: '설날 연휴', start: '2026-02-14', end: '2026-02-18', color: '#F87171', textColor: 'white', className: 'holiday-event' }, 
+            { title: '설날 연휴', start: '2026-02-14', end: '2026-02-18', color: '#F87171', textColor: 'white', className: 'holiday-event' }, // FullCalendar의 end 규칙에 따라 하루 전으로 수정 (2/18까지 표시)
             { title: '삼일절 대체휴일', start: '2026-03-02', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '어린이날', start: '2026-05-05', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '부처님 오신날 대체휴일', start: '2026-05-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '현충일', start: '2026-06-06', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '광복절', start: '2026-08-15', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
-            { title: '추석 연휴', start: '2026-09-24', end: '2026-09-27', color: '#F87171', textColor: 'white', className: 'holiday-event' }, 
+            { title: '추석 연휴', start: '2026-09-24', end: '2026-09-27', color: '#F87171', textColor: 'white', className: 'holiday-event' }, // FullCalendar의 end 규칙에 따라 하루 전으로 수정 (9/27까지 표시)
             { title: '개천절 대체휴일', start: '2026-10-05', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '한글날', start: '2026-10-09', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
             { title: '크리스마스', start: '2026-12-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
@@ -742,103 +566,88 @@
 
         // 캘린더 초기화
         var calendar = new FullCalendar.Calendar(calendarEl, {
+            // FullCalendar 설정 시작
             initialView: 'dayGridMonth', 
             locale: 'ko', 
             editable: false,
             selectable: true,
             weekends: true,
-            dayHeaders: false, // 요일 헤더 숨김 (HTML에서 수동으로 표시)
-            headerToolbar: false, // 상단 툴바 숨김
+            dayHeaders: false,
+            headerToolbar: false, 
             
-            // 날짜 숫자만 표시하도록 커스터마이징
+            // ⭐️ 핵심 수정: 날짜 숫자만 표시하도록 변경
             dayCellContent: function(arg) {
                  const dayNumber = arg.date.getDate();
-                 // span 태그를 사용하여 커스텀 스타일 적용을 쉽게 함
+                 // 가운데 정렬을 위해 w-7 h-7 flex items-center justify-center mx-auto 유지
                  return { html: `<span class="w-7 h-7 flex items-center justify-center mx-auto">${dayNumber}</span>` };
             },
             
+            // 🔴 [수정 완료]: Timezone과 Date 객체 비교를 배제한 로컬 문자열 비교
             dayCellDidMount: function(info) {
-                // 1. 공휴일 클래스 적용
+                // info.date를 로컬 시간 기준으로 'YYYY-MM-DD' 문자열로 변환합니다. (Timezone 오류 방지)
                 const currentDayString = toDateStringLocal(info.date); 
+                
+                // 해당 날짜에 해당하는 공휴일 이벤트가 있는지 확인합니다.
                 const isHoliday = allEvents.some(event => {
-                    if (event.className !== 'holiday-event') return false; 
-                    const startDayString = event.start; 
-                    if (!event.end) return currentDayString === startDayString;
+                    // 공휴일 클래스('holiday-event')가 없는 이벤트는 무시합니다.
+                    if (event.className !== 'holiday-event') {
+                        return false; 
+                    }
+                    
+                    const startDayString = event.start; // 'YYYY-MM-DD' 형식 (시작일)
+                    
+                    // 이벤트가 하루짜리인 경우 (end가 없는 경우)
+                    if (!event.end) {
+                        return currentDayString === startDayString;
+                    } 
+                    
+                    // 이벤트가 기간(연휴)인 경우: start와 end 문자열을 직접 비교
+                    // 여기서 event.end는 실제 종료일 다음 날이 아닌, '실제 종료일'이 들어있다고 가정하고 비교합니다.
+                    // (이벤트 데이터에 입력된 'YYYY-MM-DD' 문자열을 그대로 사용)
                     const endDayString = event.end; 
-                    // FullCalendar는 end 날짜의 하루 전까지 이벤트가 지속되므로, end를 포함하기 위해 1일 더 추가 (FullCalendar 기본 동작)
-                    return currentDayString >= startDayString && currentDayString <= endDayString; 
+                    
+                    // 현재 날짜 문자열이 시작일 문자열보다 크거나 같고(>=),
+                    // 종료일 문자열보다 작거나 같으면 (<=) 기간에 포함됨
+                    return currentDayString >= startDayString && currentDayString <= endDayString;
                 });
+
                 if (isHoliday) {
+                    // CSS에서 정의한 'holiday-date' 클래스를 날짜 셀에 추가합니다.
                     info.el.classList.add('holiday-date');
                 }
-
-                // 2. 캘린더 날짜 클릭 이벤트 추가
-                info.el.addEventListener('click', function() {
-                    const selectedDateStr = toDateStringLocal(info.date);
-                    // 클릭된 셀 엘리먼트를 fetchSchedule에 전달하여 스타일 변경
-                    fetchSchedule(selectedDateStr, info.el.closest('.fc-daygrid-day')); 
-                });
             },
 
             // 캘린더 렌더링/월 변경 시 제목 업데이트
             datesSet: function(info) {
                 const currentMonthStart = info.view.currentStart;
                 calendarTitle.textContent = formatMonthTitle(currentMonthStart); 
+                
+                var today = new Date(); 
+                if (todayDateDisplay) {
+                    todayDateDisplay.textContent = getFormattedDate(today);
+                }
             },
             
             eventClick: function(info) {
                  showEventDetails(info);
             },
             
+            // 여기에 학사 일정 및 공휴일 데이터를 추가합니다.
             events: allEvents
         });
         
         // 로딩 직후 초기 제목 설정
         calendarTitle.textContent = formatMonthTitle(new Date());
 
-        // 캘린더 렌더링
         calendar.render();
         
-        // ⭐️ 최초 로딩 시: 오늘 날짜의 시간표를 로드하고 스타일 적용
-        const today = new Date();
-        const todayStr = toDateStringLocal(today);
-        
-        // 오늘 날짜 표시 영역 초기 업데이트
-        if (todayDateDisplay) {
-             todayDateDisplay.textContent = getFormattedDateWithWeekday(today);
-        }
-
-        // FullCalendar DOM에서 오늘 날짜 셀 찾기
-        // .fc-day-today 클래스 대신, data-date 속성을 사용하여 오늘 날짜를 확실히 찾습니다.
-        const todayDataCell = calendarEl.querySelector(`.fc-day[data-date="${todayStr}"]`);
-
-        if (todayDataCell) {
-            // .closest('.fc-daygrid-day')를 사용하여 FullCalendar 셀의 상위 컨테이너를 찾음
-            fetchSchedule(todayStr, todayDataCell.closest('.fc-daygrid-day'));
-        } else {
-             // 오늘 날짜가 현재 뷰에 없는 경우라도, 스케줄 로드는 시도 (스타일 적용은 안 됨)
-             fetchSchedule(todayStr, null);
-        }
-
-        
-        // Tailwind 버튼에 FullCalendar 이동 이벤트 연결
+        // Tailwind 버튼에 FullCalendar 이동 이벤트 연결 (유지)
         prevMonthBtn.addEventListener('click', function() {
             calendar.prev();
-            // 월 이동 후에도 오늘 날짜 스타일을 유지하기 위해, 선택된 날짜가 현재 뷰에 있는지 확인
-            if (currentSelectedDayEl && !calendarEl.contains(currentSelectedDayEl)) {
-                // 선택된 날짜가 뷰를 벗어나면, 스타일 제거
-                currentSelectedDayEl.classList.remove('selected-day');
-                currentSelectedDayEl = null;
-            }
         });
 
         nextMonthBtn.addEventListener('click', function() {
             calendar.next();
-            // 월 이동 후에도 오늘 날짜 스타일을 유지하기 위해
-            if (currentSelectedDayEl && !calendarEl.contains(currentSelectedDayEl)) {
-                currentSelectedDayEl.classList.remove('selected-day');
-                currentSelectedDayEl = null;
-            }
         });
     });
 </script>
@@ -962,7 +771,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">${notice.universityWriterUserName}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">${notice.universityNoticeViewCnt}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(date)}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">${date}</td>
                                 </tr>
                             `;
                         });
@@ -1079,7 +888,7 @@
 
                     document.getElementById('detailTitle').textContent = detail.universityNoticeTitle;
                     document.getElementById('detailWriter').innerHTML = `<i class="fa-solid fa-user"></i> 작성자: ${detail.universityWriterUserName}`;
-                    document.getElementById('detailDate').innerHTML = `<i class="fa-regular fa-clock"></i> 작성일: ${formatDate(detail.universityNoticeUpdatedate) ? formatDate(detail.universityNoticeUpdatedate.split(' ')[0]) : 'N/A'}`;
+                    document.getElementById('detailDate').innerHTML = `<i class="fa-regular fa-clock"></i> 작성일: ${detail.universityNoticeUpdatedate ? detail.universityNoticeUpdatedate.split(' ')[0] : 'N/A'}`;
                     document.getElementById('detailViewCount').innerHTML = `<i class="fa-solid fa-eye"></i> 조회수: ${detail.universityNoticeViewCnt}`;
                     
                     let priorityName = '';
@@ -1158,15 +967,6 @@
             });
         }
     });
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.notice-date[data-raw-date]').forEach(el => {
-        const raw = el.getAttribute('data-raw-date');
-        el.textContent = formatDate(raw);
-    });
-});
 </script>
 
 </body>
