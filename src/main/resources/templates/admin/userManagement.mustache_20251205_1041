@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시스템사용자관리 | 학사관리시스템</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .admin-hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .input-readonly {
+            background-color: #F8F9FA;
+            border-color: #E5E7EB;
+            color: #6B7280;
+            cursor: default;
+        }
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50; /* Tailwind z-50 */
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+	<!--  헤더  -->
+	
+    <header class="bg-white border-b border-gray-200">
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a> 
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
+        </div>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p> 
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
+
+    <div class="admin-hero-bg h-40 p-8 text-white">
+        <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
+            <h2 class="text-3xl font-bold">시스템 사용자 관리</h2>
+            <p class="text-sm text-gray-200 mt-2">시스템 사용자 조회 및 관리</p>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-16rem)]">
+        
+        <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보 관리
+                </a>
+                <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
+                    <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
+                    <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
+                </a>
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자 권한 관리
+                </a>
+                <a href="/admin/deptManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과 관리
+                </a>
+                <a href="/admin/universityNoticeManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항 관리
+                </a>
+                <a href="/admin/courseManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+            		<i class="fa-solid fa-graduation-cap w-5"></i> 학점 관리
+        		</a>
+            </nav>
+        </aside>
+        
+		<!--  여기부터 동적 -->
+        <main class="flex-grow p-8 max-w-screen-2xl mx-auto">
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">시스템 사용자 관리</h2>
+                <p class="text-gray-500 mb-6">시스템 사용자를 조회하고 관리할 수 있습니다.</p>
+
+                <div class="mb-8 p-4 border rounded-lg bg-gray-50">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">사용자 조회</h3>
+                    <p class="text-sm text-gray-500 mb-3">사용자 ID, 이름, 이메일 등으로 검색할 수 있습니다.</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="searchCondition" placeholder="사용자 ID 또는 이름을 입력하세요" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <button id="searchBtn" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+                            <i class="fa-solid fa-magnifying-glass"></i> 조회
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 버튼 -->
+                
+                <div class="flex justify-between items-center mb-4">
+				    <p class="text-gray-700 font-medium">사용자 목록 <span class="text-sm text-gray-500 ml-1" id="totalCountDisplay">총 {{totalCount}}명의 사용자</span></p>
+				    <div class="flex gap-2">
+				        <button id="downloadListExcelBtn" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+				            <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
+				        </button>
+				        <button id="downloadFormExcelBtn" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+				            <i class="fa-solid fa-file-excel"></i> 양식 다운로드
+				        </button>
+				        <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
+				            <i class="fa-solid fa-upload"></i> 일괄 업로드
+				        </button>
+				        <button onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+				            <i class="fa-solid fa-plus"></i> 등록
+				        </button>
+				    </div>
+				</div>
+				
+                <div class="overflow-x-auto border rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="w-10 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"><input type="checkbox" id="selectAll"></th>
+                                <th class="w-10 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학번 (ID)</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이름</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이메일</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">소속</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">권한</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">계정상태</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">등록일</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="userListBody">
+                            {{#userList}}
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="{{userNo}}"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{userNo}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                                    <a href="#" onclick="openUserDetailModal('{{userId}}')" class="text-blue-600 hover:underline">{{userId}}</a>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{userName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{userEmail}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{deptName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">{{authName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm 
+                                    {{#isRetire}}text-red-600{{/isRetire}}
+                                    {{^isRetire}}{{#isActive}}text-green-600{{/isActive}}{{^isActive}}text-red-600{{/isActive}}{{/isRetire}}
+                                ">{{statusName}}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{createDate}}</td>
+                            </tr>
+                            {{/userList}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex justify-between items-center">
+                    <button id="retireSelectedBtn" class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition disabled:bg-red-300" disabled>
+                        <i class="fa-solid fa-user-slash mr-1"></i> 계정 폐지
+                    </button>
+                    <div class="flex items-center space-x-1" id="pagination">
+                        {{#showPrev}}
+                        <a href="/admin/userManagement?page={{prevPage}}&limit=10" class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">이전</a>
+                        {{/showPrev}}
+                        {{^showPrev}}
+                        <span class="px-3 py-1 border rounded-lg text-gray-300 cursor-not-allowed">이전</span>
+                        {{/showPrev}}
+
+                        {{#pageNumbers}}
+                        <a href="/admin/userManagement?page={{number}}&limit=10" 
+                           class="px-3 py-1 border rounded-lg {{#isActive}}bg-blue-600 text-white{{/isActive}}{{^isActive}}text-gray-700 hover:bg-gray-100{{/isActive}}">{{number}}</a>
+                        {{/pageNumbers}}
+
+                        {{#showNext}}
+                        <a href="/admin/userManagement?page={{nextPage}}&limit=10" class="px-3 py-1 border rounded-lg text-gray-500 hover:bg-gray-100">다음</a>
+                        {{/showNext}}
+                        {{^showNext}}
+                        <span class="px-3 py-1 border rounded-lg text-gray-300 cursor-not-allowed">다음</span>
+                        {{/showNext}}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 엑셀 모달 -->
+
+   <div id="batchUploadModal" class="modal-container hidden">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+        <form id="excelUploadForm">
+            <div class="p-8 rounded-xl shadow-lg border border-gray-100"> <div class="flex justify-between items-center pb-4 border-b">
+                    <h2 class="text-2xl font-bold text-gray-900">사용자 일괄 업로드</h2> <button type="button" onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
+                    
+                    <label for="excelFileInput" class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500 cursor-pointer block hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <p id="fileNameDisplay">클릭하여 파일을 선택하여 업로드</p>
+                        <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
+                        <input type="file" id="excelFileInput" name="excelFile" accept=".xlsx, .xls" class="hidden">
+                        </label>
+                    
+                    <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
+                        <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm text-gray-600"> 
+                        <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
+					    <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
+					    <li>필수 항목은 반드시 입력되어야 합니다. (학과코드, 학과명, 사용여부)</li>
+					    <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
+					    <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
+					    <li>중복된 데이터는 자동으로 제외됩니다.</li>
+					</ul>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition text-sm">취소</button>
+                    <button type="submit" id="submitUploadBtn" disabled  class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 text-sm">
+						업로드
+					</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+    
+    <!--  사용자 등록 모달 -->
+    
+    <div id="userCrudModal" class="modal-container hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">
+        <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeUserCrudModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h3 id="modalTitle" class="text-xl font-bold mb-4 border-b pb-2">사용자 등록</h3>
+        <p id="modalSubtitle" class="text-sm text-gray-500 mb-4">* 표시는 필수 항목입니다</p>
+        
+        <form id="userForm" class="space-y-4">
+            <input type="hidden" id="userNo" name="userNo" />
+            <input type="hidden" id="userLastLogin" name="userLastLogin" />
+            <input type="hidden" id="userLoginFailCnt" name="userLoginFailCnt" />
+            <input type="hidden" id="createDate" name="createDate" />
+            <input type="hidden" id="updateDate" name="updateDate" />
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="userId" class="block text-sm font-medium text-gray-700 mb-1">사용자 ID (학번) *</label>
+                    <input type="text" id="userId" name="userId" required placeholder="ID를 입력하세요" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div>
+                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">이름 *</label>
+                    <input type="text" id="userName" name="userName" required placeholder="이름을 입력하세요" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div id="passwordField">
+                    <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-1">비밀번호 *</label>
+                    <input type="password" id="userPassword" name="userPassword" required placeholder="********" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+                    <input type="email" id="userEmail" name="userEmail" placeholder="email@example.com" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div>
+                    <label for="userPhone" class="block text-sm font-medium text-gray-700 mb-1">휴대폰 번호</label>
+                    <input type="text" id="userPhone" name="userPhone" placeholder="010-0000-0000" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+                <div>
+                    <label for="userBirth" class="block text-sm font-medium text-gray-700 mb-1">생년월일</label>
+                    <input type="date" id="userBirth" name="userBirth" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="userAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 권한 *</label>
+                    <select id="userAuth" name="userAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">권한을 선택하세요</option>
+                        {{#metaData.authList}}
+                            <option value="{{authCode}}">{{authName}}</option>
+                        {{/metaData.authList}}
+                    </select>
+                </div>
+				<div>
+		            <label for="userDetailAuth" class="block text-sm font-medium text-gray-700 mb-1">사용자 세부 권한 *</label>
+		            <select id="userDetailAuth" name="userDetailAuth" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+		                <option value="">세부 권한을 선택하세요</option>
+	                </select>
+      		  	</div>
+                <div>
+                    <label for="userStatus" class="block text-sm font-medium text-gray-700 mb-1">사용자 계정 상태 *</label>
+                    <select id="userStatus" name="userStatus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">상태를 선택하세요</option>
+                        {{#metaData.statusList}}
+                            <option value="{{statusCode}}">{{statusName}}</option>
+                        {{/metaData.statusList}}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label for="deptCode" class="block text-sm font-medium text-gray-700 mb-1">학과</label>
+                    <select id="deptCode" name="deptCode" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">학과를 선택하세요</option>
+                        {{#metaData.deptList}}
+                            <option value="{{deptCode}}">{{deptName}}</option>
+                        {{/metaData.deptList}}
+                    </select>
+                </div>
+                <div>
+                    <label for="userGrade" class="block text-sm font-medium text-gray-700 mb-1">학년</label>
+                    <select id="userGrade" name="userGrade" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+                        <option value="">학년을 선택하세요</option>
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                        <option value="4">4학년</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div>
+                <label for="userZipcode" class="block text-sm font-medium text-gray-700 mb-1">우편번호</label>
+                <input type="text" id="userZipcode" name="userZipcode" placeholder="우편번호"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+            <div>
+                <label for="userAddr" class="block text-sm font-medium text-gray-700 mb-1">기본 주소</label>
+                <input type="text" id="userAddr" name="userAddr" placeholder="기본 주소"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+            <div>
+                <label for="userAddrDetail" class="block text-sm font-medium text-gray-700 mb-1">상세 주소</label>
+                <input type="text" id="userAddrDetail" name="userAddrDetail" placeholder="상세 주소"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg input-field">
+            </div>
+
+            <div class="pt-4 border-t flex justify-end gap-2">
+                <button type="submit" id="registerButtons" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> 등록
+                </button>
+                
+                <div id="detailButtons" class="hidden">
+                    <button type="button" onclick="enterDetailEditMode()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> 변경
+                    </button>
+                </div>
+                
+                <div id="editBtns" class="hidden">
+                    <button type="button" onclick="cancelDetailEditMode()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                        <i class="fa-solid fa-xmark mr-1"></i> 취소
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> 저장
+                    </button>
+                </div>
+                
+                <button type="button" onclick="closeUserCrudModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <i class="fa-solid fa-times mr-1"></i> 닫기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        	<p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        	<p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+</footer>
+
+<!-- 스크립트 부분 -->
+
+<script>
+    // 전역 변수 설정
+    const batchModal = document.getElementById('batchUploadModal');
+    const userCrudModal = document.getElementById('userCrudModal');
+    const userForm = document.getElementById('userForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    
+    const registerBtns = document.getElementById('registerButtons');
+    const detailBtns = document.getElementById('detailButtons');
+    const editBtns = document.getElementById('editBtns');
+    
+    const passwordFieldDiv = document.getElementById('passwordField');
+    const passwordInput = document.getElementById('userPassword');
+    const userIdInput = document.getElementById('userId');
+    
+    // [AJAX 통신 및 목록 갱신을 위한 변수]
+    const userListBody = document.getElementById('userListBody');
+    const searchConditionInput = document.getElementById('searchCondition');
+    const searchBtn = document.getElementById('searchBtn');
+    const retireSelectedBtn = document.getElementById('retireSelectedBtn');
+    const totalCountDisplay = document.getElementById('totalCountDisplay');
+    const paginationDiv = document.getElementById('pagination'); 
+    
+    let originalDetailData = {}; 
+    
+    // input-field 클래스를 가진 모든 입력/선택 필드 (숨김 필드 제외)
+    const inputFields = document.querySelectorAll('#userCrudModal .input-field');
+
+    // 🚀 검색 상태 유지를 위한 전역 변수 추가 🚀
+    let currentSearchCondition = ''; // 현재 검색어
+    let currentPageNo = 1;         // 현재 페이지 번호
+
+    // 🚀 권한 선택 요소 전역 변수 추가 🚀
+    const userAuthSelect = document.getElementById('userAuth');
+    const userDetailAuthSelect = document.getElementById('userDetailAuth');
+
+    // ⭐️ 엑셀 관련 전역 변수 추가 ⭐️
+    const downloadFormExcelBtn = document.getElementById('downloadFormExcelBtn');
+    const downloadListExcelBtn = document.getElementById('downloadListExcelBtn');
+    const excelUploadForm = document.getElementById('excelUploadForm'); // HTML에 추가된 폼 ID
+    const excelFileInput = document.getElementById('excelFileInput');   // HTML에 추가된 파일 input ID
+    const fileNameDisplay = document.getElementById('fileNameDisplay'); // 파일명 표시 DOM ID
+    const submitUploadBtn = document.getElementById('submitUploadBtn'); // 👈 **추가: 업로드 버튼**
+
+	 // ------------------------
+	 // 유틸리티 함수: 폼에 데이터 바인딩
+	 // ------------------------
+	 function bindFormData(data) {
+	     for (const key in data) {
+	         const input = document.getElementById(key);
+	         
+	         if (input) { 
+	             input.value = (data[key] === null || data[key] === undefined) ? '' : data[key].toString(); 
+	         }
+	     }
+	     
+	     const userNoInput = document.getElementById('userNo');
+	     if (userNoInput) {
+	         userNoInput.value = data.userNo || ''; 
+	     }
+	     
+	     if (passwordInput) {
+	         passwordInput.value = '********'; 
+	         passwordInput.setAttribute('type', 'text');
+	     }
+	 }
+
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 입력 필드 읽기 전용 상태 토글 (userId 예외 처리 제거)
+    // ------------------------
+    function toggleInputReadOnly(isReadOnly, preservePassword) {
+        inputFields.forEach(input => {
+            if (input.id !== 'userNo') {
+                input.readOnly = isReadOnly;
+                input.disabled = isReadOnly;
+                
+                if (isReadOnly) {
+                    input.classList.add('input-readonly');
+                } else {
+                    input.classList.remove('input-readonly');
+                }
+            }
+        });
+
+        // 비밀번호 필드 처리
+        if (!preservePassword) {
+            passwordInput.readOnly = isReadOnly;
+            passwordInput.disabled = isReadOnly;
+            if (isReadOnly) {
+                passwordInput.classList.add('input-readonly');
+            } else {
+                passwordInput.classList.remove('input-readonly');
+            }
+        }
+        
+        // 🚀 추가: 동적으로 로드되는 Select 박스의 disabled 처리
+        if (userAuthSelect) userAuthSelect.disabled = isReadOnly;
+        if (userDetailAuthSelect) userDetailAuthSelect.disabled = isReadOnly;
+    }
+
+    // ------------------------
+    // 🚀 추가: 세부 권한 동적 로딩 및 렌더링 함수
+    // ------------------------
+    function loadAndRenderAuthDetails(authCode, selectedDetailCode) {
+        
+        // 1. 초기화
+        userDetailAuthSelect.innerHTML = '<option value="">세부 권한을 선택하세요</option>';
+        if (!authCode) {
+            return; 
+        }
+
+        // 2. AJAX 호출
+        $.ajax({
+            url: '/admin/getAuthDetailListByAuthCode',
+            type: 'GET',
+            data: { authCode: authCode },
+            success: function(response) {
+                if (response.status === 'success' && response.detailList) {
+                    let html = '<option value="">세부 권한을 선택하세요</option>';
+                    
+                    response.detailList.forEach(item => {
+                        const isSelected = (item.authDetailCode === selectedDetailCode) ? 'selected' : '';
+                        html += `<option value="${item.authDetailCode}" ${isSelected}>${item.authDetailName}</option>`;
+                    });
+                    
+                    userDetailAuthSelect.innerHTML = html;
+                } else {
+                    console.error("세부 권한 데이터를 불러오는 데 실패했습니다.");
+                }
+            },
+            error: function() {
+                console.error("세부 권한 조회 서버 통신 오류");
+            }
+        });
+    }
+    
+    // ------------------------
+    // 💡 추가된 유틸리티 함수: 사용자 목록 테이블 렌더링
+    // ------------------------
+    function renderUserTable(userList) {
+        let html = '';
+        
+        const statusMap = {
+            '0': { name: '사용대기', class: 'text-blue-600' }, 
+            '1': { name: '사용중', class: 'text-green-600' }, 
+            '2': { name: '미사용', class: 'text-orange-600' }, 
+            '3': { name: '폐지', class: 'text-gray-600' } 
+        };
+        
+        if (userList && userList.length > 0) {
+            userList.forEach((user) => {
+                const statusKey = user.userStatus !== null && user.userStatus !== undefined
+                                  ? user.userStatus.toString() 
+                                  : ''; 
+                                  
+                const statusInfo = statusMap[statusKey] || { name: '알 수 없음', class: 'text-gray-500' };
+                
+                const statusClass = statusInfo.class;
+                const statusName = statusInfo.name;
+                
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedUser" data-user-no="${user.userNo}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.userNo}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                            <a href="#" onclick="openUserDetailModal('${user.userId}')" class="text-blue-600 hover:underline">${user.userId}</a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.userEmail || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">${user.deptName || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-blue-600">${user.authName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm ${statusClass}">${statusName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${user.createDate}</td>
+                    </tr>
+                `;
+            });
+        } else {
+             html += `
+                <tr>
+                    <td colspan="9" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 사용자 정보가 없습니다.</td>
+                </tr>
+            `;
+        }
+        
+        userListBody.innerHTML = html;
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) selectAll.checked = false;
+        updateRetireButtonState();
+    }
+
+
+    // ------------------------
+    // 💡 최종 통합된 함수: renderPagination
+    // ------------------------
+    function renderPagination(totalCount, currentPage, pageSize = 10) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+        
+        // ... (페이지네이션 렌더링 로직 유지) ...
+        
+        totalCountDisplay.textContent = `총 ${totalCount}명의 사용자`;
+        
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            paginationDiv.style.display = 'none';
+            return;
+        }
+
+        let html = '';
+        html += '<nav class="flex items-center space-x-1">';
+        
+        const pagesPerBlock = 10;
+        const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
+        const blockStart = currentBlock * pagesPerBlock + 1;
+        const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
+        
+        
+        const prevPage = currentPage - 1;
+        const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
+
+
+        for (let i = blockStart; i <= blockEnd; i++) {
+            const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
+            html += `<a href="#" data-page="${i}" 
+                       class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
+        }
+
+        const nextPage = currentPage + 1;
+        const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}" 
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
+        
+        
+        html += '</nav>';
+        
+        paginationDiv.innerHTML = html;
+        paginationDiv.style.display = 'flex';
+        
+        paginationDiv.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const clickedLink = e.target.closest('a.page-link');
+                if (!clickedLink) return;
+
+                const targetPage = parseInt(clickedLink.dataset.page);
+                
+                if (clickedLink.classList.contains('cursor-not-allowed') || targetPage < 1 || targetPage > totalPages) return;
+
+                if (typeof searchAndRenderUser === 'function') {
+                    searchAndRenderUser(targetPage); 
+                } else {
+                     console.error("searchAndRenderUser 함수를 찾을 수 없습니다.");
+                }
+            });
+        });
+    }
+
+    // ------------------------
+    // 핵심 함수: 검색 및 페이지 이동 AJAX 요청 (상태 저장 로직 추가)
+    // ------------------------
+    function searchAndRenderUser(pageNo) {
+        const condition = searchConditionInput.value.trim();
+        
+        // 🚀 상태 갱신
+        currentSearchCondition = condition; 
+        currentPageNo = pageNo;
+        // -------------------
+
+        $.ajax({
+            url: '/admin/searchUserInfo',
+            type: 'GET',
+            data: { 
+                searchCondition: condition,
+                currentPage: pageNo 
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    renderUserTable(response.userList);
+                    renderPagination(response.totalCount, response.currentPage);
+                    searchConditionInput.value = currentSearchCondition;
+                } else {
+                    alert('사용자 검색에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
+    // ------------------------
+    // 모달 제어 함수 (closeBatchUploadModal 수정 - 버튼 초기화 추가)
+    // ------------------------
+    function openBatchUploadModal() {
+        batchModal.classList.remove('hidden');
+        batchModal.classList.add('flex');
+    }
+
+    function closeBatchUploadModal() {
+        batchModal.classList.add('hidden');
+        batchModal.classList.remove('flex');
+        
+        // ⭐️ 모달 닫을 때 파일 입력 및 버튼 상태 초기화 ⭐️
+        if (excelUploadForm) {
+            excelUploadForm.reset();
+        }
+        if (fileNameDisplay) {
+            fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+        }
+        // 버튼 비활성화 초기화
+        if (submitUploadBtn) {
+            submitUploadBtn.disabled = true;
+        }
+        
+        // 🚀 일괄 업로드 후 목록을 현재 상태로 갱신
+        searchAndRenderUser(currentPageNo); 
+    }
+    
+    function closeUserCrudModal() {
+        userCrudModal.classList.add('hidden');
+        userCrudModal.classList.remove('flex');
+        userForm.reset();
+        
+        userIdInput.removeAttribute('readonly');
+        userIdInput.classList.remove('input-readonly');
+        
+        searchConditionInput.value = currentSearchCondition; 
+        searchAndRenderUser(currentPageNo); 
+    }
+
+    function openRegisterModal() {
+        userForm.reset();
+        modalTitle.textContent = "사용자 등록";
+        modalSubtitle.textContent = "* 표시는 필수 항목입니다";
+        toggleInputReadOnly(false, false); 
+        registerBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        editBtns.classList.add('hidden');
+        passwordInput.required = true; 
+        userIdInput.removeAttribute('readonly'); 
+        userCrudModal.classList.remove('hidden');
+        userCrudModal.classList.add('flex');
+        
+        loadAndRenderAuthDetails(userAuthSelect.value, null); 
+    }
+
+    function openUserDetailModal(userId) {
+        $.ajax({
+            url: '/admin/getUserDetail',
+            type: 'GET',
+            data: { userId: userId },
+            success: function(response) {
+                if (response.status === 'success') {
+                    const data = response.data;
+                    originalDetailData = data; 
+                    
+                    bindFormData(data); 
+                    
+                    const authCode = data.userAuth; 
+                    const detailCode = data.userDetailAuth; 
+                    
+                    if (authCode) {
+                        loadAndRenderAuthDetails(authCode, detailCode); 
+                    } else {
+                         loadAndRenderAuthDetails(null, null); 
+                    }
+
+                    modalTitle.textContent = "사용자 상세 정보 (" + userId + ")";
+                    modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+                    
+                    toggleInputReadOnly(true, true); 
+                    
+                    detailBtns.classList.remove('hidden');
+                    registerBtns.classList.add('hidden');
+                    editBtns.classList.add('hidden');
+                    userCrudModal.classList.remove('hidden');
+                    userCrudModal.classList.add('flex');
+                } else {
+                    alert('사용자 정보를 불러오는 데 실패했습니다: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function enterDetailEditMode() {
+        modalTitle.textContent = "사용자 정보 수정";
+        modalSubtitle.textContent = "정보를 수정 후 저장해주세요. (비밀번호 미입력 시 변경 없음)";
+        
+        toggleInputReadOnly(false, true); 
+        
+        editBtns.classList.remove('hidden');
+        detailBtns.classList.add('hidden');
+        registerBtns.classList.add('hidden');
+        
+        passwordInput.setAttribute('type', 'password'); 
+        passwordInput.removeAttribute('readonly');
+        passwordInput.classList.remove('input-readonly');
+        passwordInput.disabled = false;
+        passwordInput.required = false; 
+        passwordInput.value = ''; 
+    }
+
+    function cancelDetailEditMode() {
+        bindFormData(originalDetailData); 
+        
+        const authCode = originalDetailData.userAuth; 
+        const detailCode = originalDetailData.userDetailAuth; 
+        loadAndRenderAuthDetails(authCode, detailCode);
+        
+        modalTitle.textContent = "사용자 상세 정보 (" + userIdInput.value + ")";
+        modalSubtitle.textContent = "사용자 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
+        
+        toggleInputReadOnly(true, true); 
+        
+        detailBtns.classList.remove('hidden');
+        editBtns.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBatchUploadModal();
+            closeUserCrudModal();
+        }
+    });
+    
+    // 유틸리티 함수 (체크박스 상태) - DOMContentLoaded 밖으로 이동하여 전역에서 사용 가능하도록 함
+    function updateRetireButtonState() {
+        const checkedCount = document.querySelectorAll('input[name="selectedUser"]:checked').length;
+        retireSelectedBtn.disabled = checkedCount === 0;
+    }
+
+
+    // ------------------------
+    // DOMContentLoaded 이벤트 및 AJAX 요청 (엑셀 기능 통합)
+    // ------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAll = document.getElementById('selectAll');
+        const retireBtn = document.getElementById('retireSelectedBtn'); 
+        
+        const initialTotalCount = {{totalCount}}; 
+        const initialCurrentPage = {{currentPage}}; 
+        
+        currentPageNo = initialCurrentPage;
+        currentSearchCondition = searchConditionInput.value.trim() || ''; 
+
+
+        if (initialTotalCount > 0) {
+            renderPagination(initialTotalCount, initialCurrentPage);
+        }
+        
+        // 🚀 핵심: userAuth 변경 시 세부 권한 동적 로딩 리스너 추가
+        if (userAuthSelect && userDetailAuthSelect) {
+            userAuthSelect.addEventListener('change', function() {
+                loadAndRenderAuthDetails(this.value, null); 
+            });
+        }
+        
+        // 체크박스 이벤트 리스너 설정
+        selectAll.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            document.querySelectorAll('input[name="selectedUser"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            updateRetireButtonState();
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'selectedUser') {
+                updateRetireButtonState();
+                const allChecked = Array.from(document.querySelectorAll('input[name="selectedUser"]')).every(cb => cb.checked);
+                selectAll.checked = allChecked;
+            }
+        });
+        
+        // 1. 폼 제출 이벤트 핸들링 (등록/수정)
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isRegisterMode = registerBtns.classList.contains('hidden') === false;
+            const url = isRegisterMode ? '/admin/insertUserInfo' : '/admin/updateUserInfoByAdmin';
+
+            let formData = $(this).serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+            
+            if (formData.userDetailAuth) {
+                formData.userAuth = formData.userDetailAuth;
+            } else if (formData.userAuth === '') {
+                 // DB NOT NULL 제약 조건 대응 로직 필요 시 여기에 추가
+            }
+            
+            if (!isRegisterMode && formData.userPassword === '') {
+                delete formData.userPassword;
+            }
+
+            if (isRegisterMode) {
+                 delete formData.userNo;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeUserCrudModal(); 
+                    }
+                },
+                error: function() {
+                    alert(isRegisterMode ? '사용자 등록 중 서버 통신 오류가 발생했습니다.' : '사용자 수정 중 서버 통신 오류가 발생했습니다.');
+                }
+            });
+        });
+        
+        // 2. 검색 버튼 클릭 이벤트 처리
+        searchBtn.addEventListener('click', function() {
+             searchAndRenderUser(1);
+        });
+        
+     	// 검색 조건 입력 필드에서 Enter 키 입력 처리 (새로 추가된 부분)
+        searchConditionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 기본 폼 제출 동작 방지
+                searchAndRenderUser(1); // 첫 페이지로 검색 실행
+            }
+        });
+
+        // 3. 계정 폐지 버튼 클릭 이벤트 처리
+        retireBtn.addEventListener('click', () => {
+            const selectedUserNos = Array.from(document.querySelectorAll('input[name="selectedUser"]:checked'))
+                .map(cb => parseInt(cb.getAttribute('data-user-no'))); 
+
+            if(selectedUserNos.length === 0) {
+                alert("폐지할 사용자를 선택해주세요.");
+                return;
+            }
+
+            if(confirm(`선택된 ${selectedUserNos.length}명의 사용자를 정말 계정 폐지(상태 변경) 처리하시겠습니까?`)) {
+                
+                $.ajax({
+                    url: '/admin/modifySysUserStatusRetire',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ userNoList: selectedUserNos }), 
+                    success: function(response) {
+                        alert(response.message);
+                        if (response.status === 'success') {
+                            searchAndRenderUser(currentPageNo); 
+                        }
+                    },
+                    error: function() {
+                        alert('계정 폐지 처리 중 서버 통신 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+
+        // ----------------------------------------------------
+        // ⭐️ 엑셀 기능 이벤트 리스너 통합 (버튼 활성화/비활성화 로직 포함) ⭐️
+        // ----------------------------------------------------
+        
+        // 4. 양식 다운로드 버튼 처리: GET 요청
+        if (downloadFormExcelBtn) {
+            downloadFormExcelBtn.addEventListener('click', () => {
+                window.location.href = '/admin/downloadSysUserForm'; 
+            });
+        }
+
+        // 5. 목록 엑셀 다운로드 버튼 처리: GET 요청 (현재 검색 조건 반영)
+        if (downloadListExcelBtn) {
+            downloadListExcelBtn.addEventListener('click', () => {
+                // 현재 검색어는 currentSearchCondition 변수에 저장되어 있음
+                const condition = encodeURIComponent(currentSearchCondition);
+                const url = `/admin/downloadSysUserList?searchUserCondition=${condition}`;
+                window.location.href = url;
+            });
+        }
+
+        // 6. 파일 선택 시 파일명 표시 및 버튼 상태 변경
+        if (excelFileInput && fileNameDisplay && submitUploadBtn) {
+            excelFileInput.addEventListener('change', function() {
+                const fileSelected = this.files.length > 0;
+                
+                // 파일명 표시
+                if (fileSelected) {
+                    fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
+                } else {
+                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+                }
+                
+                // ⭐️ 버튼 상태 변경 ⭐️
+                submitUploadBtn.disabled = !fileSelected;
+            });
+        } else if (excelFileInput && fileNameDisplay) {
+             // submitUploadBtn이 없는 경우 파일명 표시만이라도 작동하도록 6번 로직 유지
+             excelFileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
+                } else {
+                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+                }
+            });
+        }
+        
+        // 7. 일괄 업로드 폼 제출 처리: POST AJAX 요청
+        if (excelUploadForm) {
+            excelUploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (excelFileInput.files.length === 0) {
+                    alert("업로드할 엑셀 파일을 선택해주세요.");
+                    return;
+                }
+                
+                const file = excelFileInput.files[0];
+                const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                if (extension !== '.xlsx' && extension !== '.xls') {
+                    alert("엑셀 파일(.xlsx 또는 .xls)만 업로드 가능합니다.");
+                    excelUploadForm.reset();
+                    fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+                    
+                    // ⭐️ 업로드 실패 시 버튼 비활성화 ⭐️
+                    if (submitUploadBtn) submitUploadBtn.disabled = true;
+
+                    return;
+                }
+
+                if (!confirm(`'${file.name}' 파일을 업로드하여 사용자 정보를 일괄 등록하시겠습니까?`)) {
+                    return;
+                }
+
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: '/admin/uploadSysUserBatch',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, 
+                    contentType: false, 
+                    success: function(response) {
+                        alert(response.message);
+                        if (response.status === 'success') {
+                            closeBatchUploadModal(); 
+                        } else {
+                            // 업로드 실패 시에도 모달을 닫지 않고 상태만 초기화 (선택적)
+                            excelUploadForm.reset();
+                            fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+                            if (submitUploadBtn) submitUploadBtn.disabled = true;
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                         alert('일괄 업로드 처리 중 서버 통신 오류가 발생했습니다. (HTTP 상태: ' + xhr.status + ')');
+                         // 서버 통신 오류 시에도 상태 초기화
+                         excelUploadForm.reset();
+                         fileNameDisplay.textContent = '파일을 드래그하거나 클릭하여 업로드';
+                         if (submitUploadBtn) submitUploadBtn.disabled = true;
+                    }
+                });
+            });
+        }
+
+        // 🟢 초기 목록 색상 오류 해결을 위한 AJAX 재렌더링 로직 추가 🟢
+        if (typeof searchAndRenderUser === 'function') {
+            searchAndRenderUser(currentPageNo); 
+        }
+    });
+</script>
+ 
+</body>
+</html>

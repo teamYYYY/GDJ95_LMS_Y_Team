@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 권한 관리 | 학사관리시스템</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .admin-hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .input-readonly {
+            background-color: #F8F9FA;
+            border-color: #E5E7EB;
+            color: #6B7280;
+            cursor: default;
+        }
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<!-- 헤더부분 -->
+
+ <header class="bg-white border-b border-gray-200">
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a>
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
+        </div>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p>
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
+
+    <div class="admin-hero-bg h-40 p-8 text-white">
+        <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
+            <h2 class="text-3xl font-bold">공지사항 관리</h2>
+            <p class="text-sm text-gray-200 mt-2">학교 공지사항 조회 및 관리</p>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-16rem)]">
+
+        <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보 관리
+                </a>
+                <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
+                </a>
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자 권한 관리
+                </a>
+                <a href="/admin/deptManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과 관리
+                </a>
+                <a href="/admin/universityNoticeManagement" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항 관리
+                    <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
+                </a>
+                <a href="/admin/courseManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+            		<i class="fa-solid fa-graduation-cap w-5"></i> 학점 관리
+        		</a>
+            </nav>
+        </aside>
+
+	<!-- 메인 동적 부분 -->
+<main class="flex-grow p-8 max-w-screen-2xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">📢 학교 공지사항 관리</h2>
+        <p class="text-gray-500 mb-6">학교 공지사항을 등록, 수정, 조회 및 삭제 관리할 수 있습니다.</p>
+
+        <form id="searchForm" class="mb-8 p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">공지사항 검색</h3>
+            <p class="text-sm text-gray-500 mb-3">제목 또는 내용으로 검색할 수 있습니다.</p>
+            <div class="flex items-center gap-2">
+                <div class="flex-grow">
+                    <input type="text"
+                           id="searchUniversityNoticeCondition"
+                           name="searchUniversityNoticeCondition"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="제목 또는 내용을 입력하세요"
+                           value="{{searchUniversityNoticeCondition}}">
+                </div>
+                <button type="submit" id="searchBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-magnifying-glass"></i> 조회
+                </button>
+            </div>
+        </form>
+
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-gray-700 font-medium" id="totalCountDisplay">공지 목록 (총 {{totalCount}}개의 공지)</p>
+            <div class="flex space-x-2">
+                <button id="removeSelectedBtn" disabled class="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+                    <i class="fa-solid fa-trash-can mr-1"></i> 선택 삭제
+                </button>
+                <button id="openRegisterModalBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-plus"></i> 공지 등록
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-10"><input type="checkbox" id="selectAll"></th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">No</th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-28">우선순위</th>
+                        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">작성자</th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">조회수</th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">업데이트일자</th>
+                        <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">생성일자</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="noticeListBody">
+                    {{#universityNoticeList}}
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 whitespace-nowrap text-center"><input type="checkbox" name="noticeNo" value="{{universityNoticeNo}}" class="notice-checkbox"></td>
+                        <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">{{universityNoticeNo}}</td>
+                        <td class="p-3 whitespace-nowrap text-xs text-center">
+                            <span class="font-medium {{priorityColorClass}}">
+                                {{universityNoticePriorityName}}
+                            </span>
+                        </td>
+                        <td class="p-3 text-sm text-gray-900 cursor-pointer hover:text-blue-600 font-medium detail-link" data-notice-no="{{universityNoticeNo}}">
+                            {{universityNoticeTitle}}
+                        </td>
+                        <td class="p-3 whitespace-nowrap text-center text-sm text-gray-800">{{universityWriterUserName}}</td>
+                        <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">{{universityNoticeViewCnt}}</td>
+                        <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">{{universityNoticeUpdatedate}}</td>
+                        <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">{{universityNoticeCreatedate}}</td>
+                    </tr>
+                    {{/universityNoticeList}}
+                    {{^universityNoticeList}}
+                    <tr>
+                        <td colspan="8" class="p-4 text-center text-gray-500 text-sm">조회된 공지사항 정보가 없습니다.</td>
+                    </tr>
+                    {{/universityNoticeList}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-center items-center mt-6" id="pagination">
+             </div>
+    </div>
+</main>
+
+</div>
+
+	<!-- CRUD Modal 부분 -->
+
+	<div id="noticeCrudModal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 id="modalTitle" class="text-xl font-bold text-gray-900">공지사항 등록</h3>
+                    <button onclick="closeNoticeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+
+                <form id="noticeForm" class="mt-6 space-y-4">
+                    <p id="modalSubtitle" class="text-sm text-red-500">* 표시는 필수 항목입니다</p>
+
+                    <div>
+                        <label for="universityNoticeNo" class="block text-sm font-medium text-gray-700">공지 번호</label>
+                        <input type="text" id="universityNoticeNo" name="universityNoticeNo" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+
+                    <div>
+                        <label for="universityWriterUserName" class="block text-sm font-medium text-gray-700">작성자</label>
+                        <input type="text" id="universityWriterUserName" name="universityWriterUserName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+
+                    <div>
+                        <label for="universityNoticeViewCnt" class="block text-sm font-medium text-gray-700">조회수</label>
+                        <input type="text" id="universityNoticeViewCnt" name="universityNoticeViewCnt" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+
+                    <div>
+                        <label for="universityNoticeTitle" class="block text-sm font-medium text-gray-700">제목 *</label>
+                        <input type="text" id="universityNoticeTitle" name="universityNoticeTitle" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="공지사항 제목을 입력하세요" required>
+                    </div>
+
+                    <div>
+                        <label for="universityNoticePriorityCode" class="block text-sm font-medium text-gray-700">우선순위 *</label>
+                        <select id="universityNoticePriorityCode" name="universityNoticePriorityCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                            <option value="">우선순위를 선택하세요</option>
+                            {{#universityNoticePriorityList}}
+                            <option value="{{universityNoticePriorityCode}}">{{universityNoticePriorityName}}</option>
+                            {{/universityNoticePriorityList}}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="universityNoticeContent" class="block text-sm font-medium text-gray-700">내용 *</label>
+                        <textarea id="universityNoticeContent" name="universityNoticeContent" rows="5" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="공지사항 내용을 입력하세요" required></textarea>
+                    </div>
+
+                    <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                        <div id="registerButtons" class="flex space-x-3">
+                            <button type="button" onclick="closeNoticeModal()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">
+                                <i class="fa-solid fa-times mr-1"></i> 취소
+                            </button>
+                            <button type="submit" data-action="register" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i> 등록
+                            </button>
+                        </div>
+
+                        <div id="detailButtons" class="hidden flex space-x-3">
+                            <button type="button" onclick="closeNoticeModal()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">
+                                <i class="fa-solid fa-times mr-1"></i> 닫기
+                            </button>
+                            <button type="button" onclick="enterDetailEditMode()" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                <i class="fa-solid fa-pen-to-square mr-1"></i> 변경
+                            </button>
+                        </div>
+
+                        <div id="editButtons" class="hidden flex space-x-3">
+                            <button type="button" onclick="cancelDetailEditMode()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">
+                                <i class="fa-solid fa-xmark mr-1"></i> 취소
+                            </button>
+                            <button type="submit" data-action="update" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i> 저장
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+	<!-- 엑셀 기능 -->
+
+    <div id="batchUploadModal" class="modal-container hidden">
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
+                    <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
+                    <div class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <p>파일을 드래그하거나 클릭하여 업로드</p>
+                        <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
+                        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                            파일 선택
+                        </button>
+                    </div>
+
+                    <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
+                        <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
+                            <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
+                            <li>필수 항목은 반드시 입력되어야 합니다.</li>
+                            <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
+                            <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
+                            <li>중복된 데이터는 자동으로 제외됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
+                    <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">업로드</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        	<p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        	<p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+</footer>
+
+    <!-- 스크립트 부분 -->
+    
+<script>
+	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
+	function formatDate(isoString) {
+	    if (!isoString) return '-';
+	
+	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
+	    const date = new Date(isoString);
+	
+	    // 한국식 날짜 형식으로 예쁘게 (예: 2025-12-02 11:48:15 또는 2025.12.02 11:48)
+	    // 원하는 스타일에 따라 아래 두 줄 중 하나만 선택하세요!
+	
+	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
+	    return date.toLocaleString('ko-KR', {
+	        year: 'numeric',
+	        month: '2-digit',
+	        day: '2-digit',
+	        hour: '2-digit',
+	        minute: '2-digit',
+	        second: '2-digit',
+	        hour12: false
+	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
+	
+	    // 2. 점으로 구분 + 시간만 (좀 더 깔끔한 스타일 원하면 이거 추천)
+	    // return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+	}
+</script>
+    
+    
+
+<script>
+    $(document).ready(function() {
+
+        // ==========================================================
+        // 0. 전역 상태 및 모달 제어 함수 (HTML onclick 제거 후에도 유지)
+        // ==========================================================
+        let currentMode = 'register';
+        let originalDetailData = {};
+        
+        // Mustache로 서버에서 받은 초기값 설정
+        const initialTotalCount = parseInt('{{totalCount}}');
+        const initialCurrentPage = parseInt('{{currentPage}}');
+        const initialSearchCondition = '{{searchUniversityNoticeCondition}}' || '';
+
+        /**
+         * 공지사항 모달을 열고 모드를 설정합니다.
+         * @param {string} mode - 'register', 'detail' 중 하나
+         * @param {number | null} noticeNo - 상세/수정 시 공지 번호
+         */
+        window.openNoticeModal = function(mode, noticeNo) {
+            currentMode = mode;
+            const $modal = $('#noticeCrudModal');
+            const $form = $('#noticeForm');
+
+            // 폼 초기화
+            $form[0].reset();
+            // .input-field 클래스를 가진 요소들의 상태 초기화
+            $form.find('.input-field').prop('readonly', false).prop('disabled', false).removeClass('bg-gray-100 cursor-not-allowed');
+
+            // ID, 작성자, 조회수 필드는 항상 readonly 유지
+            $('#universityNoticeNo').prop('readonly', true).addClass('bg-gray-100 cursor-not-allowed').val('');
+            $('#universityWriterUserName').prop('readonly', true).addClass('bg-gray-100 cursor-not-allowed').val('');
+            $('#universityNoticeViewCnt').prop('readonly', true).addClass('bg-gray-100 cursor-not-allowed').val('');
+
+            // 버튼 및 제목 설정
+            $('#registerButtons').addClass('hidden');
+            $('#detailButtons').addClass('hidden');
+            $('#editButtons').addClass('hidden');
+
+            if (mode === 'register') {
+                $('#modalTitle').text('공지사항 등록');
+                $('#registerButtons').removeClass('hidden');
+                $('#universityWriterUserName').val('작성자 자동 설정');
+                $('#universityNoticeNo').parent().hide(); 
+                $('#universityNoticeViewCnt').parent().hide(); 
+            } else if (mode === 'detail') {
+                $('#modalTitle').text('공지사항 상세 조회');
+                $('#universityNoticeNo').parent().show(); 
+                $('#universityNoticeViewCnt').parent().show(); 
+                loadNoticeDetail(noticeNo);
+            }
+
+            $modal.removeClass('hidden');
+        };
+
+        window.closeNoticeModal = function() {
+            $('#noticeCrudModal').addClass('hidden');
+            originalDetailData = {};
+        };
+
+        window.enterDetailEditMode = function() {
+            currentMode = 'edit';
+            $('#modalTitle').text('공지사항 수정');
+            $('#detailButtons').addClass('hidden');
+            $('#editButtons').removeClass('hidden');
+
+            // 수정 가능 필드 활성화 (제목, 내용, 우선순위)
+            $('#universityNoticeTitle').prop('readonly', false).removeClass('bg-gray-100 cursor-not-allowed');
+            $('#universityNoticeContent').prop('readonly', false).removeClass('bg-gray-100 cursor-not-allowed');
+            $('#universityNoticePriorityCode').prop('disabled', false).removeClass('bg-gray-100 cursor-not-allowed');
+        };
+
+        window.cancelDetailEditMode = function() {
+            // 상세 조회 모드로 복귀 및 원래 데이터 복원
+            currentMode = 'detail';
+            $('#modalTitle').text('공지사항 상세 조회');
+            $('#editButtons').addClass('hidden');
+            $('#detailButtons').removeClass('hidden');
+
+            // 데이터 복원 및 읽기 전용으로 설정
+            bindDetailData(originalDetailData, false);
+        };
+
+
+        // ==========================================================
+        // 1. 공지사항 목록 로딩 및 검색/페이징 기능 (핵심 갱신 로직)
+        // ==========================================================
+
+        /**
+         * 목록을 AJAX로 다시 불러와 테이블과 페이징을 갱신합니다.
+         * @param {number} pageNo - 요청할 페이지 번호 (기본 1)
+         * @param {string} searchCondition - 검색 조건 (기본 빈 문자열)
+         */
+        window.loadNoticeList = function(pageNo, searchCondition) {
+            const condition = searchCondition || $('#searchUniversityNoticeCondition').val() || '';
+            const currentPage = pageNo || 1;
+
+            $.ajax({
+                url: '/admin/searchUniversityNotice', // Controller의 5번 매핑 사용
+                type: 'GET',
+                data: {
+                    searchUniversityNoticeCondition: condition,
+                    currentPage: currentPage
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const list = response.searchUniversityNoticeInfoList;
+                        const totalCount = response.totalCount;
+                        const totalPages = Math.ceil(totalCount / 10); // Controller limit=10 기준
+
+                        // 1. 테이블 업데이트
+                        updateNoticeTable(list);
+
+                        // 2. 총 개수 표시 업데이트
+                        $('#totalCountDisplay').text(`공지 목록 (총 ${totalCount}개의 공지)`);
+
+                        // 3. 페이징 업데이트
+                        updatePagination(currentPage, totalPages, condition);
+
+                        // 4. 체크박스 상태 초기화
+                        $('#selectAll').prop('checked', false);
+                        updateDeleteButtonState(); // 목록 갱신 후 삭제 버튼 상태 업데이트
+                    } else {
+                        alert('목록 조회에 실패했습니다.');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('List load AJAX Error:', xhr);
+                    alert('목록 로드 중 서버 오류가 발생했습니다.');
+                }
+            });
+        };
+
+        /**
+         * 조회된 목록 데이터를 HTML 테이블에 바인딩합니다.
+         */
+        function updateNoticeTable(list) {
+            const $tbody = $('#noticeListBody');
+            $tbody.empty(); 
+
+            if (list && list.length > 0) {
+                list.forEach(function(item) {
+                    
+                    // ⭐️ 수정된 부분: DTO에서 받은 priorityCode (10 또는 20)에 맞게 클래스 재정의 ⭐️
+                    let finalBadgeClass = 'bg-gray-100 text-gray-800'; // 기본값 (30 또는 기타)
+                    const priorityCode = item.universityNoticePriorityCode; // MyBatis XML에서 가져온 코드
+
+                    // Service/DB의 우선순위 코드(10, 20)에 맞게 클래스 적용
+                    if (priorityCode === 10) {
+                        finalBadgeClass = 'bg-red-100 text-red-700'; // 필수/긴급 공지 (Service의 10:text-red-600 대응)
+                    } else if (priorityCode === 20) {
+                        finalBadgeClass = 'bg-yellow-100 text-orange-700'; // 주요/중요 공지 (Service의 20:text-orange-500 대응)
+                    }
+                    // ⭐️ 수정된 부분 끝 ⭐️
+
+                    // HTML onclick 대신 data-attribute와 클래스를 사용
+                    const row = `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 whitespace-nowrap text-center"><input type="checkbox" name="noticeNo" value="${item.universityNoticeNo}" class="notice-checkbox"></td>
+                            <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">${item.universityNoticeNo}</td>
+                            <td class="p-3 whitespace-nowrap text-xs text-center">
+                                <span class="font-medium ${finalBadgeClass} px-2 py-0.5 rounded-full">
+                                    ${item.universityNoticePriorityName}
+                                </span>
+                            </td>
+                            <td class="p-3 text-sm text-gray-900 cursor-pointer hover:text-blue-600 font-medium detail-link" data-notice-no="${item.universityNoticeNo}">
+                                ${item.universityNoticeTitle}
+                            </td>
+                            <td class="p-3 whitespace-nowrap text-center text-sm text-gray-800">${item.universityWriterUserName || '알 수 없음'}</td>
+                            <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">${item.universityNoticeViewCnt}</td>
+                            <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(item.universityNoticeUpdatedate.split(' ')[0])}</td>
+                            <td class="p-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(item.universityNoticeCreatedate.split(' ')[0])}</td>
+                        </tr>
+                    `;
+                    $tbody.append(row);
+                });
+            } else {
+                const emptyRow = `<tr><td colspan="8" class="p-4 text-center text-gray-500 text-sm">조회된 공지사항 정보가 없습니다.</td></tr>`;
+                $tbody.append(emptyRow);
+            }
+        }
+
+        /**
+         * 페이징 HTML을 다시 생성합니다.
+         */
+        function updatePagination(currentPage, totalPages, searchCondition) {
+            const $pagination = $('#pagination');
+            $pagination.empty();
+            const pagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+
+            if (endPage - startPage + 1 < pagesToShow) {
+                startPage = Math.max(1, endPage - pagesToShow + 1);
+            }
+            if (totalPages === 0) return;
+
+            // Previous Button
+            if (currentPage > 1) {
+                $pagination.append(createPaginationLink(currentPage - 1, '이전', searchCondition, false));
+            }
+
+            // Page links
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === currentPage;
+                $pagination.append(createPaginationLink(i, i, searchCondition, isActive));
+            }
+
+            // Next Button
+            if (currentPage < totalPages) {
+                $pagination.append(createPaginationLink(currentPage + 1, '다음', searchCondition, false));
+            }
+        }
+
+        /**
+         * 페이징 링크 요소를 생성하고 이벤트 핸들러를 연결합니다.
+         */
+        function createPaginationLink(page, text, searchCondition, isActive) {
+            const baseClass = 'px-3 py-1.5 text-sm rounded-lg mx-1 transition duration-150';
+            const activeClass = 'bg-blue-600 text-white font-semibold';
+            const inactiveClass = 'bg-gray-200 text-gray-700 hover:bg-gray-300';
+            const className = isActive ? `${baseClass} ${activeClass} pagination-link` : `${baseClass} ${inactiveClass} pagination-link`;
+
+            const $link = $('<button></button>')
+                .addClass(className)
+                .text(text)
+                .data('page', page)
+                .on('click', function(e) {
+                    e.preventDefault();
+                    loadNoticeList(page, searchCondition);
+                });
+            return $link;
+        }
+
+        // ==========================================================
+        // 2. 공지사항 등록 및 수정 (AJAX) - 갱신 로직 추가
+        // ==========================================================
+        $('#noticeForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const action = currentMode === 'register' ? 'register' : 'update';
+            const url = action === 'register' ? '/admin/insertUniversityNotice' : '/admin/updateUniversityNotice';
+
+            // 폼 데이터 수집 (수정 시 universityNoticeNo 포함)
+            const noticeData = {
+                universityNoticeTitle: $('#universityNoticeTitle').val(),
+                universityNoticeContent: $('#universityNoticeContent').val(),
+                // 드롭다운 값은 String일 수 있으므로 parseInt 처리
+                universityNoticePriorityCode: parseInt($('#universityNoticePriorityCode').val()),
+            };
+
+            if (action === 'update') {
+                // 수정 시에만 공지 번호 포함
+                noticeData.universityNoticeNo = parseInt($('#universityNoticeNo').val());
+            }
+
+            if (!noticeData.universityNoticePriorityCode) {
+                 alert('우선순위를 선택해주세요.');
+                 return;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(noticeData),
+                success: function(response) {
+                    console.log("AJAX 성공, 응답:", response);
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeNoticeModal();
+                        
+                        // ⭐️ 핵심 갱신 로직 ⭐️
+                        const searchCondition = $('#searchUniversityNoticeCondition').val();
+                        let pageToLoad = 1; // 등록 성공 시 항상 1페이지로 이동
+                        
+                        if (action === 'update') {
+                            // 수정 성공 시 현재 활성화된 페이지 번호를 가져와 유지
+                            pageToLoad = $('.pagination-link.bg-blue-600').data('page') || 1;
+                        }
+                        
+                        // 목록을 갱신합니다.
+                        loadNoticeList(pageToLoad, searchCondition);
+                        
+                    }
+                },
+                error: function(xhr) {
+                    alert(`${action === 'register' ? '등록' : '수정'} 중 서버 오류가 발생했습니다.`);
+                    console.error('AJAX Error:', xhr);
+                }
+            });
+        });
+
+
+        // ==========================================================
+        // 3. 상세 조회 (AJAX)
+        // ==========================================================
+        /**
+         * 공지 상세 정보를 로드하고 모달에 바인딩합니다.
+         */
+        function loadNoticeDetail(noticeNo) {
+            $.ajax({
+                url: '/admin/getUniversityNoticeDetail',
+                type: 'GET',
+                data: { universityNoticeNo: noticeNo },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const detail = response.data;
+                        originalDetailData = detail;
+
+                        bindDetailData(detail, false);
+
+                        currentMode = 'detail';
+                        $('#detailButtons').removeClass('hidden');
+                    } else {
+                        alert(response.message);
+                        closeNoticeModal();
+                    }
+                },
+                error: function() {
+                    alert('상세 정보 로드 중 오류가 발생했습니다.');
+                    closeNoticeModal();
+                }
+            });
+        }
+
+        /**
+         * 상세 정보를 모달 폼에 바인딩하고 필드 상태를 설정합니다.
+         */
+        function bindDetailData(detail, isEditable) {
+             const readOnlyClass = isEditable ? '' : 'bg-gray-100 cursor-not-allowed';
+             const readOnlyProp = isEditable ? false : true;
+
+             // 항상 readonly인 필드
+             $('#universityNoticeNo').val(detail.universityNoticeNo);
+             $('#universityWriterUserName').val(detail.universityWriterUserName || '알 수 없음');
+             $('#universityNoticeViewCnt').val(detail.universityNoticeViewCnt); 
+             
+             // 수정 가능 필드 (isEditable에 따라 상태 변경)
+             $('#universityNoticeTitle').val(detail.universityNoticeTitle).prop('readonly', readOnlyProp).toggleClass('bg-gray-100 cursor-not-allowed', !isEditable);
+             $('#universityNoticeContent').val(detail.universityNoticeContent).prop('readonly', readOnlyProp).toggleClass('bg-gray-100 cursor-not-allowed', !isEditable);
+             $('#universityNoticePriorityCode').val(detail.universityNoticePriorityCode).prop('disabled', readOnlyProp).toggleClass('bg-gray-100 cursor-not-allowed', !isEditable);
+        }
+
+        // ==========================================================
+        // 4. 다중 삭제 기능 (AJAX) - 갱신 로직 추가
+        // ==========================================================
+
+        /**
+         * 체크박스 선택 상태에 따라 삭제 버튼을 활성화/비활성화합니다.
+         */
+        function updateDeleteButtonState() {
+            const checkedCount = $('.notice-checkbox:checked').length;
+            const $button = $('#removeSelectedBtn'); // ID 변경
+            if (checkedCount > 0) {
+                $button.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+            } else {
+                $button.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+            }
+        }
+
+        // 전체 선택 체크박스 이벤트
+        $('#selectAll').on('change', function() {
+            $('.notice-checkbox').prop('checked', $(this).prop('checked'));
+            updateDeleteButtonState();
+        });
+
+        // 개별 체크박스 이벤트 (동적으로 추가될 수 있으므로 on('change') 사용)
+        $('#noticeListBody').on('change', '.notice-checkbox', function() {
+            if (!$(this).prop('checked')) {
+                $('#selectAll').prop('checked', false);
+            } else if ($('.notice-checkbox').length === $('.notice-checkbox:checked').length) {
+                $('#selectAll').prop('checked', true);
+            }
+            updateDeleteButtonState();
+        });
+        
+        // 다중 삭제 버튼 클릭 이벤트 (ID 수정: deleteSelectedNotices -> removeSelectedBtn)
+        $('#removeSelectedBtn').on('click', function() {
+            const universityNoticeNoList = $('.notice-checkbox:checked').map(function() {
+                return parseInt($(this).val());
+            }).get();
+
+            if (universityNoticeNoList.length === 0) {
+                alert('삭제할 공지사항을 선택해주세요.');
+                return;
+            }
+
+            if (!confirm(`선택한 ${universityNoticeNoList.length}개의 공지사항을 정말로 삭제하시겠습니까?`)) {
+                return;
+            }
+
+            $.ajax({
+                url: '/admin/removeUniversityNotice', // Controller의 6번 매핑 사용
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ universityNoticeNoList: universityNoticeNoList }),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success' || response.status === 'fail') {
+                        // ⭐️ 삭제 후 목록 갱신 ⭐️
+                        const searchCondition = $('#searchUniversityNoticeCondition').val();
+                        const pageToLoad = $('.pagination-link.bg-blue-600').data('page') || 1;
+                        loadNoticeList(pageToLoad, searchCondition);
+                    }
+                },
+                error: function(xhr) {
+                    alert('다중 삭제 중 서버 오류가 발생했습니다.');
+                    console.error('AJAX Error:', xhr);
+                }
+            });
+        });
+
+        // ==========================================================
+        // 5. 검색 및 초기 로드 이벤트 핸들러 및 동적 바인딩 추가
+        // ==========================================================
+        
+        // 1. 공지 등록 버튼 이벤트 바인딩 (HTML의 onclick 제거 후)
+        $('#openRegisterModalBtn').on('click', function() {
+            openNoticeModal('register'); 
+        });
+
+        // 2. 목록의 제목 클릭 시 상세 조회 이벤트 바인딩 (동적 요소에 대해 .on() 사용)
+        // updateNoticeTable 함수에서 HTML onclick 속성을 제거했으므로 이 바인딩이 필수입니다.
+        $('#noticeListBody').on('click', '.detail-link', function() {
+            // data-notice-no 속성에서 공지 번호를 가져옵니다.
+            const noticeNo = $(this).data('notice-no'); 
+            if (noticeNo) {
+                openNoticeModal('detail', noticeNo);
+            }
+        });
+
+        // 3. 검색 폼 이벤트 핸들러 (검색 실행 시 1페이지로 이동)
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const condition = $('#searchUniversityNoticeCondition').val();
+            loadNoticeList(1, condition); // 검색 시 1페이지부터 다시 시작
+        });
+
+        // 초기 로드 시 목록 갱신 (Mustache에서 받은 초기 데이터를 기반으로 페이징 재구성)
+        if (!isNaN(initialTotalCount) && !isNaN(initialCurrentPage)) {
+            // Math.ceil((double) totalCount / limit)와 동일한 계산
+            const initialTotalPages = Math.ceil(initialTotalCount / 10);
+            updatePagination(initialCurrentPage, initialTotalPages, initialSearchCondition);
+            $('#totalCountDisplay').text(`공지 목록 (총 ${initialTotalCount}개의 공지)`);
+        }
+        
+        loadNoticeList(initialCurrentPage, initialSearchCondition);
+        
+        // 초기 로드 시 삭제 버튼 상태 업데이트
+        updateDeleteButtonState();
+        
+    });
+</script>
+
+</body>
+</html>

@@ -34,4 +34,9 @@ public class SysUserDTO {
     private Integer userLoginFailCnt; //로그인실패수
     private LocalDateTime userCreatedate; //생성일자
     private LocalDateTime userUpdatedate; //수정일자
+    
+    //세션 값에 추가해야함
+    private String authDetailName;
+    private String authCode;
+    private String authName;
 }

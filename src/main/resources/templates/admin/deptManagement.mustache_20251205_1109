@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 권한 관리 | 학사관리시스템</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .admin-hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .input-readonly {
+            background-color: #F8F9FA;
+            border-color: #E5E7EB;
+            color: #6B7280;
+            cursor: default;
+        }
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<!-- 헤더부분 -->
+
+ <header class="bg-white border-b border-gray-200">
+    <div class="max-w-screen-2xl mx-auto py-3 px-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <h1 class="text-lg font-bold text-gray-800">
+                <a href="/main" class="text-gray-800 hover:text-blue-600 transition">
+                    학사관리시스템
+                </a> 
+                <span class="text-sm font-medium text-gray-500 ml-1">관리자 페이지</span>
+            </h1>
+        </div>
+        <div class="text-sm text-gray-600 flex items-center gap-4">
+            <p>홍길동님 로그인 중입니다</p> 
+            <a href="/logout" class="text-red-500 hover:text-red-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> 로그아웃
+            </a>
+        </div>
+    </div>
+	</header>
+
+    <div class="admin-hero-bg h-40 p-8 text-white">
+        <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
+            <h2 class="text-3xl font-bold">학과 관리</h2>
+            <p class="text-sm text-gray-200 mt-2">학과 코드 조회 및 관리</p>
+        </div>
+    </div>
+
+    <div class="flex min-h-[calc(100vh-16rem)]">
+        
+        <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
+            <nav class="p-4 space-y-1">
+                <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보 관리
+                </a>
+                <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
+                </a>
+                <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자 권한 관리
+                </a>
+                <a href="/admin/deptManagement" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과 관리
+                    <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
+                </a>
+                <a href="/admin/universityNoticeManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항 관리
+                </a>
+                <a href="/admin/courseManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+            		<i class="fa-solid fa-graduation-cap w-5"></i> 학점관리
+        		</a>
+            </nav>
+        </aside>
+
+	<!-- 메인 동적 부분 -->
+	<main class="flex-grow p-8 max-w-screen-2xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">학과 코드 관리</h2>
+        <p class="text-gray-500 mb-6">시스템에 등록된 학과 코드를 조회하고 관리할 수 있습니다.</p>
+
+        <section class="mb-8 p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">학과 코드 조회</h3>
+            <p class="text-sm text-gray-500 mb-3">학과 코드 또는 학과명으로 검색할 수 있습니다.</p>
+            <div class="flex items-center gap-2">
+                <div class="flex-grow">
+                    <input type="text" id="searchCondition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="학과 코드 또는 학과명을 입력하세요" value="{{searchDeptCondition}}">
+                </div>
+                <button id="searchBtn" class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-magnifying-glass"></i> 조회
+                </button>
+            </div>
+        </section>
+
+        <!-- excel 엑셀 -->
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-gray-700 font-medium" id="totalCountDisplay">학과 목록 (총 0개의 학과)</p>
+            <div class="flex space-x-2">
+                <button onclick="downloadDeptList()" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
+                </button>
+                <button onclick="downloadDeptForm()" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-file-excel"></i> 양식 다운로드
+                </button>
+                <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-upload"></i> 일괄 업로드
+                </button>
+                <button id="openRegisterModalBtn" onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
+                    <i class="fa-solid fa-plus"></i> 등록
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+		    <table class="min-w-full divide-y divide-gray-200">
+		        <thead class="bg-gray-50">
+		            <tr>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-10"><input type="checkbox" id="selectAll"></th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">No</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">학과코드</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">학과명</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">업데이트일자</th>
+		                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">생성일자</th>
+		            </tr>
+		        </thead>
+		        <tbody class="bg-white divide-y divide-gray-200" id="deptListBody"> 
+		            {{#deptList}}
+		            <tr>
+		                <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedDept" data-dept-code="{{deptCode}}"></td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{rownum}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+		                    <a href="#" onclick="openDeptDetailModal('{{deptCode}}')" class="text-blue-600 hover:underline">
+		                        {{deptCode}}
+		                    </a>
+		                </td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">{{deptName}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{deptUpdatedate}}</td>
+		                <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">{{deptCreatedate}}</td>
+		            </tr>
+		            {{/deptList}}
+		            {{^deptList}}
+		            <tr>
+		                <td colspan="6" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 학과 정보가 없습니다.</td>
+		            </tr>
+		            {{/deptList}}
+		        </tbody>
+		    </table>
+		</div>
+
+        <div class="flex justify-between items-center mt-6">
+            <button id="removeSelectedBtn" disabled class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-trash-can mr-2"></i> 선택 항목 삭제
+            </button>
+            
+            <div id="pagination" class="flex justify-end">
+                </div>
+        </div>
+    </div>
+</main>
+</div>
+
+	<!-- CRUD Modal 부분 -->
+	
+	<div id="deptCrudModal" class="modal-container hidden">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+        <div class="p-6">
+            <div class="flex justify-between items-center pb-4 border-b">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-900">학과 등록</h3>
+                <button onclick="closeDeptCrudModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="deptForm" class="mt-6 space-y-4">
+                <p id="modalSubtitle" class="text-sm text-red-500">* 표시는 필수 항목입니다</p>
+                
+                <input type="hidden" id="originalDeptCode" name="deptCode"> 
+
+                <div>
+                    <label for="newDeptCode" class="block text-sm font-medium text-gray-700">학과 코드 *</label>
+                    <input type="text" id="newDeptCode" name="newDeptCode" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: CS (컴퓨터공학과)" required>
+                </div>
+
+                <div>
+                    <label for="deptName" class="block text-sm font-medium text-gray-700">학과명 *</label>
+                    <input type="text" id="deptName" name="deptName" class="input-field mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="예: 컴퓨터공학과" required>
+                </div>
+                
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    
+                    <div id="registerButtons" class="flex space-x-3">
+                        <button type="button" onclick="closeDeptCrudModal()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">
+                            <i class="fa-solid fa-times mr-1"></i> 취소
+                        </button>
+                        <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> 등록
+                        </button>
+                    </div>
+
+                    <div id="detailButtons" class="hidden flex space-x-3">
+                        <button type="button" onclick="closeDeptCrudModal()" class="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                            <i class="fa-solid fa-times mr-1"></i> 닫기
+                        </button>
+                        <button type="button" onclick="enterDetailEditMode()" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> 변경
+                        </button>
+                    </div>
+                    
+                    <div id="editButtons" class="hidden flex space-x-3">
+                         <button type="button" onclick="cancelDetailEditMode()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">
+                            <i class="fa-solid fa-xmark mr-1"></i> 취소
+                        </button>
+                        <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> 저장
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Excel Dialog 부분 엑셀 다이얼로그-->
+
+<div id="batchUploadModal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden z-50">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+        <div class="p-6">
+            <div class="flex justify-between items-center pb-4 border-b">
+                <h3 class="text-2xl font-bold text-gray-900">학과 일괄 업로드</h3>
+                <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <form id="deptUploadForm" enctype="multipart/form-data">
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
+
+                    <label for="excelFile" class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500 cursor-pointer block hover:border-blue-400 transition">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
+                        <p id="fileNameDisplay">파일을 드래그하거나 클릭하여 업로드</p>
+                        <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
+                        <button type="button" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition text-sm">
+                            파일 선택
+                        </button>
+                        <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" class="hidden">
+                    </label>
+
+                    <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
+                        <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>엑셀 파일 형식(.xlsx, .xls)만 업로드 가능합니다.</li>
+                            <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
+                            <li>필수 항목은 반드시 입력되어야 합니다. (학과코드, 학과명, 사용여부)</li>
+                            <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
+                            <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
+                            <li>중복된 데이터는 자동으로 제외됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeBatchUploadModal()" class="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm">취소</button>
+                    <button type="submit" id="submitUploadBtn" disabled class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 text-sm">업로드</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        	<p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        	<p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+</footer>
+
+<script>
+	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
+	function formatDate(isoString) {
+	    if (!isoString) return '-';
+	
+	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
+	    const date = new Date(isoString);
+	
+	    // 한국식 날짜 형식으로 예쁘게 (예: 2025-12-02 11:48:15 또는 2025.12.02 11:48)
+	    // 원하는 스타일에 따라 아래 두 줄 중 하나만 선택하세요!
+	
+	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
+	    return date.toLocaleString('ko-KR', {
+	        year: 'numeric',
+	        month: '2-digit',
+	        day: '2-digit',
+	        hour: '2-digit',
+	        minute: '2-digit',
+	        second: '2-digit',
+	        hour12: false
+	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
+	
+	    // 2. 점으로 구분 + 시간만 (좀 더 깔끔한 스타일 원하면 이거 추천)
+	    // return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+	}
+</script>
+
+
+<script>
+    // 전역 변수 (DOM Element)
+    const $deptCrudModal = $('#deptCrudModal');
+    const $deptForm = $('#deptForm');
+    const $modalTitle = $('#modalTitle');
+    const $modalSubtitle = $('#modalSubtitle');
+
+    const $registerBtns = $('#registerButtons');
+    const $detailBtns = $('#detailButtons');
+    const $editBtns = $('#editBtns');
+
+    // Hidden Fields
+    const $originalDeptCodeInput = $('#originalDeptCode');
+
+    // Input Fields
+    const $newDeptCodeInput = $('#newDeptCode');
+    const $deptNameInput = $('#deptName');
+
+    // List/Search Elements
+    const $deptListBody = $('#deptListBody');
+    const $searchConditionInput = $('#searchCondition');
+    const $searchBtn = $('#searchBtn');
+    const $removeSelectedBtn = $('#removeSelectedBtn');
+    const $totalCountDisplay = $('#totalCountDisplay');
+    const $paginationDiv = $('#pagination');
+
+    // ⭐️ 엑셀 업로드 관련 DOM 변수 ⭐️
+    const $batchUploadModal = $('#batchUploadModal');
+    const $deptUploadForm = $('#deptUploadForm');
+    const $excelFile = $('#excelFile');
+    const $fileNameDisplay = $('#fileNameDisplay');
+    const $submitUploadBtn = $('#submitUploadBtn');
+    
+    // ⭐️ 파일 드롭 영역으로 사용할 라벨 선택 ⭐️
+    const $dropArea = $('label[for="excelFile"]'); 
+
+    // [상태 관리 변수]
+    let originalDetailData = {}; // 상세 조회 시 원본 데이터 저장용
+    let currentSearchCondition = $searchConditionInput.val().trim() || '';
+    let currentPageNo = {{currentPage}} || 1; // Mustache 템플릿의 초기 값 사용
+
+    // **⭐️ 컨트롤러가 전달하는 초기 값 ⭐️**
+    const initialTotalCount = {{totalCount}} || 0;
+
+    // ------------------------
+    // 유틸리티 함수: 폼 데이터 바인딩
+    // ------------------------
+    function bindFormData(data) {
+        $originalDeptCodeInput.val(data.deptCode || '');
+        $newDeptCodeInput.val(data.deptCode || '');
+        $deptNameInput.val(data.deptName || '');
+    }
+
+    // ------------------------
+    // 💡 입력 필드 상태 토글 (readonly / disabled)
+    // ------------------------
+    function toggleInputState(isReadOnly) {
+        const $inputFields = $deptCrudModal.find('.input-field');
+
+        $inputFields.each(function() {
+            const $this = $(this);
+            $this.prop('readOnly', isReadOnly);
+            $this.prop('disabled', isReadOnly);
+
+            if (isReadOnly) {
+                $this.addClass('input-readonly');
+            } else {
+                $this.removeClass('input-readonly');
+                $this.prop('disabled', false);
+            }
+        });
+    }
+
+    // ------------------------
+    // 💡 학과 목록 테이블 렌더링
+    // ------------------------
+    function renderDeptTable(deptList) {
+        let html = '';
+
+        if (deptList && deptList.length > 0) {
+            deptList.forEach((dept) => {
+                const rownum = dept.rownum;
+
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 whitespace-nowrap text-center"><input type="checkbox" name="selectedDept" data-dept-code="${dept.deptCode}"></td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${rownum}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm font-medium">
+                            <a href="#" onclick="openDeptDetailModal('${dept.deptCode}')" class="text-blue-600 hover:underline">
+                                ${dept.deptCode}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${dept.deptName}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(dept.deptUpdatedate) || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(dept.deptCreatedate)}</td>
+                    </tr>
+                `;
+            });
+        } else {
+             html += `
+                <tr>
+                    <td colspan="6" class="px-4 py-3 whitespace-nowrap text-center text-gray-500">조회된 학과 정보가 없습니다.</td>
+                </tr>
+            `;
+        }
+
+        $deptListBody.html(html);
+
+        $('#selectAll').prop('checked', false);
+        updateRemoveButtonState();
+    }
+
+
+    // ------------------------
+    // 💡 페이징 렌더링
+    // ------------------------
+    function renderPagination(totalCount, currentPage, pageSize = 10) {
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        $totalCountDisplay.text(`학과 목록 (총 ${totalCount}개의 학과)`);
+
+        if (totalPages <= 1) {
+            $paginationDiv.empty().hide();
+            return;
+        }
+
+        let html = '<nav class="flex items-center space-x-1">';
+
+        const pagesPerBlock = 10;
+        const currentBlock = Math.floor((currentPage - 1) / pagesPerBlock);
+        const blockStart = currentBlock * pagesPerBlock + 1;
+        const blockEnd = Math.min(blockStart + pagesPerBlock - 1, totalPages);
+
+        // 이전 페이지 버튼 (◀)
+        const prevPage = currentPage - 1;
+        const prevDisabled = (currentPage === 1) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${prevPage > 0 ? prevPage : 1}"
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${prevDisabled}">◀</a>`;
+
+        // 페이지 번호 링크
+        for (let i = blockStart; i <= blockEnd; i++) {
+            const activeClass = (i === currentPage) ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100';
+            html += `<a href="#" data-page="${i}"
+                       class="page-link px-3 py-1 text-sm font-medium rounded-lg ${activeClass}">${i}</a>`;
+        }
+
+        // 다음 페이지 버튼 (▶)
+        const nextPage = currentPage + 1;
+        const nextDisabled = (currentPage === totalPages) ? 'opacity-50 cursor-not-allowed' : '';
+        html += `<a href="#" data-page="${nextPage <= totalPages ? nextPage : totalPages}"
+                     class="page-link px-3 py-1 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 ${nextDisabled}">▶</a>`;
+
+
+        html += '</nav>';
+
+        $paginationDiv.html(html).show();
+    }
+
+    // ------------------------
+    // 핵심 함수: 검색 및 페이지 이동 AJAX 요청
+    // ------------------------
+    function searchAndRenderDept(pageNo) {
+        const condition = $searchConditionInput.val().trim();
+
+        currentSearchCondition = condition;
+        currentPageNo = pageNo;
+
+        $.ajax({
+            url: '/admin/searchDept',
+            type: 'GET',
+            data: {
+                searchDeptCondition: condition,
+                currentPage: pageNo
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    renderDeptTable(response.searchDeptInfoList);
+                    renderPagination(response.totalCount, response.currentPage);
+                    $searchConditionInput.val(currentSearchCondition);
+                } else {
+                    alert('학과 검색에 실패했습니다.');
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    // ------------------------
+    // 모달 제어 함수 (CRUD)
+    // ------------------------
+
+    window.closeDeptCrudModal = function() {
+        $deptCrudModal.removeClass('flex').addClass('hidden');
+        $deptForm[0].reset();
+        $originalDeptCodeInput.val('');
+        $searchConditionInput.val(currentSearchCondition);
+        searchAndRenderDept(currentPageNo);
+    }
+
+    window.openRegisterModal = function() {
+        $deptForm[0].reset();
+        $modalTitle.text("학과 등록");
+        $modalSubtitle.text("* 표시는 필수 항목입니다");
+
+        toggleInputState(false);
+
+        $registerBtns.removeClass('hidden');
+        $detailBtns.addClass('hidden');
+        $editBtns.addClass('hidden');
+
+        $deptCrudModal.removeClass('hidden').addClass('flex');
+    }
+
+    window.openDeptDetailModal = function(deptCode) {
+        $.ajax({
+            url: '/admin/getDeptDetail',
+            type: 'GET',
+            data: { deptCode: deptCode },
+            success: function(response) {
+                if (response.status === 'success') {
+                    const data = response.data;
+                    originalDetailData = data;
+
+                    bindFormData(data);
+
+                    $modalTitle.text("학과 세부 정보 (" + deptCode + ")");
+                    $modalSubtitle.text("학과 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)");
+
+                    toggleInputState(true);
+
+                    $detailBtns.removeClass('hidden');
+                    $registerBtns.addClass('hidden');
+                    $editBtns.addClass('hidden');
+                    $deptCrudModal.removeClass('hidden').addClass('flex');
+                } else {
+                    alert('학과 정보를 불러오는 데 실패했습니다: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('서버 통신 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    window.enterDetailEditMode = function() {
+        $modalTitle.text("학과 정보 수정");
+        $modalSubtitle.text("정보를 수정 후 저장해주세요.");
+
+        toggleInputState(false);
+
+        $editBtns.removeClass('hidden');
+        $detailBtns.addClass('hidden');
+        $registerBtns.addClass('hidden');
+    }
+
+    window.cancelDetailEditMode = function() {
+        bindFormData(originalDetailData);
+
+        $modalTitle.text("학과 세부 정보 (" + originalDetailData.deptCode + ")");
+        $modalSubtitle.text("학과 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)");
+
+        toggleInputState(true);
+
+        $detailBtns.removeClass('hidden');
+        $editBtns.addClass('hidden');
+    }
+
+    // 유틸리티 함수 (체크박스 상태)
+    function updateRemoveButtonState() {
+        const checkedCount = $('input[name="selectedDept"]:checked').length;
+        $removeSelectedBtn.prop('disabled', checkedCount === 0);
+    }
+
+    // ------------------------
+    // 💡 엑셀 기능 함수 (양식 다운로드)
+    // ------------------------
+
+    /**
+     * 엑셀 양식 파일 다운로드 (GET 요청)
+     */
+    window.downloadDeptForm = function() {
+        // 서버의 다운로드 엔드포인트로 리다이렉트
+        window.location.href = '/admin/downloadDeptForm';
+    };
+
+    /**
+     * 학과 목록 엑셀 다운로드 (다음 단계에서 구현)
+     */
+    window.downloadDeptList = function() {
+        // ⭐️ 현재 검색 조건(currentSearchCondition)을 쿼리 파라미터로 전달 ⭐️
+       const condition = currentSearchCondition;
+       // URL 인코딩은 자바스크립트에서 처리하여 한글 깨짐 방지
+       window.location.href = `/admin/downloadDeptList?searchDeptCondition=${encodeURIComponent(condition)}`;
+    };
+
+    // ------------------------
+    // 모달 제어 함수 (일괄 업로드)
+    // ------------------------
+
+    window.openBatchUploadModal = function() {
+        $deptUploadForm[0].reset();
+        // input[type=file] 값을 초기화해야 드롭된 파일 정보도 제거됨
+        $excelFile.val(''); 
+        $fileNameDisplay.text('파일을 드래그하거나 클릭하여 업로드');
+        $submitUploadBtn.prop('disabled', true);
+        $batchUploadModal.removeClass('hidden').addClass('flex');
+    }
+
+    window.closeBatchUploadModal = function() {
+        $batchUploadModal.removeClass('flex').addClass('hidden');
+    }
+
+
+    // ------------------------
+    // 문서 로딩 완료 후 이벤트 리스너 설정
+    // ------------------------
+    $(document).ready(function() {
+
+        renderPagination(initialTotalCount, currentPageNo);
+
+        // 1. 페이징 링크 클릭 이벤트 위임
+        $paginationDiv.on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const targetPage = parseInt($(this).data('page'));
+
+            if ($(this).hasClass('cursor-not-allowed')) return;
+
+            searchAndRenderDept(targetPage);
+        });
+
+        // 2. 체크박스 이벤트 설정
+        const $selectAll = $('#selectAll');
+
+        $selectAll.on('change', function() {
+            const isChecked = $(this).prop('checked');
+            $('input[name="selectedDept"]').prop('checked', isChecked);
+            updateRemoveButtonState();
+        });
+
+        $deptListBody.on('change', 'input[name="selectedDept"]', function() {
+            updateRemoveButtonState();
+            const $checkboxes = $('input[name="selectedDept"]');
+            const allChecked = $checkboxes.length > 0 && $checkboxes.filter(':checked').length === $checkboxes.length;
+            $selectAll.prop('checked', allChecked);
+        });
+
+        // 3. 폼 제출 이벤트 핸들링 (등록/수정)
+        $deptForm.on('submit', function(e) {
+            e.preventDefault();
+
+            const isRegisterMode = !$registerBtns.hasClass('hidden');
+            const url = isRegisterMode ? '/admin/insertDept' : '/admin/updateDept';
+
+            let formData = {};
+
+            if (isRegisterMode) {
+                formData.deptCode = $newDeptCodeInput.val().trim();
+                formData.deptName = $deptNameInput.val().trim();
+            } else {
+                formData.deptCode = $originalDeptCodeInput.val();
+                formData.deptNewCode = $newDeptCodeInput.val().trim();
+                formData.deptName = $deptNameInput.val().trim();
+            }
+
+            if ( !formData.deptCode || !formData.deptName || (!isRegisterMode && !formData.deptNewCode) ) {
+                alert("필수 항목을 모두 입력해주세요.");
+                return;
+            }
+
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeDeptCrudModal();
+                    }
+                },
+                error: function() {
+                    alert(isRegisterMode ? '학과 등록 중 서버 통신 오류가 발생했습니다.' : '학과 수정 중 서버 통신 오류가 발생했습니다.');
+                }
+            });
+        });
+
+        // 4. 검색 버튼 클릭 이벤트 처리
+        $searchBtn.on('click', function() {
+             searchAndRenderDept(1);
+        });
+        
+    	 // ⭐️ 4-1. 검색 입력 필드 엔터 키 이벤트 처리 ⭐️
+        $searchConditionInput.on('keyup', function(e) {
+            // 엔터 키(KeyCode 13)가 눌렸는지 확인
+            if (e.key === 'Enter') {
+                searchAndRenderDept(1);
+            }
+        });
+
+        // 5. 선택 항목 삭제 버튼 클릭 이벤트 처리
+        $removeSelectedBtn.on('click', function() {
+            const selectedDeptCodes = $('input[name="selectedDept"]:checked')
+                .map(function() { return $(this).data('dept-code'); })
+                .get();
+
+            if(selectedDeptCodes.length === 0) {
+                alert("삭제할 학과 코드를 선택해주세요.");
+                return;
+            }
+
+            if(confirm(`선택된 ${selectedDeptCodes.length}개의 학과 코드를 정말 삭제 처리하시겠습니까?`)) {
+
+                $.ajax({
+                    url: '/admin/removeDept',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ deptCodeList: selectedDeptCodes }),
+                    success: function(response) {
+                        alert(response.message);
+                        searchAndRenderDept(currentPageNo);
+                    },
+                    error: function() {
+                        alert('학과 삭제 처리 중 서버 통신 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+
+        // 6. 엑셀 파일 선택/변경 이벤트 
+        $excelFile.on('change', function() {
+            const fileName = $(this).val().split('\\').pop();
+            if (fileName) {
+                $fileNameDisplay.text(fileName);
+                $submitUploadBtn.prop('disabled', false);
+            } else {
+                $fileNameDisplay.text('파일을 드래그하거나 클릭하여 업로드');
+                $submitUploadBtn.prop('disabled', true);
+            }
+        });
+
+        // ⭐️ 9. 파일 선택 영역/버튼 클릭 시 input[type=file] 강제 실행 로직 (재조정) ⭐️
+        $dropArea.on('click', function(e) {
+            // 클릭된 요소가 input 자체가 아닐 때만 trigger를 실행하여 확실하게 팝업을 띄웁니다.
+            // label의 기본 동작을 막지 않으므로, 환경에 따라 한 번 또는 두 번 팝업이 뜰 수 있지만,
+            // 기능 불작동보다는 중복 팝업이 덜 치명적입니다.
+            if (e.target.id !== 'excelFile') {
+                $excelFile.trigger('click'); 
+            }
+        });
+
+        // ⭐️ 10. 드래그 앤 드롭 이벤트 구현 (유지) ⭐️
+        // dragenter, dragover: 파일이 영역 위로 들어왔을 때
+        $dropArea.on('dragenter dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // 시각적 피드백 제공 
+            $(this).addClass('border-blue-600 bg-blue-50'); 
+        });
+
+        // dragleave: 파일이 영역을 벗어났을 때
+        $dropArea.on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).removeClass('border-blue-600 bg-blue-50');
+        });
+
+        // drop: 파일을 드롭했을 때
+        $dropArea.on('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).removeClass('border-blue-600 bg-blue-50');
+
+            // 드롭된 파일 가져오기
+            const files = e.originalEvent.dataTransfer.files;
+
+            if (files.length > 0) {
+                const file = files[0];
+                const fileName = file.name;
+                const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+                // 파일 확장자 유효성 검사
+                if (fileExtension === '.xlsx' || fileExtension === '.xls') {
+                    // input[type=file] 요소에 드롭된 파일을 설정
+                    $excelFile[0].files = files;
+
+                    // change 이벤트를 수동으로 발생시켜 파일 이름 표시 및 버튼 활성화 로직 실행 (6번 항목)
+                    $excelFile.trigger('change'); 
+                } else {
+                    alert("엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.");
+                    $excelFile.val(''); // input 값 초기화
+                    $excelFile.trigger('change'); // 초기화 후 change 이벤트 재실행
+                }
+            }
+        });
+
+        // 7. 엑셀 일괄 업로드 폼 제출 처리 
+        $deptUploadForm.on('submit', function(e) {
+            e.preventDefault();
+
+            if ($excelFile[0].files.length === 0) {
+                alert('업로드할 엑셀 파일을 선택해주세요.');
+                return;
+            }
+
+            const formData = new FormData(this);
+
+            $submitUploadBtn.prop('disabled', true).text('업로드 중...');
+
+            $.ajax({
+                url: '/admin/uploadDeptBatch',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeBatchUploadModal();
+                        searchAndRenderDept(1);
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = '학과 일괄 업로드 중 서버 오류가 발생했습니다.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = `업로드 실패: ${xhr.responseJSON.message}`;
+                    }
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    $submitUploadBtn.prop('disabled', false).text('업로드');
+                }
+            });
+        });
+
+        // 8. 키보드 ESC로 모달 닫기 (CRUD 및 일괄 업로드 모달 통합)
+        $(document).on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if ($deptCrudModal.hasClass('flex')) {
+                    if (!$detailBtns.hasClass('hidden') || !$editBtns.hasClass('hidden')) {
+                         cancelDetailEditMode();
+                    }
+                    closeDeptCrudModal();
+                } else if ($batchUploadModal.hasClass('flex')) {
+                     closeBatchUploadModal();
+                }
+            }
+        });
+        
+     	// 맨 마지막에 이 한 줄 추가 또는 기존에 있으면 그대로 두기
+        searchAndRenderDept(currentPageNo);
+    });
+</script>
+
+</body>
+</html>

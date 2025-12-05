@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리시스템 | Academic Management System</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 메인페이지 캘린더 동적으로 사용하기 위한 LIB -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales-all.global.min.js'></script>
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F5F7FA;
+        }
+        .hero-bg {
+            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    
+    <!-- 캘린더 스타일추가 -->
+	<style>
+    /* ----------------------------------------------------- */
+    /* 폰트, 주말 색상, 이벤트 스타일 (최종 수정) */
+    /* ----------------------------------------------------- */
+    
+    /* 1. 폰트 및 기본 스타일 조정 (유지) */
+    /* 둥글고 친화적인 폰트 적용 */
+    #academicCalendar, .fc-header-toolbar, #calendarTitle {
+        font-family: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', sans-serif !important;
+    }
+    
+    /* 캘린더 날짜 셀의 높이 조정 (이벤트가 잘 보이도록) */
+    #academicCalendar .fc-daygrid-day {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        height: 100px; 
+    }
+    
+    /* 2. ⭐️ 그리드 테두리 스타일링 (유지) */
+    
+    /* 캘린더 전체 Border 제거 (투박한 바깥쪽 테두리 제거) */
+    #academicCalendar .fc-daygrid-container,
+    #academicCalendar .fc-scrollgrid {
+        border: none !important;
+    }
+    
+    /* 요일 헤더가 숨겨져 있으므로, 그리드 상단의 불필요한 테두리 제거 */
+    #academicCalendar .fc-daygrid-day-top {
+        border-top: none !important;
+    }
+    
+    /* 날짜 셀의 오른쪽/아래쪽 테두리 스타일을 얇고 연한 색으로 통일 */
+    #academicCalendar .fc-daygrid-day {
+        border-right: 1px solid #E5E7EB; /* border-gray-200 */
+        border-bottom: 1px solid #E5E7EB; /* border-gray-200 */
+    }
+    
+    /* 맨 왼쪽 날짜 셀의 왼쪽 테두리 추가 (테이블 전체 틀 유지) */
+    #academicCalendar .fc-daygrid-body table {
+        border-left: 1px solid #E5E7EB;
+    }
+    
+    /* 마지막 행의 아래쪽 테두리 스타일 제거 (깔끔하게 마무리) */
+    #academicCalendar .fc-daygrid-body tr:last-child .fc-daygrid-day {
+        border-bottom: none !important;
+    }
+    
+    /* 3. 날짜 및 주말 색상 조정 (공휴일 스타일 추가) */
+    .fc-daygrid-day-number {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #4B5563; 
+    }
+    
+    /* 🚩 일요일 날짜 (숫자) 색상: 빨강 */
+    .fc-day-sun .fc-daygrid-day-number {
+        color: #EF4444 !important; /* red-500 */
+    }
+    /* 🟦 토요일 날짜 (숫자) 색상: 파랑 */
+    .fc-day-sat .fc-daygrid-day-number {
+        color: #3B82F6 !important; /* blue-600 */
+    }
+
+    /* 🔴 [추가된 부분]: 공휴일 날짜 텍스트를 빨간색으로 지정 */
+    /* FullCalendar 설정에서 해당 날짜 셀에 'holiday-date' 클래스가 추가되었다고 가정 */
+    .holiday-date .fc-daygrid-day-number {
+        color: #EF4444 !important; /* red-500 */
+        font-weight: 700 !important; /* 공휴일은 더욱 강조 */
+    }
+    
+    /* 오늘 날짜 강조 스타일 */
+    #academicCalendar .fc-day-today {
+        background-color: #EFF6FF !important; 
+        border: 1px solid #60A5FA !important; 
+        border-radius: 0.5rem;
+    }
+    
+    /* 4. 공휴일 및 학사 일정 이벤트 스타일 (유지) */
+    #academicCalendar .fc-event {
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        padding: 0 0.2rem;
+        line-height: 1.25;
+        white-space: normal;
+        font-weight: 600;
+        cursor: pointer; 
+        border: none !important; /* 이벤트 자체 테두리 제거 */
+    }
+    
+    /* 🔴 공휴일 이벤트 스타일 (빨간색 배경/글자) */
+    .holiday-event {
+        border: none !important;
+    }
+    
+    /* 5. 기타 그리드 스타일 (유지) */
+    #academicCalendar .fc-daygrid-body {
+        padding-top: 5px; 
+    }
+    #academicCalendar .fc-daygrid-body table {
+        height: auto !important;
+    }
+</style>
+    
+</head>
+<body class="text-gray-800">
+
+    <header>
+        <div class="bg-white py-4 px-6 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-800">학사관리시스템</h1>
+                    <p class="text-xs text-gray-500">Academic Management System</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-bg h-32 w-full"></div>
+
+		<!-- 헤더 네비게이션 부분 -->
+
+        <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <nav class="flex space-x-8 overflow-x-auto scrollbar-hide">
+                
+                	{{#useAdmin}}
+                	<!-- 관리자 기능 사용할 헤더 메뉴 -->
+			        {{/useAdmin}}
+			        
+			        {{#useStudent}}
+			        <!-- 학생 기능 사용할 헤더 메뉴 -->
+			        {{/useStudent}}
+			        
+			        {{#useProfessor}}
+			        <!-- 교수 기능 사용할 헤더 메뉴 -->
+			        {{/useProfessor}}
+                    <a href="/courseListForEnrollment" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-book-open"></i> 수강신청
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-chart-bar"></i> 성적조회
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-regular fa-calendar-check"></i> 학사일정
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-file-lines"></i> 증명서발급
+                    </a>
+                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
+                        <i class="fa-solid fa-gear"></i> 설정
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 캘린더 부분 -->
+            
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+			    <div class="mb-4">
+			        <h2 class="text-lg font-bold text-gray-800">학사 일정</h2>
+			        <p class="text-sm text-gray-500">이번 달 주요 일정을 확인하세요</p>
+			    </div>
+			    
+			    <div class="mb-4">
+			        <div class="flex justify-between items-center mb-4">
+			            <button id="prevMonthBtn" class="text-gray-400 hover:text-gray-600 px-2 py-1"><i class="fa-solid fa-chevron-left"></i></button>
+			            
+			            <span id="calendarTitle" class="font-semibold text-gray-700">로딩 중...</span>
+			            
+			            <button id="nextMonthBtn" class="text-gray-400 hover:text-gray-600 px-2 py-1"><i class="fa-solid fa-chevron-right"></i></button>
+			        </div>
+			        
+			        <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-400 border-b pb-2">
+					    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+					</div>
+			    </div>
+			    
+			    <div id="academicCalendar">
+			        </div>
+			</div>
+
+			<!-- 시간표 부분 -->
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+			    
+			    <!-- 시간표 캘린더와 동적으로 같이 움직임 -->
+			    
+			    <div class="mb-4">
+				    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+				        <i class="fa-regular fa-clock text-blue-500"></i> 오늘의 시간표
+				    </h2>
+				    <p class="text-sm text-gray-500 today-date-display">
+				        로딩 중...
+				    </p> 
+				</div>
+			
+			    <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scroll pr-1">
+			        
+			        {{#hasSchedule}}
+			            {{#mainCourseTimeTable}}
+			            <div class="border border-gray-100 rounded-lg p-4 hover:bg-blue-50 transition group">
+			                <div class="flex justify-between items-start mb-1">
+			                    <h3 class="font-bold text-gray-800 group-hover:text-blue-600">{{courseName}}</h3>
+			                    <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded font-medium">{{professorUserName}}</span>
+			                </div>
+			                <div class="text-sm text-gray-500 flex flex-col gap-1">
+			                    <div class="flex items-center gap-2">
+			                        <i class="fa-regular fa-clock text-xs"></i> {{courseTimeStart}} - {{courseTimeEnd}}
+			                    </div>
+			                    <div class="flex items-center gap-2">
+			                        <i class="fa-solid fa-location-dot text-xs"></i> {{courseClassroom}}
+			                    </div>
+			                </div>
+			            </div>
+			            {{/mainCourseTimeTable}}
+			        {{/hasSchedule}}
+			        
+			        {{^hasSchedule}}
+			        <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
+			            금일 일정은 없습니다. 여유로운 하루를 보내세요!
+			        </div>
+			        {{/hasSchedule}}
+			    </div>
+			</div>
+
+			<!-- 사용자 프로파일 카드 세션 -->
+			
+			<div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-fit">
+			    <div class="mb-6">
+			        <h2 class="text-lg font-bold text-gray-800">환영합니다!</h2>
+			        <p class="text-gray-600 mt-1">{{userProfileCard.deptName}}</p> </div>
+			
+			    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+			        <span class="text-xs text-gray-500 block mb-1">학번/번호</span>
+			        <span class="text-blue-700 font-semibold">{{userProfileCard.userId}}</span> 
+			    </div>
+			    
+			    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+			        <span class="text-xs text-gray-500 block mb-1">사용자 이름</span>
+			        <span class="text-blue-700 font-semibold">{{userProfileCard.userName}}님</span> </div>
+			
+			    <div class="space-y-3">
+			        <a href="/myInfo/userInfo" class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+			            <i class="fa-regular fa-user w-5"></i> 내 정보
+			        </a>
+			        
+			        {{#useAdmin}}
+			        <a href="/admin/courseManagement" class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+			            <i class="fa-solid fa-book w-5"></i> 학점 관리
+			        </a>
+			        {{/useAdmin}}
+			        
+			        {{#useStudent}}
+			        <a href="/myInfo/courseManagement" class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+			            <i class="fa-solid fa-book w-5"></i> 학점 관리
+			        </a>
+			        {{/useStudent}}
+			        
+			        {{#useProfessor}}
+			        <a href="#" class="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-gray-600 text-sm hover:bg-gray-50 flex items-center gap-3 transition">
+			            <i class="fa-solid fa-book w-5"></i> 성적 입력/조회
+			        </a>
+			        {{/useProfessor}}
+			
+			        <a href="/logout" class="w-full py-2.5 px-4 border border-red-200 rounded-lg text-red-500 text-sm hover:bg-red-50 flex items-center gap-3 transition">
+			            <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> 로그아웃
+			        </a>
+			    </div>
+			</div>
+            
+        </div>
+        
+        <!-- 학교 공지사항 -->
+
+        <div class="bg-blue-50 rounded-xl border border-blue-100 p-6">
+        
+        	<div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white shadow-md">
+                        <i class="fa-regular fa-bell"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">학교 공지사항</h2>
+                        <p class="text-sm text-gray-500">최신 공지사항을 확인하세요</p>
+                    </div>
+                </div>
+                <a href="#" class="text-sm text-gray-500 bg-white px-3 py-1.5 rounded border hover:bg-gray-50 shadow-sm">전체보기</a>
+            </div>
+        
+        	<!-- 공지사항 게시글 부분 -->
+        
+		    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			    {{#mainUniversityNoticeList}}
+			    
+			    <a href="javascript:void(0)" 
+			       class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition block"
+			       data-notice-no="{{universityNoticeNo}}"> 
+			        
+			        <div class="flex justify-between items-start mb-2">
+			            <div class="flex gap-2">
+			                
+			                {{#universityNoticePriorityCode}}
+			                    {{#is_10}}
+			                    <span class="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded font-bold" data-priority-code="{{universityNoticePriorityCode}}">
+			                        고정 공지사항
+			                    </span>
+			                    {{/is_10}}
+			
+			                    {{#is_20}}
+			                    <span class="bg-yellow-100 text-orange-700 text-[10px] px-2 py-0.5 rounded font-bold" data-priority-code="{{universityNoticePriorityCode}}">
+			                        우선 공지사항
+			                    </span>
+			                    {{/is_20}}
+			                    
+			                    {{#is_30}}
+			                    <span class="bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5 rounded font-bold" data-priority-code="{{universityNoticePriorityCode}}">
+			                        일반 공지사항
+			                    </span>
+			                    {{/is_30}}
+			                    
+			                    {{^is_10}} {{^is_20}} {{^is_30}}
+			                    <span class="bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5 rounded font-bold">
+			                        기타
+			                    </span>
+			                    {{/is_30}} {{/is_20}} {{/is_10}}
+			                    
+			                {{/universityNoticePriorityCode}}
+			                
+			            </div>
+			            <span class="text-xs text-gray-400">{{universityNoticeUpdatedate}}</span>
+			        </div>
+			        
+			        <h3 class="text-gray-800 font-medium mb-4">{{universityNoticeTitle}}</h3>
+			        
+			        <div class="flex justify-between items-center text-xs text-gray-500 border-t pt-3">
+			            
+			            <!-- <span class="flex items-center gap-1" onclick="openNoticeDetailModal({{universityNoticeNo}}); event.stopPropagation();"> -->
+			            <span class="flex items-center gap-1" onclick="openNoticeDetailModal({{universityNoticeNo}});">
+			                <i class="fa-regular fa-file-lines"></i> 자세히 보기
+			            </span>
+			            
+			            <span>조회수 {{universityNoticeViewCnt}}</span>
+			        </div>
+			        
+			    </a> {{/mainUniversityNoticeList}}
+			    
+			    {{^mainUniversityNoticeList}}
+			    <div class="col-span-full p-6 text-center text-gray-500 border border-dashed rounded-lg bg-white">
+			        등록된 최신 공지사항이 없습니다.
+			    </div>
+			    {{/mainUniversityNoticeList}}
+			</div>
+		
+		</div>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2025 학사관리시스템. All rights reserved.</p>
+        <p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+    </footer>
+    
+    <!-- 공지사항 게시판 모달 레이어 부분 -->
+    
+    <div id="noticeModalBackdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[90] hidden transition-opacity">
+    	
+    	<!-- 전체보기 시 나오는 모달 -->
+    	<div id="noticeListModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+		    <div class="flex items-center justify-center min-h-screen p-4">
+		        <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 max-w-screen-xl w-full">
+		            <div class="flex justify-between items-center mb-6 border-b pb-4">
+		                <h2 class="text-2xl font-bold text-gray-800">학교 공지사항 전체</h2>
+		                <button onclick="closeNoticeListModal()" class="text-gray-500 hover:text-gray-800 text-xl">
+		                    <i class="fa-solid fa-xmark"></i>
+		                </button>
+		            </div>
+		
+		            <div class="flex justify-between items-center mb-6">
+		                <div class="text-sm text-gray-600">총 <span id="listTotalCount" class="font-semibold text-blue-600">0</span>건</div>
+		                <div class="flex gap-2">
+		                    <input type="text" id="searchInput" placeholder="제목 또는 내용 검색" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-blue-500 focus:border-blue-500 w-64">
+		                    <button onclick="searchNotice(1)" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+		                        <i class="fa-solid fa-magnifying-glass"></i> 검색
+		                    </button>
+		                </div>
+		            </div>
+		            
+		            <div class="overflow-x-auto border rounded-xl">
+		                <table class="min-w-full divide-y divide-gray-200">
+		                    <thead class="bg-gray-50">
+		                        <tr>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">번호</th>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">우선순위</th>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">제목</th>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">작성자</th>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">조회수</th>
+		                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">작성일</th>
+		                        </tr>
+		                    </thead>
+		                    <tbody id="noticeListTableBody" class="bg-white divide-y divide-gray-200">
+		                        <tr><td colspan="6" class="p-6 text-center text-gray-500">데이터를 불러오는 중...</td></tr>
+		                    </tbody>
+		                </table>
+		            </div>
+		            
+		            <div id="paginationContainer" class="mt-6 flex justify-center space-x-2">
+		                </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<!-- 상세보기시 나오는 모달 -->
+		<div id="noticeDetailModal" class="fixed inset-0 z-[110] hidden overflow-y-auto">
+		    <div class="flex items-center justify-center min-h-screen p-4">
+		        <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 max-w-screen-xl w-full">
+		            <div class="flex justify-between items-center mb-6 border-b pb-4">
+		                <h2 class="text-2xl font-bold text-gray-800">공지사항 상세 정보</h2>
+		                <button onclick="closeNoticeDetailModal()" class="text-gray-500 hover:text-gray-800 text-xl">
+		                    <i class="fa-solid fa-xmark"></i>
+		                </button>
+		            </div>
+		
+		            <div class="space-y-4">
+		                <h3 id="detailTitle" class="text-xl font-bold text-gray-900 border-b pb-3">제목</h3>
+		                <div class="flex justify-between text-sm text-gray-500 border-b pb-3">
+		                    <span id="detailWriter" class="flex items-center gap-2"><i class="fa-solid fa-user"></i> 작성자: </span>
+		                    <span id="detailDate" class="flex items-center gap-2"><i class="fa-regular fa-clock"></i> 작성일: </span>
+		                    <span id="detailViewCount" class="flex items-center gap-2"><i class="fa-solid fa-eye"></i> 조회수: </span>
+		                    <span id="detailPriority" class="flex items-center gap-2 font-semibold"></span>
+		                </div>
+		                <div id="detailContent" class="text-base text-gray-800 min-h-[200px] whitespace-pre-wrap">
+		                    </div>
+		            </div>
+		
+		            <div class="mt-6 text-right">
+		                <button onclick="closeNoticeDetailModal()" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">닫기</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+    </div>
+    
+    <!-- 공지사항 우선순위 태그 스크립트 -->
+    <script>
+		/**
+		 * main.mustache에 포함되어야 하는 JavaScript 코드
+		 * 공지사항 우선순위 코드에 따라 태그 스타일을 지정하는 함수
+		 */
+		function getPriorityClass(priorityCode) {
+		    // Controller에서 전달된 MainDTO의 universityNoticePriorityCode를 사용
+		    if (priorityCode === '10') {
+		        // 고정공지사항 (10): 'bg-red-100 text-red-700'
+		        return 'bg-red-100 text-red-700';
+		    } else if (priorityCode === '20') {
+		        // 우선공지사항 (20): 'bg-yellow-100 text-orange-700'
+		        return 'bg-yellow-100 text-orange-700';
+		    } else if (priorityCode === '30') {
+		        // 일반공지사항 (30): 'bg-gray-100 text-gray-800'
+		        return 'bg-gray-100 text-gray-800';
+		    }
+		    return 'bg-gray-200 text-gray-600'; // 기본값
+		}
+	</script>
+    
+	
+	<!-- 캘린더 태그 스타일 스크립트 -->
+	<script>
+    // 🔴 [추가]: Date 객체를 로컬 시간 기준으로 'YYYY-MM-DD' 문자열로 변환하는 헬퍼 함수
+    function toDateStringLocal(date) {
+        const y = date.getFullYear();
+        // getMonth()는 0부터 시작하므로 +1, 두 자리로 패딩
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        // getDate()는 로컬 날짜를 반환, 두 자리로 패딩
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('academicCalendar');
+        var todayDateDisplay = document.querySelector('.today-date-display');
+        var calendarTitle = document.getElementById('calendarTitle');
+        var prevMonthBtn = document.getElementById('prevMonthBtn');
+        var nextMonthBtn = document.getElementById('nextMonthBtn');
+        
+        // 월 제목을 'YYYY년 M월' 형태로 포맷팅하는 함수 (한글)
+        function formatMonthTitle(date) {
+             const year = date.getFullYear();
+             const month = date.getMonth() + 1;
+             return `${year}년 ${month}월`;
+        }
+
+        // 날짜 포맷팅 함수 (오늘의 시간표: 한국어 유지)
+        function getFormattedDate(date) {
+            var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+            return date.toLocaleDateString('ko-KR', options).replace(/\s*\(.\)/, function(match) {
+                return ' (' + match.trim().slice(-2, -1) + ')';
+            });
+        }
+
+        // 캘린더 이벤트 클릭 시 호출될 함수 (유지)
+        function showEventDetails(info) {
+             alert(`[${info.event.title}] \n기간: ${info.event.startStr} ~ ${info.event.endStr || info.event.startStr}\n 상세 정보를 보려면 API 호출이 필요합니다.`);
+        }
+
+        // 캘린더 이벤트 데이터 (유지)
+        const allEvents = [
+            // 기존 학사 일정
+            { title: '수강 신청 시작', start: '2025-11-20', display: 'background', color: '#BDE0FE' },
+            { title: '중간고사', start: '2025-11-24', end: '2025-11-28' , color: '#FDBA74'},
+            
+            // 🔴 2025년 12월 ~ 2026년 공휴일 (유지)
+            // 참고: 설날 연휴, 추석 연휴처럼 end가 있는 이벤트는 해당 날짜까지 빨간색이 적용되도록 합니다.
+            { title: '크리스마스', start: '2025-12-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' }, 
+            { title: '신정', start: '2026-01-01', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' }, 
+            { title: '설날 연휴', start: '2026-02-14', end: '2026-02-18', color: '#F87171', textColor: 'white', className: 'holiday-event' }, // FullCalendar의 end 규칙에 따라 하루 전으로 수정 (2/18까지 표시)
+            { title: '삼일절 대체휴일', start: '2026-03-02', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '어린이날', start: '2026-05-05', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '부처님 오신날 대체휴일', start: '2026-05-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '현충일', start: '2026-06-06', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '광복절', start: '2026-08-15', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '추석 연휴', start: '2026-09-24', end: '2026-09-27', color: '#F87171', textColor: 'white', className: 'holiday-event' }, // FullCalendar의 end 규칙에 따라 하루 전으로 수정 (9/27까지 표시)
+            { title: '개천절 대체휴일', start: '2026-10-05', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '한글날', start: '2026-10-09', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+            { title: '크리스마스', start: '2026-12-25', color: '#EF4444', textColor: 'white', className: 'holiday-event', display: 'list-item' },
+        ];
+
+
+        // 캘린더 초기화
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // FullCalendar 설정 시작
+            initialView: 'dayGridMonth', 
+            locale: 'ko', 
+            editable: false,
+            selectable: true,
+            weekends: true,
+            dayHeaders: false,
+            headerToolbar: false, 
+            
+            // ⭐️ 핵심 수정: 날짜 숫자만 표시하도록 변경
+            dayCellContent: function(arg) {
+                 const dayNumber = arg.date.getDate();
+                 // 가운데 정렬을 위해 w-7 h-7 flex items-center justify-center mx-auto 유지
+                 return { html: `<span class="w-7 h-7 flex items-center justify-center mx-auto">${dayNumber}</span>` };
+            },
+            
+            // 🔴 [수정 완료]: Timezone과 Date 객체 비교를 배제한 로컬 문자열 비교
+            dayCellDidMount: function(info) {
+                // info.date를 로컬 시간 기준으로 'YYYY-MM-DD' 문자열로 변환합니다. (Timezone 오류 방지)
+                const currentDayString = toDateStringLocal(info.date); 
+                
+                // 해당 날짜에 해당하는 공휴일 이벤트가 있는지 확인합니다.
+                const isHoliday = allEvents.some(event => {
+                    // 공휴일 클래스('holiday-event')가 없는 이벤트는 무시합니다.
+                    if (event.className !== 'holiday-event') {
+                        return false; 
+                    }
+                    
+                    const startDayString = event.start; // 'YYYY-MM-DD' 형식 (시작일)
+                    
+                    // 이벤트가 하루짜리인 경우 (end가 없는 경우)
+                    if (!event.end) {
+                        return currentDayString === startDayString;
+                    } 
+                    
+                    // 이벤트가 기간(연휴)인 경우: start와 end 문자열을 직접 비교
+                    // 여기서 event.end는 실제 종료일 다음 날이 아닌, '실제 종료일'이 들어있다고 가정하고 비교합니다.
+                    // (이벤트 데이터에 입력된 'YYYY-MM-DD' 문자열을 그대로 사용)
+                    const endDayString = event.end; 
+                    
+                    // 현재 날짜 문자열이 시작일 문자열보다 크거나 같고(>=),
+                    // 종료일 문자열보다 작거나 같으면 (<=) 기간에 포함됨
+                    return currentDayString >= startDayString && currentDayString <= endDayString;
+                });
+
+                if (isHoliday) {
+                    // CSS에서 정의한 'holiday-date' 클래스를 날짜 셀에 추가합니다.
+                    info.el.classList.add('holiday-date');
+                }
+            },
+
+            // 캘린더 렌더링/월 변경 시 제목 업데이트
+            datesSet: function(info) {
+                const currentMonthStart = info.view.currentStart;
+                calendarTitle.textContent = formatMonthTitle(currentMonthStart); 
+                
+                var today = new Date(); 
+                if (todayDateDisplay) {
+                    todayDateDisplay.textContent = getFormattedDate(today);
+                }
+            },
+            
+            eventClick: function(info) {
+                 showEventDetails(info);
+            },
+            
+            // 여기에 학사 일정 및 공휴일 데이터를 추가합니다.
+            events: allEvents
+        });
+        
+        // 로딩 직후 초기 제목 설정
+        calendarTitle.textContent = formatMonthTitle(new Date());
+
+        calendar.render();
+        
+        // Tailwind 버튼에 FullCalendar 이동 이벤트 연결 (유지)
+        prevMonthBtn.addEventListener('click', function() {
+            calendar.prev();
+        });
+
+        nextMonthBtn.addEventListener('click', function() {
+            calendar.next();
+        });
+    });
+</script>
+	
+	
+	<!-- 공지사항 모달레이어 스크립트 -->
+	<script>
+    // ----------------------------------------------------------------------
+    // 0. 전역 상태 변수 (유지)
+    // ----------------------------------------------------------------------
+    /**
+     * 상세 모달이 목록 모달에서 열렸는지 여부를 저장하는 플래그입니다.
+     */
+    let isOpenedFromListModal = false;
+
+    // ----------------------------------------------------------------------
+    // 1. 공통 모달 제어 함수 (유지)
+    // ----------------------------------------------------------------------
+
+    /**
+     * 공지사항 목록 모달을 열고 데이터를 로드합니다. (유지)
+     */
+    function openNoticeListModal() {
+        document.getElementById('noticeModalBackdrop').classList.remove('hidden');
+        document.getElementById('noticeListModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+        loadNoticeList(1);
+    }
+
+    /**
+     * 공지사항 목록 모달을 닫습니다. (유지)
+     */
+    function closeNoticeListModal() {
+        document.getElementById('noticeModalBackdrop').classList.add('hidden');
+        document.getElementById('noticeListModal').classList.add('hidden');
+        document.body.style.overflow = ''; // 배경 스크롤 복구
+        document.getElementById('searchInput').value = '';
+    }
+
+    /**
+     * 공지사항 상세 모달을 닫습니다. (유지)
+     */
+    function closeNoticeDetailModal() {
+        document.getElementById('noticeDetailModal').classList.add('hidden');
+        
+        if (isOpenedFromListModal) {
+            // 1. 목록 모달에서 진입: 목록 모달을 다시 보이게 하고, 배경과 스크롤 잠금은 유지
+            document.getElementById('noticeListModal').classList.remove('hidden'); 
+        } else {
+            // 2. 메인 페이지에서 진입: 배경, 스크롤 잠금을 모두 해제하고 메인으로 복귀
+            document.getElementById('noticeModalBackdrop').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        // 상세 모달을 닫았으므로 플래그 초기화
+        isOpenedFromListModal = false;
+    }
+
+    // ----------------------------------------------------------------------
+    // 2. 공지사항 데이터 로드 및 렌더링 함수 (페이징 로직 전면 수정)
+    // ----------------------------------------------------------------------
+
+    /**
+     * 공지사항 우선순위 코드에 따른 스타일 태그 HTML을 반환합니다. (유지)
+     */
+    function getPriorityTag(notice) {
+        if (notice.is_10) {
+            return `<span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-bold">고정</span>`;
+        } else if (notice.is_20) {
+            return `<span class="bg-yellow-100 text-orange-700 text-xs px-2 py-0.5 rounded font-bold">우선</span>`;
+        } else if (notice.is_30) {
+            return `<span class="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded font-bold">일반</span>`;
+        }
+        return `<span class="text-gray-500 text-xs">기타</span>`;
+    }
+    
+    /**
+     * 공지사항 목록을 AJAX로 불러와 테이블에 렌더링하고 페이징을 처리합니다. (유지)
+     */
+    function loadNoticeList(pageNo, condition = "") {
+        const tableBody = document.getElementById('noticeListTableBody');
+        // condition이 빈 문자열이 아니면 검색 API 호출
+        const apiUrl = condition ? '/searchMainUniversityNotice' : '/getMainUniversityNoticeList'; 
+        
+        tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-blue-500"><i class="fa-solid fa-spinner fa-spin"></i> 데이터를 불러오는 중...</td></tr>`;
+
+        const params = new URLSearchParams();
+        params.append('currentPage', pageNo);
+        if (condition) {
+            // 서버 변수명 (searchUniversityNoticeCondition)을 사용하여 파라미터 전달
+            // 이쪽에서 페이지 파라미터도 맞춰줘야함
+            params.append('currentPage', pageNo);
+            params.append('searchUniversityNoticeCondition', condition); 
+        } else {
+        	
+        	// 일반 목록 API: page 사용 (컨트롤러 파라미터 이름이 page임!)
+            params.append('page', pageNo);
+            // limit은 기본 10이지만 명시적으로 넣어도 됨
+            params.append('limit', 10);
+        }
+
+        fetch(`${apiUrl}?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const noticeList = data.universityNoticeList;
+                    let html = '';
+
+                    if (noticeList && noticeList.length > 0) {
+                        noticeList.forEach(notice => {
+                            const date = notice.universityNoticeUpdatedate ? notice.universityNoticeUpdatedate.split(' ')[0] : 'N/A';
+                            
+                            html += `
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${notice.universityNoticeNo}</td>
+                                    <td class="px-6 py-4 text-sm text-center">${getPriorityTag(notice)}</td>
+                                    <td class="px-6 py-4 text-sm font-medium">
+                                        <a href="javascript:void(0)" onclick="openNoticeDetailModal(${notice.universityNoticeNo})" class="text-blue-600 hover:text-blue-800 font-semibold transition">
+                                            ${notice.universityNoticeTitle}
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">${notice.universityWriterUserName}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">${notice.universityNoticeViewCnt}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">${date}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        html = `<tr><td colspan="6" class="p-6 text-center text-gray-500">검색 결과 또는 등록된 공지사항이 없습니다.</td></tr>`;
+                    }
+                    
+                    tableBody.innerHTML = html;
+                    document.getElementById('listTotalCount').textContent = data.totalCount;
+
+                    // 서버 응답에서 검색 조건을 가져옵니다. (없으면 초기 condition 사용)
+                    const finalCondition = data.searchUniversityNoticeCondition || condition;
+                    const finalTotalPages = data.totalPages || 1;
+                    
+                    renderPagination(data.currentPage, finalTotalPages, finalCondition); 
+
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">공지사항 목록을 불러오는 데 실패했습니다.</td></tr>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching notice list:', error);
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">서버 오류가 발생했습니다.</td></tr>`;
+            });
+    }
+
+    /**
+     * 검색 버튼 클릭 또는 엔터 키 입력 시 호출됩니다. (유지)
+     */
+    function searchNotice(pageNo) {
+        // 검색창의 값에서 공백을 제거하고, 값이 없으면 빈 문자열 ""을 사용합니다.
+        const condition = document.getElementById('searchInput').value.trim() || "";
+        loadNoticeList(pageNo, condition);
+    }
+    
+    /**
+     * 페이징 버튼을 렌더링하고 동적 이벤트 리스너를 연결합니다. 
+     * ⭐️ 최종 수정: 컨테이너 자체에 data-condition을 설정하여 DOM 구조 안정화 및 이벤트 오류 방지
+     */
+    function renderPagination(currentPage, totalPages, condition) {
+        const container = document.getElementById('paginationContainer');
+        let html = '';
+        const groupSize = 5;
+        const currentGroup = Math.ceil(currentPage / groupSize);
+        const startPage = (currentGroup - 1) * groupSize + 1;
+        const endPage = Math.min(startPage + groupSize - 1, totalPages);
+        
+        // totalPages가 1 이하인 경우, 페이징을 숨깁니다.
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            container.removeAttribute('data-condition');
+            return;
+        }
+        
+        // ⭐️ 핵심 수정 1: 컨테이너 DOM 자체에 data-condition 속성을 설정합니다.
+        // 큰따옴표가 포함될 경우를 대비해 HTML 엔티티로 이스케이프합니다.
+        container.setAttribute('data-condition', condition.replace(/"/g, '&quot;'));
+        
+        // 이전 페이지 그룹 버튼
+        if (startPage > 1) {
+            html += `<button class="prev-page px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600" data-page="${startPage - 1}"><i class="fa-solid fa-chevron-left"></i></button>`;
+        }
+        
+        // 페이지 번호 버튼
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100';
+            // onclick 대신 class와 data-page 속성만 사용하여 안정적인 이벤트 처리를 준비합니다.
+            html += `<button class="page-btn px-3 py-1.5 text-sm rounded border border-gray-300 ${activeClass}" data-page="${i}">${i}</button>`;
+        }
+
+        // 다음 페이지 그룹 버튼
+        if (endPage < totalPages) {
+            html += `<button class="next-page px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100 text-gray-600" data-page="${endPage + 1}"><i class="fa-solid fa-chevron-right"></i></button>`;
+        }
+        
+        // ⭐️ 핵심 수정 2: 버튼들만 container.innerHTML에 삽입합니다. (추가 div 제거)
+        container.innerHTML = html;
+        
+        // ⭐️ 핵심 수정 3: 이벤트 리스너 동적 연결 (새로 삽입된 버튼에 이벤트를 다시 연결)
+        container.querySelectorAll('.page-btn, .prev-page, .next-page').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = parseInt(this.getAttribute('data-page'));
+                
+                // data-condition을 컨테이너(paginationContainer)에서 직접 가져옵니다.
+                const condAttribute = container.getAttribute('data-condition');
+                // HTML 엔티티를 다시 문자열로 디코딩하여 사용
+                const cond = condAttribute ? condAttribute.replace(/&quot;/g, '"') : '';
+                
+                loadNoticeList(page, cond);
+            });
+        });
+    }
+
+    /**
+     * 공지사항 상세 정보를 AJAX로 불러와 상세 모달을 띄웁니다. (유지)
+     */
+    function openNoticeDetailModal(noticeNo) {
+        const listModal = document.getElementById('noticeListModal');
+        
+        isOpenedFromListModal = !listModal.classList.contains('hidden');
+        
+        if (isOpenedFromListModal) {
+             listModal.classList.add('hidden');
+        }
+        
+        document.body.style.overflow = 'hidden'; 
+        document.getElementById('noticeModalBackdrop').classList.remove('hidden'); 
+
+        fetch(`/getMainUniversityNoticeDetail?universityNoticeNo=${noticeNo}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const detail = data.data;
+
+                    document.getElementById('detailTitle').textContent = detail.universityNoticeTitle;
+                    document.getElementById('detailWriter').innerHTML = `<i class="fa-solid fa-user"></i> 작성자: ${detail.universityWriterUserName}`;
+                    document.getElementById('detailDate').innerHTML = `<i class="fa-regular fa-clock"></i> 작성일: ${detail.universityNoticeUpdatedate ? detail.universityNoticeUpdatedate.split(' ')[0] : 'N/A'}`;
+                    document.getElementById('detailViewCount').innerHTML = `<i class="fa-solid fa-eye"></i> 조회수: ${detail.universityNoticeViewCnt}`;
+                    
+                    let priorityName = '';
+                    let priorityClass = '';
+                    if (detail.universityNoticePriorityCode === 10) {
+                        priorityName = '고정 공지';
+                        priorityClass = 'bg-red-50 text-red-600';
+                    } else if (detail.universityNoticePriorityCode === 20) {
+                        priorityName = '우선 공지';
+                        priorityClass = 'bg-yellow-50 text-orange-600';
+                    } else if (detail.universityNoticePriorityCode === 30) {
+                        priorityName = '일반 공지';
+                        priorityClass = 'bg-gray-50 text-gray-600';
+                    }
+
+                    document.getElementById('detailPriority').innerHTML = `<i class="fa-solid fa-bell"></i> 우선순위: <span class="${priorityClass} px-2 py-0.5 rounded">${priorityName}</span>`;
+                    document.getElementById('detailContent').textContent = detail.universityNoticeContent;
+                    
+                    // 상세 모달 표시
+                    document.getElementById('noticeDetailModal').classList.remove('hidden');
+                } else {
+                    alert(data.message || "상세 정보를 불러오는 데 실패했습니다.");
+                    // 실패 시 목록 모달 상태 복구 및 배경 해제
+                    if (isOpenedFromListModal) listModal.classList.remove('hidden');
+                    document.getElementById('noticeModalBackdrop').classList.add('hidden');
+                    document.body.style.overflow = '';
+                    isOpenedFromListModal = false; // 플래그 초기화
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching notice detail:', error);
+                alert("서버 오류로 상세 정보를 불러올 수 없습니다.");
+                 // 실패 시 목록 모달 상태 복구 및 배경 해제
+                if (isOpenedFromListModal) listModal.classList.remove('hidden');
+                document.getElementById('noticeModalBackdrop').classList.add('hidden');
+                document.body.style.overflow = '';
+                isOpenedFromListModal = false; // 플래그 초기화
+            });
+    }
+
+    // ----------------------------------------------------------------------
+    // 3. 이벤트 리스너 연결 (DOM 로드 후 실행) (유지)
+    // ----------------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. 메인 페이지 공지사항 '전체보기' 버튼 연결
+        const allNoticeButton = document.querySelector('.bg-blue-50 a.text-sm');
+        if (allNoticeButton) {
+             allNoticeButton.setAttribute('href', 'javascript:void(0)');
+             allNoticeButton.setAttribute('onclick', 'openNoticeListModal()');
+        }
+
+        // 2. 메인 페이지 공지사항 개별 항목 클릭 이벤트 연결
+        document.querySelectorAll('.grid-cols-2 a[data-notice-no]').forEach(item => {
+            const noticeNo = item.getAttribute('data-notice-no');
+            
+            if (noticeNo) {
+                 item.setAttribute('onclick', `openNoticeDetailModal(${noticeNo})`);
+                 item.setAttribute('href', 'javascript:void(0)'); // 기본 이동 방지
+
+                 const detailLinkSpan = item.querySelector('.text-xs .fa-file-lines').closest('span');
+                 if (detailLinkSpan) {
+                      detailLinkSpan.setAttribute('onclick', `openNoticeDetailModal(${noticeNo}); event.stopPropagation();`);
+                 }
+            }
+        });
+
+        // 3. 검색 input에서 Enter 키 이벤트 처리
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchNotice(1);
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

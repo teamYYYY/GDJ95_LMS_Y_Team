@@ -79,6 +79,18 @@ public class SysAuthService {
 		return sysAuthMapper.selectSysAuthAllDetail(authDetailCode);
 	}
 	
+	// 사용자 권한 등록전에 권한코드가 이미 있을 경우에는 Detail만 인서트하면 된다.
+	public Integer insertSysAuthExistChk(SysAuthDTO sysAuthDTO) {
+		
+		return sysAuthMapper.insertSysAuthExistChk(sysAuthDTO);
+	}
+	
+	// 사용자 세부권한 등록 시 동일한 세부권한코드나 세부권한명이 존재하면 안된다.
+	public Integer insertSysAuthDetailExistChk(SysAuthDTO sysAuthDTO) {
+		
+		return sysAuthMapper.insertSysAuthDetailExistChk(sysAuthDTO);
+	}
+	
 	//======================================================
 	// 사용자 권한 등록 기능 insert 순서 sysAuth -> sysAuthDetail
 	//======================================================

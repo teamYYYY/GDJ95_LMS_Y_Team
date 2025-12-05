@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.excel.CourseManagementExcelMapper">
+
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 (관리자전용) -->
+	<select id="searchCourseManagementListUseAdminForExcel" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+		
+		SELECT * FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY a.createdate ASC) AS rownm,
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate,
+					d.student_user_no AS studentUserNo,
+					e.user_name AS studentUserName, -- 학생이름
+					CONCAT(a.course_year, "-", a.course_semester) AS courseYearSemester
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				INNER JOIN tb_sysuser e
+					ON
+					d.student_user_no = e.user_no
+				WHERE 1=1
+					<if test="selectedCourseYearAndSemester != null and selectedCourseYearAndSemester.trim() != ''">
+		                AND CONCAT(CAST(a.course_year AS CHAR), "-", CAST(a.course_semester AS CHAR)) = #{selectedCourseYearAndSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND ( 
+			                a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+							OR e.user_name LIKE CONCAT ('%', #{searchCourseCondition}, '%' )
+							OR b.user_name LIKE CONCAT ('%', #{searchCourseCondition}, '%')
+						)
+		            </if>
+				) t
+			ORDER BY rownm DESC
+	
+	</select>
+	
+	<!-- 2025. 12. 02. JM. 학점 관리 - 학점 검색 조회 (학생전용) -->
+	<select id="searchCourseManagementListUseStudtForExcel" parameterType="java.util.Map" resultType="com.example.lms.dto.CourseManagementDTO">
+		
+		SELECT * FROM (
+				SELECT
+					ROW_NUMBER() OVER (ORDER BY createdate ASC) AS rownm,
+					a.course_no AS courseNo,
+					a.course_year AS courseYear,
+					a.course_semester AS courseSemester,
+					b.dept_code AS deptCode,
+					c.dept_name AS deptName, -- 학과명
+					a.course_name AS courseName,
+					a.professor_user_no AS professorUserNo,
+					b.user_name AS professorUserName, -- 교수이름
+					a.course_score AS courseScore, -- 이수학점
+					d.grade_final_score AS gradeFinalScore, -- 평가점수
+					d.grade_value AS gradeValue, -- 평가등급
+					a.createdate AS createdate,
+					CONCAT(a.course_year, "-", a.course_semester) AS courseYearSemester
+				FROM
+					tb_course a
+				INNER JOIN tb_sysuser b
+					ON
+					a.professor_user_no = b.user_no
+				INNER JOIN tb_dept c
+					ON
+					b.dept_code = c.dept_code
+				INNER JOIN tb_grade d
+					ON
+					a.course_no = d.course_no
+				WHERE 1=1
+						AND d.student_user_no = #{userNo}
+					<if test="selectedCourseYearAndSemester != null and selectedCourseYearAndSemester.trim() != ''">
+		                AND CONCAT(CAST(a.course_year AS CHAR), "-", CAST(a.course_semester AS CHAR)) = #{selectedCourseYearAndSemester}
+		            </if>
+		            
+		            <if test="searchCourseCondition != null and searchCourseCondition.trim() != ''">
+		                AND ( 
+			                a.course_name LIKE CONCAT('%', #{searchCourseCondition}, '%')
+							OR b.user_name LIKE CONCAT ('%', #{searchCourseCondition}, '%')
+						)
+		            </if>
+				) t
+			ORDER BY rownm DESC
+	
+	</select>
+
+</mapper>

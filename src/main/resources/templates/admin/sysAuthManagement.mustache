@@ -67,8 +67,8 @@
 
     <div class="admin-hero-bg h-40 p-8 text-white">
         <div class="max-w-screen-2xl mx-auto h-full flex flex-col justify-end">
-            <h2 class="text-3xl font-bold">관리자 대시보드</h2>
-            <p class="text-sm text-gray-200 mt-2">시스템 관리 및 설정</p>
+            <h2 class="text-3xl font-bold">사용자 권한 관리</h2>
+            <p class="text-sm text-gray-200 mt-2">시스템 사용자 권한 코드 조회 및 관리</p>
         </div>
     </div>
 
@@ -77,21 +77,24 @@
         <aside class="w-64 bg-white border-r border-gray-200 shadow-md flex-shrink-0">
             <nav class="p-4 space-y-1">
                 <a href="/myInfo/userInfo" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
-                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보관리
+                    <i class="fa-solid fa-user-gear w-5"></i> 개인정보 관리
                 </a>
                 <a href="/admin/userManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                     <i class="fa-solid fa-users-gear w-5"></i> 시스템 사용자 관리
                 </a>
                 <a href="/admin/sysAuthManagement" class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 text-blue-700 font-semibold transition">
-                    <i class="fa-solid fa-user-lock w-5"></i> 사용자권한관리
+                    <i class="fa-solid fa-user-lock w-5"></i> 사용자 권한 관리
                     <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
                 </a>
                 <a href="/admin/deptManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
-                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과관리
+                    <i class="fa-solid fa-book-open-reader w-5"></i> 학과 관리
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
-                    <i class="fa-regular fa-bell w-5"></i> 공지사항관리
+                <a href="/admin/universityNoticeManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <i class="fa-regular fa-bell w-5"></i> 공지사항 관리
                 </a>
+                <a href="/admin/courseManagement" class="flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+            		<i class="fa-solid fa-graduation-cap w-5"></i> 학점 관리
+        		</a>
             </nav>
         </aside>
 
@@ -117,23 +120,26 @@
             </div>
         </section>
 
-        <div class="flex justify-between items-center mb-4">
-            <p class="text-gray-700 font-medium" id="totalCountDisplay">권한 목록 (총 0개의 권한)</p>
-            <div class="flex space-x-2">
-                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
-                    <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
-                </button>
-                <button class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 text-sm">
-                    <i class="fa-solid fa-file-excel"></i> 양식 다운로드
-                </button>
-                <button onclick="openBatchUploadModal()" class="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-1 text-sm">
-                            <i class="fa-solid fa-upload"></i> 일괄 업로드
-                </button>
-                <button id="openRegisterModalBtn" onclick="openRegisterModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1 text-sm">
-                    <i class="fa-solid fa-plus"></i> 등록
-                </button>
-            </div>
-        </div>
+		<div class="flex justify-between items-center mb-4">
+		    <p class="text-gray-700 font-medium" id="totalCountDisplay">권한 목록 (총 0개의 권한)</p>
+		    <div class="flex space-x-2">
+		        <a id="downloadListBtn" href="#" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1">
+		            <i class="fa-solid fa-download"></i> 목록 엑셀 다운로드
+		        </a>
+		        
+		        <button id="downloadFormBtn" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-1">
+		            <i class="fa-solid fa-file-excel"></i> 양식 다운로드
+		        </button>
+		        
+		        <button onclick="openBatchUploadModal()" class="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-1">
+		            <i class="fa-solid fa-upload"></i> 일괄 업로드
+		        </button>
+		        
+		        <button id="openRegisterModalBtn" onclick="openRegisterModal()" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1">
+		            <i class="fa-solid fa-plus"></i> 등록
+		        </button>
+		    </div>
+		</div>
 
         <div class="overflow-x-auto border border-gray-200 rounded-lg">
 		    <table class="min-w-full divide-y divide-gray-200">
@@ -260,28 +266,30 @@
     </div>
 </div>
 
-	<!-- 엑셀 기능 -->
+	<!-- 엑셀 업로드 모달 -->
 
-    <div id="batchUploadModal" class="modal-container hidden">
-        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
-            <div class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
-                    <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-xmark text-2xl"></i>
-                    </button>
-                </div>
-
+   <div id="batchUploadModal" class="modal-container hidden">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl transform transition-all duration-300 scale-100">
+        <div class="p-6">
+            <div class="flex justify-between items-center pb-4 border-b">
+                <h3 class="text-2xl font-bold text-gray-900">권한 일괄 업로드</h3>
+                <button onclick="closeBatchUploadModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="excelUploadForm" enctype="multipart/form-data" class="space-y-4">
                 <div class="mt-6 text-center space-y-4">
+                    
                     <p class="text-gray-600">엑셀 파일을 업로드하여 여러 데이터를 한번에 등록할 수 있습니다.</p>
-                    <div class="border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500">
+                    
+                    <label for="excelFile" class="block cursor-pointer border-2 border-dashed border-gray-300 p-10 rounded-lg text-gray-500 hover:border-blue-500 hover:text-blue-600 transition">
                         <i class="fa-solid fa-cloud-upload-alt text-4xl mb-3"></i>
-                        <p>파일을 드래그하거나 클릭하여 업로드</p>
+                        <p>파일을 클릭하여 선택</p>
                         <p class="text-sm">.xlsx, .xls 파일만 지원됩니다</p>
-                        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
-                            파일 선택
-                        </button>
-                    </div>
+                    </label>
+                    <input type="file" name="excelFile" id="excelFile" accept=".xlsx, .xls" class="hidden">
+                    <p id="fileNameDisplay" class="text-sm font-medium text-gray-700"></p>
                     
                     <div class="text-left bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-yellow-800">
                         <p class="font-semibold mb-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-2"></i> 첨부파일 업로드 시 주의사항</p>
@@ -290,23 +298,62 @@
                             <li>제공된 양식의 항목과 순서를 변경하지 마세요.</li>
                             <li>필수 항목은 반드시 입력되어야 합니다.</li>
                             <li>최대 1000개의 데이터까지 한번에 등록할 수 있습니다.</li>
-                            <li>데이터 형식이 올바르지 않으면 등록이 실패할 수 있습니다.</li>
-                            <li>중복된 데이터는 자동으로 제외됩니다.</li>
+                            <li>**중복된 세부 권한 코드가 발견되면 전체 등록이 취소됩니다.**</li> 
                         </ul>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeBatchUploadModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">취소</button>
-                    <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">업로드</button>
+                    <button type="button" onclick="closeBatchUploadModal()" class="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">취소</button>
+                    <button type="submit" id="uploadBtn" class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition" disabled>
+                        <i class="fa-solid fa-upload mr-1"></i> 업로드
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+</div>
+
+
+<footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-gray-400">
+        	<p>&copy; 2025 SEMI- Y 학사관리시스템. All rights reserved.</p>
+        	<p class="mt-1">본 시스템은 학사 업무의 효율적 관리를 위해 제작되었습니다.</p>
+</footer>
+
     
     <!-- 스크립트 부분 -->
     
-    <script>
+    
+<script>
+	//날짜 포맷팅 헬퍼 함수 (T 제거 + 원하는 형식으로 변환)
+	function formatDate(isoString) {
+	    if (!isoString) return '-';
+	
+	    // "2025-12-02T11:48:15" 또는 "2025-12-02T11:48:15.123Z" 형태 모두 처리
+	    const date = new Date(isoString);
+	
+	    // 한국식 날짜 형식으로 예쁘게 (예: 2025-12-02 11:48:15 또는 2025.12.02 11:48)
+	    // 원하는 스타일에 따라 아래 두 줄 중 하나만 선택하세요!
+	
+	    // 1. 하이픈 + 띄어쓰기 (가장 일반적)
+	    return date.toLocaleString('ko-KR', {
+	        year: 'numeric',
+	        month: '2-digit',
+	        day: '2-digit',
+	        hour: '2-digit',
+	        minute: '2-digit',
+	        second: '2-digit',
+	        hour12: false
+	    }).replace(/\.\s/g, '-').replace(/오[전후]\s/, ' '); // 필요시 오전/오후 제거
+	
+	    // 2. 점으로 구분 + 시간만 (좀 더 깔끔한 스타일 원하면 이거 추천)
+	    // return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+	}
+</script>
+    
+    
+    
+ <script>
     // 전역 변수 설정
     const batchModal = document.getElementById('batchUploadModal');
     const authCrudModal = document.getElementById('authCrudModal');
@@ -314,9 +361,10 @@
     const modalTitle = document.getElementById('modalTitle');
     const modalSubtitle = document.getElementById('modalSubtitle');
     
+    // ⭐️ 수정: HTML ID에 맞게 'editBtns'를 'editButtons'로 변경합니다.
     const registerBtns = document.getElementById('registerButtons');
     const detailBtns = document.getElementById('detailButtons');
-    const editBtns = document.getElementById('editButtons');
+    const editBtns = document.getElementById('editButtons'); 
     
     // Hidden 필드 (수정 시 WHERE 조건에 사용될 원본 값)
     const originalAuthDetailCodeInput = document.getElementById('originalAuthDetailCode');
@@ -344,18 +392,23 @@
     // 🚀 검색 상태 유지를 위한 전역 변수 🚀
     let currentSearchCondition = searchConditionInput.value.trim() || ''; 
     let currentPageNo = {{currentPage}} || 1; 
+    
+    // ⭐️ 엑셀 관련 DOM 요소 ⭐️
+    const excelUploadForm = document.getElementById('excelUploadForm');
+    const excelFileInput = document.getElementById('excelFile');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const downloadFormBtn = document.getElementById('downloadFormBtn');
+    const downloadListBtn = document.getElementById('downloadListBtn');
+
 
     // ------------------------
     // 유틸리티 함수: 폼에 데이터 바인딩
     // ------------------------
     function bindFormData(data) {
-        // 상세 조회/수정 모드 시 기존/새로운 코드를 Hidden 필드와 Input 필드에 모두 바인딩
-        
-        // 1. Hidden 필드 (WHERE 조건용 원본 값 저장)
         originalAuthDetailCodeInput.value = data.authDetailCode || '';
         originalAuthCodeInput.value = data.authCode || '';
         
-        // 2. Input 필드 (수정/조회용)
         newAuthDetailCodeInput.value = data.authDetailCode || '';
         authDetailNameInput.value = data.authDetailName || '';
         newAuthCodeInput.value = data.authCode || '';
@@ -368,7 +421,6 @@
     function toggleInputReadOnly(isReadOnly) {
         inputFields.forEach(input => {
             input.readOnly = isReadOnly;
-            // PK, FK 필드는 수정 모드일 때만 활성화하기 위해 disabled를 별도로 제어할 수 있음
             input.disabled = isReadOnly;
             
             if (isReadOnly) {
@@ -378,7 +430,6 @@
             }
         });
         
-        // 수정 모드에서도 PK/FK 필드가 변경 가능해야 한다면, 여기서 다시 활성화 로직 추가
         if (!isReadOnly) {
             newAuthDetailCodeInput.removeAttribute('disabled');
             newAuthCodeInput.removeAttribute('disabled');
@@ -386,14 +437,13 @@
     }
 
     // ------------------------
-    // 💡 사용자 권한 목록 테이블 렌더링 (수정됨)
+    // 💡 사용자 권한 목록 테이블 렌더링
     // ------------------------
     function renderAuthTable(authList) {
         let html = '';
         
         if (authList && authList.length > 0) {
             authList.forEach((auth, index) => {
-                // Controller의 쿼리 결과에 'rownum'이 있으므로 이를 사용
                 const rownum = auth.rownum !== undefined ? auth.rownum : (index + 1); 
                 
                 html += `
@@ -410,8 +460,8 @@
                             ${auth.authCode}
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-800">${auth.authName}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailUpdatedate || '-'}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${auth.authDetailCreatedate}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(auth.authDetailUpdatedate) || '-'}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">${formatDate(auth.authDetailCreatedate)}</td>
                     </tr>
                 `;
             });
@@ -425,7 +475,6 @@
         
         authListBody.innerHTML = html;
         
-        // 체크박스 상태 초기화 및 버튼 갱신
         const selectAll = document.getElementById('selectAll');
         if (selectAll) selectAll.checked = false;
         updateRemoveButtonState();
@@ -433,7 +482,7 @@
 
 
     // ------------------------
-    // 💡 페이징 렌더링 (이전과 동일)
+    // 💡 페이징 렌더링
     // ------------------------
     function renderPagination(totalCount, currentPage, pageSize = 10) {
         const totalPages = Math.ceil(totalCount / pageSize);
@@ -507,15 +556,13 @@
     function searchAndRenderAuth(pageNo) {
         const condition = searchConditionInput.value.trim();
         
-        // 🚀 상태 갱신
         currentSearchCondition = condition; 
         currentPageNo = pageNo;
-
+        
         $.ajax({
-            url: '/admin/searchSysAuth', // Controller의 5번 매핑과 일치
+            url: '/admin/searchSysAuth', 
             type: 'GET',
             data: { 
-                // ⭐️ Controller의 @RequestParam 이름과 일치 ⭐️
                 searchSysAuthCondition: condition, 
                 currentPage: pageNo 
             },
@@ -546,6 +593,10 @@
     function closeBatchUploadModal() {
         batchModal.classList.add('hidden');
         batchModal.classList.remove('flex');
+        
+        if (excelUploadForm) excelUploadForm.reset();
+        if (fileNameDisplay) fileNameDisplay.textContent = '';
+        if (uploadBtn) uploadBtn.setAttribute('disabled', 'disabled');
     }
     
     function closeAuthCrudModal() {
@@ -553,16 +604,16 @@
         authCrudModal.classList.remove('flex');
         authForm.reset();
         
-        // 폼 초기화 시 숨김 필드도 비우기
         originalAuthDetailCodeInput.value = '';
         originalAuthCodeInput.value = '';
         
-        // 목록 갱신 (현재 상태 유지)
         searchConditionInput.value = currentSearchCondition; 
         searchAndRenderAuth(currentPageNo); 
     }
 
     function openRegisterModal() {
+        // ⭐️ Null 체크 제거: 변수 ID를 HTML과 일치시켰으므로 이제 안전합니다. ⭐️
+        
         authForm.reset();
         modalTitle.textContent = "권한 등록";
         modalSubtitle.textContent = "* 표시는 필수 항목입니다";
@@ -585,7 +636,7 @@
 
     function openAuthDetailModal(authDetailCode) {
         $.ajax({
-            url: '/admin/getSysAuthDetail', // Controller의 3번 매핑과 일치
+            url: '/admin/getSysAuthDetail', 
             type: 'GET',
             data: { authDetailCode: authDetailCode },
             success: function(response) {
@@ -593,14 +644,11 @@
                     const data = response.data;
                     originalDetailData = data; 
                     
-                    // 1. 필드 바인딩 (DTO 항목과 일치)
                     bindFormData(data); 
                     
-                    // 2. 모달 상태 설정
                     modalTitle.textContent = "권한 세부 정보 (" + authDetailCode + ")";
                     modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
                     
-                    // 모든 필드를 readonly로 만듭니다.
                     toggleInputReadOnly(true); 
                     
                     detailBtns.classList.remove('hidden');
@@ -622,14 +670,12 @@
         modalTitle.textContent = "권한 정보 수정";
         modalSubtitle.textContent = "정보를 수정 후 저장해주세요.";
         
-        // 모든 필드의 readonly를 해제합니다.
         toggleInputReadOnly(false); 
         
         editBtns.classList.remove('hidden');
         detailBtns.classList.add('hidden');
         registerBtns.classList.add('hidden');
         
-        // PK 필드 readonly 해제 (수정 가능하게 함)
         newAuthDetailCodeInput.removeAttribute('readonly');
         newAuthDetailCodeInput.classList.remove('input-readonly');
         newAuthCodeInput.removeAttribute('readonly');
@@ -637,13 +683,11 @@
     }
 
     function cancelDetailEditMode() {
-        // 원본 데이터로 복원
         bindFormData(originalDetailData); 
         
         modalTitle.textContent = "권한 세부 정보 (" + originalDetailData.authDetailCode + ")";
         modalSubtitle.textContent = "권한 정보를 조회합니다. (변경 버튼을 눌러 수정 가능)";
         
-        // 모든 필드를 다시 readonly로 만듭니다.
         toggleInputReadOnly(true); 
         
         detailBtns.classList.remove('hidden');
@@ -654,12 +698,9 @@
         if (e.key === 'Escape') {
             closeBatchUploadModal();
             if(!authCrudModal.classList.contains('hidden')) {
-                // 현재 상세/수정 모드인지 확인
                 if (!detailBtns.classList.contains('hidden') || !editBtns.classList.contains('hidden')) {
-                     // 상세/수정 모드일 때 취소 버튼 누름 효과
                     cancelDetailEditMode();
                 } 
-                // 모달 닫기
                 closeAuthCrudModal();
             }
         }
@@ -679,9 +720,14 @@
         const selectAll = document.getElementById('selectAll');
         const removeBtn = document.getElementById('removeSelectedBtn'); 
         
+        // ⭐️ 등록 버튼 클릭 이벤트 추가 (안전성 확보) ⭐️
+        const openRegisterModalBtn = document.getElementById('openRegisterModalBtn'); 
+        if (openRegisterModalBtn) {
+            openRegisterModalBtn.addEventListener('click', openRegisterModal);
+        }
+        
         // 초기 로드 시 목록 조회
         if (typeof searchAndRenderAuth === 'function') {
-            // 현재 페이지 번호로 목록 로드 (URL에 의해 이미 로드된 상태일 수 있으나, AJAX 페이지에서는 다시 로드)
             searchAndRenderAuth(currentPageNo); 
         }
         
@@ -707,24 +753,19 @@
             e.preventDefault();
             
             const isRegisterMode = registerBtns.classList.contains('hidden') === false;
-            const url = isRegisterMode ? '/admin/insertSysAuth' : '/admin/updateSysAuth'; // Controller 2번/4번 매핑과 일치
+            const url = isRegisterMode ? '/admin/insertSysAuth' : '/admin/updateSysAuth'; 
 
-            // 폼 데이터를 DTO 구조에 맞게 재구성
             let formData = {};
 
             if (isRegisterMode) {
-                // 등록: 새로운 값만 DTO 필드명에 맞게 전송
                 formData.authDetailCode = newAuthDetailCodeInput.value.trim();
                 formData.authDetailName = authDetailNameInput.value.trim();
                 formData.authCode = newAuthCodeInput.value.trim();
                 formData.authName = authNameInput.value.trim();
             } else {
-                // 수정: DTO에 필요한 모든 필드를 담아 전송
-                // Controller 4번 updateSysAuth()는 DTO 전체를 받음
-                formData.authDetailCode = originalAuthDetailCodeInput.value; // WHERE 조건용 기존 코드
-                formData.authCode = originalAuthCodeInput.value;             // WHERE 조건용 기존 코드
+                formData.authDetailCode = originalAuthDetailCodeInput.value; 
+                formData.authCode = originalAuthCodeInput.value;             
                 
-                // 새로운 값 (수정된 값)
                 formData.newAuthDetailCode = newAuthDetailCodeInput.value.trim(); 
                 formData.authDetailName = authDetailNameInput.value.trim();
                 formData.newAuthCode = newAuthCodeInput.value.trim();
@@ -750,7 +791,15 @@
         
         // 2. 검색 버튼 클릭 이벤트 처리
         searchBtn.addEventListener('click', function() {
-             searchAndRenderAuth(1); // 검색 시 1페이지부터 시작
+             searchAndRenderAuth(1); 
+        });
+        
+     	// 검색 조건 입력 필드에서 Enter 키 입력 처리 (새로 추가된 부분)
+        searchConditionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 기본 폼 제출 동작 방지
+                searchAndRenderAuth(1); // 첫 페이지로 검색 실행
+            }
         });
 
         // 3. 선택 항목 삭제 버튼 클릭 이벤트 처리
@@ -766,14 +815,12 @@
             if(confirm(`선택된 ${selectedAuthDetailCodes.length}개의 권한 코드를 정말 삭제 처리하시겠습니까?`)) {
                 
                 $.ajax({
-                    url: '/admin/removeSysAuth', // Controller의 6번 매핑과 일치
+                    url: '/admin/removeSysAuth', 
                     type: 'POST',
                     contentType: 'application/json',
-                    // Controller에서 Map<String, List<String>>을 받으므로 키 이름을 'authDetailCodeList'로 설정
                     data: JSON.stringify({ authDetailCodeList: selectedAuthDetailCodes }), 
                     success: function(response) {
                         alert(response.message);
-                        // 삭제 성공/실패 여부와 관계없이 목록을 갱신하여 최신 상태를 반영
                         searchAndRenderAuth(currentPageNo); 
                     },
                     error: function() {
@@ -781,6 +828,75 @@
                     }
                 });
             }
+        });
+        
+        // 4. 엑셀 양식 다운로드 버튼 이벤트 처리 (GET 요청)
+        downloadFormBtn.addEventListener('click', function() {
+            window.location.href = '/admin/downloadSysAuthForm';
+        });
+
+        // 5. 목록 엑셀 다운로드 버튼 클릭 이벤트 처리
+        if (downloadListBtn) {
+             downloadListBtn.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                const downloadUrl = `/admin/downloadSysAuthList?searchSysAuthCondition=${encodeURIComponent(currentSearchCondition)}`;
+                window.location.href = downloadUrl;
+            });
+        }
+
+        // 6. 엑셀 파일 선택 이벤트: 파일명 표시 및 업로드 버튼 활성화
+        excelFileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files[0].name;
+                fileNameDisplay.textContent = `선택된 파일: ${fileName}`;
+                uploadBtn.removeAttribute('disabled');
+            } else {
+                fileNameDisplay.textContent = '';
+                uploadBtn.setAttribute('disabled', 'disabled');
+            }
+        });
+
+        // 7. 엑셀 일괄 업로드 폼 제출 이벤트 처리 (POST 요청)
+        excelUploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const file = excelFileInput.files[0];
+            if (!file) {
+                alert('업로드할 엑셀 파일을 선택해주세요.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('excelFile', file);
+            
+            uploadBtn.textContent = '업로드 중...';
+            uploadBtn.setAttribute('disabled', 'disabled');
+
+            $.ajax({
+                url: '/admin/uploadSysAuthBatch', 
+                type: 'POST',
+                processData: false,     
+                contentType: false,     
+                data: formData,
+                success: function(response) {
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        closeBatchUploadModal();
+                    }
+                },
+                error: function() {
+                    alert('서버 통신 오류가 발생했습니다.');
+                },
+                complete: function() {
+                    uploadBtn.textContent = '업로드';
+                    
+                    excelUploadForm.reset();
+                    fileNameDisplay.textContent = '';
+                    uploadBtn.setAttribute('disabled', 'disabled');
+                    
+                    searchAndRenderAuth(currentPageNo); 
+                }
+            });
         });
     });
 </script>

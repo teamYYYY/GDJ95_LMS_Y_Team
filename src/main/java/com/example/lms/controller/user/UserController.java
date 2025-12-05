@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.lms.controller.login.LoginController;
 import com.example.lms.dto.SysUserDTO;
+import com.example.lms.service.common.authorization.ViewAuthorizationValidateService;
 import com.example.lms.service.user.UserService;
 
 import jakarta.security.auth.message.callback.PrivateKeyCallback.Request;
@@ -36,12 +37,26 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ViewAuthorizationValidateService viewAuthorizationValidateService;
+	
 		// 내정보 - 개인정보관리
 		@GetMapping("/myInfo/userInfo")
 		public String mUserInfo(HttpSession session, Model model) {
 			
+			
 			// 세션불러오기
 			SysUserDTO loginSysUserDTO = (SysUserDTO) session.getAttribute("loginUser");
+			
+			
+			// 사이드 메뉴 권한 필터 처리
+			String authCode = loginSysUserDTO.getAuthCode();
+			Map<String, Boolean> menuValidateRsltMap = viewAuthorizationValidateService.MenuAuthorizationValidate(authCode);
+			
+			Boolean useAdmin = menuValidateRsltMap.get("useAdmin");
+			Boolean useStudent = menuValidateRsltMap.get("useStudent"); 
+			Boolean useProfessor = menuValidateRsltMap.get("useProfessor");
+			Boolean useStaff = menuValidateRsltMap.get("useStaff");
 			
 			// 세션에 있는 userNo, userId로 조회함
 			// MyBatis는 SQL 쿼리의 결과를 읽어올 때, 결과 셋(ResultSet)의 컬럼 이름을 Map의 **키(Key)**에 담아 값을 담아준다
@@ -51,6 +66,10 @@ public class UserController {
 			//모델 반환값
 			model.addAttribute("userInfo", userInfoMap);
 			log.info("userInfoMap 조회 완료: {}", userInfoMap);
+			model.addAttribute("useAdmin", useAdmin);
+			model.addAttribute("useStudent", useStudent);
+			model.addAttribute("useProfessor", useProfessor);
+			model.addAttribute("useStaff", useStaff);
 			
 			return "/myInfo/userInfo";
 		}

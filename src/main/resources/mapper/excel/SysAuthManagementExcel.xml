@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.excel.SysAuthManagementExcelMapper">
+	
+	<!-- 2025. 11. 27. JM. 권한관리 - 사용자 권한 코드 검색 조회 -->
+	<select id="searchSysAuthInfoListForExcel" parameterType="java.util.Map" resultType="com.example.lms.dto.SysAuthDTO">
+	
+		SELECT * FROM (		
+			SELECT
+				ROW_NUMBER() OVER (
+				ORDER BY a.auth_detail_updatedate ASC) AS rownum,
+				a.auth_detail_code AS authDetailCode,
+				a.auth_detail_name AS authDetailName,
+				a.auth_code AS authCode,
+				b.auth_name AS authName,
+				a.auth_detail_updatedate AS authDetailUpdatedate,
+				a.auth_detail_createdate AS authDetailCreatedate,
+				b.auth_updatedate AS authUpdatedate,
+				b.auth_createdate AS authCreatedate
+			FROM
+				tb_sysauth_detail a
+			INNER JOIN tb_sysauth b
+			  ON
+				a.auth_code = b.auth_code
+			WHERE 1=1
+				<if test="searchSysAuthCondition != null and searchSysAuthCondition.trim() != ''">
+		        AND (
+		               a.auth_detail_name LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+		               OR a.auth_code LIKE CONCAT('%', #{searchSysAuthCondition}, '%')
+		           )
+		        </if>
+		    ) t
+		    
+		 ORDER BY rownum DESC
+	
+	</select>
+	
+		<!-- 2025. 12. 01. JM. 권한관리 - 사용자 권한 코드 등록시 권한코드 존재 여부 확인 있을 경우 Detail만 insert-->
+	<select id="insertSysAuthChkExcel" parameterType="com.example.lms.dto.SysAuthDTO" resultType="int">
+	
+		SELECT 
+			count(auth_code) 
+		FROM tb_sysauth 
+		WHERE auth_code = #{authCode}
+		OR auth_name = #{authName}
+	
+	</select>
+	
+		<!-- 2025. 12. 01. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
+	<select id="insertSysAuthDetailChkExcel" parameterType="com.example.lms.dto.SysAuthDTO" resultType="int">
+	
+		SELECT 
+			count(auth_detail_code) 
+		FROM tb_sysauth_detail 
+		WHERE auth_detail_code = #{authDetailCode}
+		OR auth_detail_name = #{authDetailName}
+	
+	</select>
+	
+		<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
+	<insert id="insertSysAuthExcel" parameterType="com.example.lms.dto.SysAuthDTO">
+	
+		INSERT INTO tb_sysauth 
+			(auth_code, 
+			auth_name, 
+			auth_updatedate,
+			auth_createdate) 
+		VALUES 
+			(#{authCode}, 
+			#{authName}, 
+			NOW(),
+			NOW())
+	
+	</insert>
+	
+		<!-- 2025. 11. 27. JM. 권한관리 - 사용자 세부 권한 코드 등록 기능 -->
+	<insert id="insertSysAuthDetailExcel" parameterType="com.example.lms.dto.SysAuthDTO">
+	
+		INSERT INTO tb_sysauth_detail 
+			(auth_detail_code, 
+			auth_detail_name, 
+			auth_code, 
+			auth_detail_updatedate,
+			auth_detail_createdate) 
+		VALUES 
+			(#{authDetailCode}, 
+			#{authDetailName}, 
+			#{authCode}, 
+			NOW(),
+			NOW())
+	
+	</insert>
+
+</mapper>

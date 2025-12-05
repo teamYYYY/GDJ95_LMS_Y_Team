@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.excel.DeptManagementExcelMapper">
+
+    <!-- 2025. 11. 27. JM. 학과관리 - 학과 코드 검색 조회 -->
+    <select id="searchDeptInfoListForExcel" parameterType="String" resultType="com.example.lms.dto.DeptDTO">
+
+        SELECT * FROM (
+            SELECT
+                ROW_NUMBER() OVER (
+                ORDER BY dept_updatedate ASC) AS rownum,
+                dept_code AS deptCode,
+                dept_name AS deptName,
+                dept_updatedate AS deptUpdatedate,
+                dept_createdate AS deptCreatedate
+            FROM
+            tb_dept
+            WHERE 1=1
+            <if test="searchDeptCondition != null and searchDeptCondition.trim() != ''">
+                AND (
+                dept_code LIKE CONCAT('%', #{searchDeptCondition}, '%')
+                OR dept_name LIKE CONCAT('%', #{searchDeptCondition}, '%')
+                )
+            </if>
+            ) t
+
+    </select>
+
+    <!-- 2025. 11. 28. JM. 학과관리 - 학과 코드 등록 기능 -->
+    <insert id="insertDeptExcel" parameterType="com.example.lms.dto.DeptDTO">
+
+        INSERT INTO tb_dept (
+            dept_code,
+            dept_name,
+            dept_updatedate,
+            dept_createdate
+        ) VALUES (
+            #{deptCode},
+            #{deptName},
+            NOW(),
+            NOW()
+        )
+
+    </insert>
+
+</mapper>

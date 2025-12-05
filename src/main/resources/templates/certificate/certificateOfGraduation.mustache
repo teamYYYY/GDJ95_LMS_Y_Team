@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>졸업 증명서</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+    :root {
+        /* 회색 톤 디자인 */
+        --primary-gray: #444444; /* 진한 회색 */
+        --light-gray: #f7f7f7; /* 데이터 박스 배경색 */
+        --icon-gray: #666666; /* 아이콘 색상 */
+        --seal-red: #cc0000; /* 공식 인장색 */
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f7f7f9;
+    }
+
+    /* ⭐️⭐️⭐️ 인쇄 전용 스타일 수정: print-hidden 요소에 display: none !important; 적용 ⭐️⭐️⭐️ */
+    @media print {
+        body { background-color: white !important; }
+        .certificate-wrapper {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            max-width: 210mm !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+        }
+        /* print-hidden 요소를 확실하게 숨깁니다. */
+        .print-hidden { 
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* .container-layout이 있다면 마진/패딩 제거 */
+        .container-layout {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* 글꼴 크기 조정 (PDF 출력 품질 개선 목적) */
+        .text-xl { font-size: 1.1rem; }
+        .text-lg { font-size: 1rem; }
+        .text-base { font-size: 0.9rem; }
+        .text-sm { font-size: 0.8rem; }
+    }
+
+    /* 워터마크 배경 스타일 */
+    .watermark-bg {
+        /* 배경 이미지 주소: 실제 학교 건물 이미지로 교체해주세요. */
+        background-image: url('https://images.unsplash.com/photo-1594605917411-e4070a248984?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 80%; 
+        opacity: 0.08; /* 워터마크처럼 희미하게 */
+        filter: grayscale(100%) blur(1.5px); /* 흑백 및 뿌연 효과 */
+        transform: rotate(-1deg); /* 약간의 기울임 */
+    }
+    
+    /* 대학 로고 모자 모양 CSS */
+    .university-logo-cap {
+        width: 100px;
+        height: 50px;
+        background-color: var(--light-gray);
+        border-radius: 10px 10px 0 0;
+        position: relative;
+        margin: 0 auto 10px;
+    }
+    .university-logo-cap::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 10px;
+        background-color: var(--icon-gray);
+        border-radius: 5px 5px 0 0;
+    }
+    .university-logo-cap::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(-5px);
+        width: 10px;
+        height: 10px;
+        background-color: var(--primary-gray);
+        border-radius: 50%;
+    }
+
+    /* 증명서 제목 스타일 */
+    .cert-title-btn {
+        background-color: var(--primary-gray);
+        color: white;
+        padding: 10px 30px;
+        border-radius: 50px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        display: inline-block;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    }
+
+    /* 데이터 박스 스타일 */
+    .data-box {
+        background-color: var(--light-gray);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+    }
+
+    /* 항목 레이블 스타일 */
+    .data-label {
+        color: var(--icon-gray);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* 공식 인장 스타일 */
+    .official-seal {
+        width: 100px;
+        height: 100px;
+        border: 3px solid var(--seal-red); 
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto 0;
+        color: var(--seal-red);
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        line-height: 1;
+    }
+</style>
+<script>
+    // PDF 저장을 위한 JavaScript 함수 (브라우저에서 PDF 저장 시 사용)
+    function saveAsPdf() {
+        window.print();
+    }
+    
+    // 아이콘 SVG 템플릿 함수
+    function getIcon(iconName, size = 16, color = 'currentColor') {
+        const icons = {
+            user: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            hash: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hash"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></svg>`,
+            calendar: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`,
+            bookOpen: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+            award: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award"><path d="m15.46 16.66-2.82 2.83-2.83-2.83-2.82-2.83 2.82-2.83 2.83 2.83 2.82 2.83Z"/><path d="M9 13v-1a4 4 0 1 1 6 0v1"/><circle cx="12" cy="12" r="10"/></svg>`,
+            trendingUp: `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+        };
+        return icons[iconName] || '';
+    }
+    
+    // 권한 검증 실패 시 PDF 버튼 비활성화 (선택 사항)
+    document.addEventListener('DOMContentLoaded', function() {
+        const validate = {{certificateValidate}}; // Mustache로 바인딩된 boolean 값
+        const pdfButton = document.querySelector('.print-hidden button');
+        if (pdfButton && !validate) {
+            pdfButton.disabled = true;
+            pdfButton.classList.add('opacity-50', 'cursor-not-allowed');
+            pdfButton.textContent = '발급 권한 없음';
+        }
+    });
+</script>
+
+
+</head>
+<body class="p-4 sm:p-8">
+
+<!-- PDF 저장 버튼 (인쇄 시 숨겨짐) -->
+<div class="print-hidden max-w-screen-2xl mx-auto flex justify-end mb-6">
+    <button onclick="saveAsPdf()" 
+            class="bg-gray-700 hover:bg-gray-800 text-white font-medium py-2 px-6 rounded-lg shadow-md transition duration-150">
+        PDF로 저장 / 인쇄
+    </button>
+    <!-- PDF 발급은 /main/certificateOfGraduation/pdf 엔드포인트를 직접 호출하여 받는 것이 더 확실합니다. -->
+    <!-- 이 버튼은 브라우저에서 'PDF로 저장' 기능을 사용하도록 돕습니다. -->
+</div>
+
+<!-- 증명서 컨테이너 -->
+<div class="certificate-wrapper max-w-3xl mx-auto bg-white p-6 sm:p-12 rounded-xl shadow-2xl border border-gray-100 relative overflow-hidden">
+    
+    <!-- 워터마크 영역 (CSS background-image 사용) -->
+    <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-none p-12 watermark-bg">
+        <!-- 배경 이미지가 CSS를 통해 설정됩니다. -->
+    </div>
+
+    <!-- 증명서 내용 (워터마크 위에 표시되도록 z-10 적용) -->
+    <div class="relative z-10">
+        
+        <!-- 헤더 및 로고 영역 -->
+        <header class="text-center mb-10">
+            <div class="university-logo-cap"></div>
+            <!-- ⭐️ 하드코딩된 값 적용 -->
+            <h1 class="text-xl font-bold text-gray-800 mb-1">
+                학사관리시스템 대학교
+            </h1>
+            <p class="text-xs text-gray-500">University</p>
+        </header>
+
+        <!-- 제목 -->
+        <div class="text-center mb-10">
+            <span class="cert-title-btn">졸 업 증 명 서</span>
+            <p class="text-xs text-gray-500 mt-2">CERTIFICATE OF GRADUATION</p>
+        </div>
+
+        <!-- ⭐️⭐️⭐️ 주요 정보 박스 (Mustache List 반복/단일 항목 바인딩) ⭐️⭐️⭐️ -->
+        {{#certificateOfGraduationList}}
+        <div class="data-box mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12 text-base text-gray-800">
+                
+                <!-- 1열: 성명 (userName) / 생년월일 (userBirth) -->
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="name-label">
+                        <script>document.getElementById('name-label').innerHTML += getIcon('user', 18, 'var(--icon-gray)') + '성명';</script>
+                    </span>
+                    <span class="ml-7 font-medium">{{userName}}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="birth-label">
+                        <script>document.getElementById('birth-label').innerHTML += getIcon('calendar', 18, 'var(--icon-gray)') + '생년월일';</script>
+                    </span>
+                    <span class="ml-7 font-medium" id="birth-value">{{userBirth}}</span>
+                </div>
+
+                <!-- 2열: 학번 (userId) / 학과 (deptName) -->
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="id-label">
+                        <script>document.getElementById('id-label').innerHTML += getIcon('hash', 18, 'var(--icon-gray)') + '학번';</script>
+                    </span>
+                    <span class="ml-7 font-medium">{{userId}}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="major-label">
+                        <script>document.getElementById('major-label').innerHTML += getIcon('bookOpen', 18, 'var(--icon-gray)') + '학과';</script>
+                    </span>
+                    <span class="ml-7 font-medium">{{deptName}}</span>
+                </div>
+
+                <!-- 3열: 학위명 (하드코딩) / 입학일 (userCreatedate) -->
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="degree-label">
+                        <script>document.getElementById('degree-label').innerHTML += getIcon('award', 18, 'var(--icon-gray)') + '학위명';</script>
+                    </span>
+                    <span class="ml-7 font-medium">학사</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="data-label" id="admission-label">
+                        <script>document.getElementById('admission-label').innerHTML += getIcon('trendingUp', 18, 'var(--icon-gray)') + '입학일';</script>
+                    </span>
+                    <span class="ml-7 font-medium" id="admission-value">{{userCreatedate}}</span>
+                </div>
+                
+                <!-- 4열: 졸업일 (하드코딩) -->
+                <div class="flex flex-col gap-1 col-span-1">
+                    <span class="data-label" id="graduation-label">
+                        <script>document.getElementById('graduation-label').innerHTML += getIcon('calendar', 18, 'var(--icon-gray)') + '졸업일';</script>
+                    </span>
+                    <span class="ml-7 font-medium">2026. 02. 28.</span>
+                </div>
+
+            </div>
+        </div>
+        {{/certificateOfGraduationList}}
+        <!-- ⭐️⭐️⭐️ 주요 정보 박스 끝 ⭐️⭐️⭐️ -->
+
+
+        <!-- 증명 문구 -->
+        <div class="text-center mb-16">
+            <p class="text-base text-gray-700 leading-relaxed font-medium mb-1">
+                위 사람은 본교를 졸업하였음을 증명합니다.
+            </p>
+            <p class="text-xs text-gray-500 italic">
+                This is to certify that the above-mentioned person has graduated from this university.
+            </p>
+        </div>
+
+        <!-- 발행 정보 및 인장 -->
+        <div class="text-center">
+             <!-- ⭐️ 하드코딩된 값 적용 -->
+            <p class="text-base text-gray-700 mb-2 font-medium">
+                2026. 02. 28.
+            </p>
+            <p class="text-lg font-bold text-gray-800 mb-6">
+                학사관리시스템 총장
+            </p>
+            
+            <div class="official-seal">
+                OFFICIAL<br>SEAL
+            </div>
+        </div>
+
+        <!-- 푸터 정보 -->
+        <footer class="mt-20 pt-4 border-t border-gray-200 text-xs text-gray-500 flex justify-between">
+            <div class="text-left">
+                 <!-- ⭐️ 하드코딩된 값 적용 -->
+                <p>발급번호: 123456789</p>
+            </div>
+            <div class="text-right leading-relaxed">
+                 <!-- ⭐️ 하드코딩된 값 적용 -->
+                <p>학사관리시스템 대학교 학사지원팀</p>
+                <p>서울특별시 관악구</p>
+                <p>Tel: 02-0000-0000</p>
+            </div>
+        </footer>
+    </div>
+
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    function toKoreanDate(dateStr) {
+	        // 서버에서 'YYYY-MM-DD' 또는 'Fri Dec 05 00:00:00 KST 2025' 같은 형식으로 넘어올 수 있습니다.
+	        
+            // 1. KST, GMT, 요일 정보 등을 제거하여 Date 객체로 변환을 시도합니다.
+	        let cleanStr = dateStr
+	            .replace(/^[A-Za-z]{3}\s+/, '')  // 앞의 Fri, Mon 같은 요일 제거
+	            .replace(/\s+KST|\s+GMT/g, '') // KST, GMT, T, Z 제거
+                .replace(/T\d{2}:\d{2}:\d{2}/, '') // ISO 시간 부분 제거
+                .trim();
+	
+	        const date = new Date(cleanStr);
+	        if (isNaN(date) || date.getFullYear() < 1900) { 
+                // 유효하지 않은 날짜인 경우, 원본 문자열을 반환합니다.
+                return dateStr;
+            }
+	
+	        const yyyy = date.getFullYear();
+	        const mm = String(date.getMonth() + 1).padStart(2, '0');
+	        const dd = String(date.getDate()).padStart(2, '0');
+	
+	        return `${yyyy}년 ${mm}월 ${dd}일`;
+	    }
+	
+	    // 모든 값 span에 대해 날짜면 변환
+	    document.querySelectorAll('.ml-7.font-medium').forEach(span => {
+	        let text = span.textContent.trim();
+	
+	        // 이미 "년 월 일" 형식으로 포맷된 것으로 보이는 경우 건너뜁니다.
+	        if (/년\s*월\s*일/.test(text)) return;
+	
+	        // 날짜일 가능성이 있는 문자열 패턴 검사 (날짜 포맷의 유연성을 위해 검사)
+	        if (
+	            text.includes('-') ||
+	            text.includes('/') ||
+	            text.includes('KST') || text.includes('GMT') ||
+	            /[A-Za-z]{3}\s+[A-Za-z]{3}\s+\d+/.test(text)
+	        ) {
+	            span.textContent = toKoreanDate(text);
+	        }
+	    });
+	
+	    // 졸업일 (하드코딩 값)도 한국어 포맷으로 통일합니다.
+	    const gradSpan = document.querySelector('#graduation-label ~ .ml-7.font-medium');
+	    if (gradSpan) {
+	        // "2026. 02. 28."을 "2026년 02월 28일"로 변환
+	        gradSpan.textContent = gradSpan.textContent.replace(/\./g, '').trim().split(/\s+/).join('.');
+            if (gradSpan.textContent.match(/^\d{4}\.\d{2}\.\d{2}$/)) {
+                const [y, m, d] = gradSpan.textContent.split('.');
+                gradSpan.textContent = `${y}년 ${m}월 ${d}일`;
+            }
+	    }
+	});
+</script>
+
+
+</body>
+</html>

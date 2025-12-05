@@ -45,9 +45,16 @@ public interface SysAuthMapper {
 	// 사용자 권한 코드 상세정보 조회
 	SysAuthDTO selectSysAuthAllDetail(String authDetailCode);
 	
+	// 사용자 권한 등록전에 권한코드가 이미 있을 경우에는 Detail만 인서트하면 된다.
+	Integer insertSysAuthExistChk(SysAuthDTO sysAuthDTO);
+	
+	// 사용자 세부권한 등록 시 동일한 세부권한코드나 세부권한명이 존재하면 안된다.
+	Integer insertSysAuthDetailExistChk(SysAuthDTO sysAuthDTO);
+	
 	//======================================================
 	// 사용자 권한 등록 기능 insert 순서 sysAuth -> sysAuthDetail
 	//======================================================
+	
 	Integer insertSysAuth(SysAuthDTO sysAuthDTO);
 
 	Integer insertSysAuthDetail(SysAuthDTO sysAuthDTO);

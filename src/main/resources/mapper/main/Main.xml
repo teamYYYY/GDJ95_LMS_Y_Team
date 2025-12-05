@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.main.MainMapper">
+
+	<!-- 2025. 12. 04. JM. 메인페이지 사용자 프로파일 카드 -->
+	<select id="userProfileCard" parameterType="int" resultType="com.example.lms.dto.MainDTO">
+	
+		SELECT
+			a.user_id AS userId,
+			b.dept_name AS deptName,
+			a.user_name AS userName
+		FROM
+			TB_SYSUSER a
+		INNER JOIN tb_dept b
+		ON a.dept_code = b.dept_code
+		WHERE user_no = #{userNo}
+	
+	</select>
+	
+	<!-- 2025. 12. 04. JM. 메인페이지 학교 공지사항 -->
+	<select id="mainUniversityNoticeList" resultType="com.example.lms.dto.MainDTO">
+	
+		SELECT
+			a.university_notice_no AS universityNoticeNo,
+			a.university_notice_title AS universityNoticeTitle,
+			c.user_name AS universityWriterUserName,
+			a.university_notice_priority_code AS universityNoticePriorityCode,
+			b.university_notice_priority_name AS universityNoticePriorityName,
+			a.university_notice_view_cnt AS universityNoticeViewCnt,
+			DATE_FORMAT(a.university_notice_updatedate, '%Y-%m-%d %H:%i:%s') AS universityNoticeUpdatedate
+		FROM
+			tb_notice a
+		INNER JOIN tb_university_notice_priority b
+		ON
+			a.university_notice_priority_code = b.university_notice_priority_code
+		INNER JOIN tb_sysuser c
+		ON
+			a.university_writer_user_no = c.user_no 
+		ORDER BY a.university_notice_priority_code ASC, a.university_notice_updatedate DESC
+		LIMIT 0, 6
+	
+	</select>
+	
+	<!-- 2025. 12. 04. JM. 메인페이지 시간표 ( 교수가 보는 강의 시간표 ) -->
+	<select id="mainCourseTimeTableByProfessor" parameterType="com.example.lms.dto.MainDTO" resultType="com.example.lms.dto.MainDTO">
+	
+		SELECT
+			a.course_no AS courseNo,
+			a.course_name AS courseName,
+			b.user_name AS professorUserName,
+			a.course_classroom AS courseClassroom,
+			c.course_time_yoil AS courseTimeYoil,
+			c.course_time_start AS courseTimeStart,
+			c.course_time_end AS courseTimeEnd
+		FROM
+			tb_course a
+			INNER JOIN tb_sysuser b
+			ON a.professor_user_no = b.user_no
+			INNER JOIN tb_course_time c
+			ON a.course_no = c.course_no
+			AND a.professor_user_no = c.professor_user_no
+		WHERE b.user_no = #{userNo}
+		AND a.course_status = '1'
+		AND c.course_time_yoil = #{courseTimeYoil}
+		ORDER BY c.course_time_start ASC
+		
+	</select>
+	
+	<!-- 2025. 12. 04. JM. 메인페이지 시간표 ( 학생이 보는 강의 시간표 ) -->
+	<select id="mainCourseTimeTableByStudent" parameterType="com.example.lms.dto.MainDTO" resultType="com.example.lms.dto.MainDTO">	
+		
+		SELECT
+			a.course_no AS courseNo,
+			a.course_name AS courseName,
+			b.user_name AS professorUserName,
+			a.course_classroom AS courseClassroom,
+			c.course_time_yoil AS courseTimeYoil,
+			c.course_time_start AS courseTimeStart,
+			c.course_time_end AS courseTimeEnd
+		FROM
+			tb_course a
+			INNER JOIN tb_sysuser b
+			ON a.professor_user_no = b.user_no
+			INNER JOIN tb_course_time c
+			ON a.course_no = c.course_no
+			AND a.professor_user_no = c.professor_user_no
+			INNER JOIN tb_enrollment d
+			ON a.course_no = d.course_no
+			INNER JOIN tb_sysuser e
+			ON d.student_user_no = e.user_no
+		WHERE d.student_user_no = #{userNo}
+		AND d.enrollment_status = '0'
+		AND c.course_time_yoil = #{courseTimeYoil}
+		ORDER BY c.course_time_start ASC
+	
+	</select>
+	
+	<!-- 2025. 12. 04. JM. 메인페이지 공지사항 조회시 ( 조회 카운트 증가 처리 ) -->
+	<update id="increaseUniversityNoticeViewCnt" parameterType="int">
+	
+		UPDATE
+			tb_notice
+		SET
+			university_notice_view_cnt = university_notice_view_cnt + 1
+		WHERE
+			university_notice_no = #{unitversityNoticeNo}
+	
+	</update>
+	
+	<!-- 2025. 12. 05. JM. 메인페이지 졸업증명서 발급 이름, 생년월일, 학번, 학과, 학위명(학사), 입학일, 졸업일(2월28일로고정),-->
+	<select id="certificateOfGraduationList" parameterType="int" resultType="com.example.lms.dto.MainDTO">
+
+		SELECT
+			a.user_name as userName,
+			a.user_birth as userBirth,
+			a.user_id as userId,
+			b.dept_name as deptName,
+			a.user_createdate as userCreatedate
+		FROM tb_sysuser a
+		INNER JOIN tb_dept b
+		ON a.dept_code = b.dept_code
+		WHERE user_no = #{userNo}
+
+	</select>
+	
+</mapper>
