@@ -22,6 +22,7 @@ import com.example.lms.dto.StudentTimetableDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.studentCourse.StudentCourseService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -309,23 +310,29 @@ public class StudentCourseController {
     
     @GetMapping("/student/attendance")
     public String attendancePage(
-            @RequestParam("courseNo") int courseNo,
+            @RequestParam int courseNo,
             HttpSession session,
             Model model) {
 
         SysUserDTO loginUser = (SysUserDTO) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
         int studentUserNo = loginUser.getUserNo();
 
-        // 출석 상세 + 요약 둘 다
+        // 회차별 출석 상세
         List<StudentAttendanceDTO> detailList =
                 studentCourseService.getAttendanceDetailList(courseNo, studentUserNo);
 
+        // 출석/지각/결석 카운트 (요약만)
         AttendanceSummaryDTO summary =
                 studentCourseService.getAttendanceSummary(courseNo, studentUserNo);
 
+        // 네비게이션에서 courseNo 사용해야 하므로 모델에 주입
+        model.addAttribute("courseNo", courseNo);
         model.addAttribute("detailList", detailList);
         model.addAttribute("summary", summary);
-        model.addAttribute("courseNo", courseNo);
 
         return "studentCourse/studentAttendance";
     }

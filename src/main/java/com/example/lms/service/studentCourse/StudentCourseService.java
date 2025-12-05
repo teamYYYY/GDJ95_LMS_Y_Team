@@ -36,7 +36,6 @@ public class StudentCourseService {
                 studentCourseMapper.selectAttendanceSummary(courseNo, studentUserNo);
 
         if (summary == null) {
-            // 아무 출석 기록이 없는 경우 0으로 초기화
             summary = new AttendanceSummaryDTO();
             summary.setAttendanceCount(0);
             summary.setLateCount(0);
@@ -59,7 +58,11 @@ public class StudentCourseService {
             summary.setLateRate((late * 100.0) / total);
             summary.setAbsentRate((absent * 100.0) / total);
         }
-
+        
+        if (summary.getPresentRate() == null) summary.setPresentRate(0.0);
+        if (summary.getLateRate() == null) summary.setLateRate(0.0);
+        if (summary.getAbsentRate() == null) summary.setAbsentRate(0.0);
+        
         return summary;
     }
 
