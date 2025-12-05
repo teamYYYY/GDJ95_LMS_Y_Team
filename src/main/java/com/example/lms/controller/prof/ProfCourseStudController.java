@@ -30,6 +30,20 @@ public class ProfCourseStudController {
 	    
 	    List<ProfCourseStudDTO> list = profCourseStudService.getStudentListByProf(courseNo, startRow, rowPerPage);
 	    
+	    int index = 0;
+	    for (Object o : list) {
+	        if (o == null) {
+	            System.out.println(">>> [" + index + "] = NULL");
+	        } else {
+	            System.out.println(">>> [" + index + "] = " + o.getClass());
+	        }
+	        index++;
+	    }
+
+	    System.out.println("list size = " + list.size());
+	    System.out.println(list);
+
+	    
 	    int totalRow = profCourseStudService.getStudentCountByProf(courseNo);
 	    
 	    int lastPage = (totalRow % rowPerPage == 0) ? (totalRow / rowPerPage) : (totalRow / rowPerPage) + 1;
@@ -50,7 +64,7 @@ public class ProfCourseStudController {
 	    model.addAttribute("currentPage", currentPage);
 	    model.addAttribute("startPage", startPage);
 	    model.addAttribute("endPage", endPage);
-	    model.addAttribute("pages", pages);
+	    model.addAttribute("pages", pages); 
 
 	    return "profCourseStud/profCourseStudList";
 	}

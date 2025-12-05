@@ -9,6 +9,9 @@ import com.example.lms.dto.CourseNoticeDTO;
 @Mapper
 public interface ProfCourseNoticeMapper {
 	
+	// 메뉴
+	List<CourseNoticeDTO> selectCourseNoticeSummary(int professorUserNo);
+	
 	// 공지사항 리스트
 	List<CourseNoticeDTO> selectCourseNoticeListByPage(int courseNo, int startRow, int rowPerPage);
 	int selectCourseNoticeCount(int courseNo); // 페이징

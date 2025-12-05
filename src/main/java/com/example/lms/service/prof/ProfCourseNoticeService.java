@@ -16,6 +16,11 @@ public class ProfCourseNoticeService {
 	@Autowired
 	ProfCourseNoticeMapper courseNoticeMapper;
 	
+	// 메뉴
+	public List<CourseNoticeDTO> getCourseNoticeSummary(int professorUserNo) {
+	    return courseNoticeMapper.selectCourseNoticeSummary(professorUserNo);
+	}
+
 	// 공지사항 리스트
 	public List<CourseNoticeDTO> getCourseNoticeListByPage(int courseNo, int startRow, int rowPerPage) {
 		

@@ -16,4 +16,6 @@ public interface ProfCourseStudMapper {
 											        @Param("rowPerPage") int rowPerPage);
 	
 	int selectStudentCountByProf(@Param("courseNo") int courseNo);
+	
+	double selectAttendanceRate(@Param("courseNo") int courseNo, @Param("studentUserNo") int studentUserNo);
 }

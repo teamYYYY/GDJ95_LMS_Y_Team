@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.prof.ProfCourseQnAMapper">
+
+	<select id="selectQuestionList" resultType="map">
+	    SELECT 
+	        q.course_question_no AS courseQuestionNo,
+	        q.course_no AS courseNo,
+	        q.course_question_title AS courseQuestionTitle,
+	        q.course_question_content AS courseQuestionContent,
+	        q.course_question_status AS courseQuestionStatus,
+	        q.createdate AS createdate,
+	        u.user_name AS writerName,
+	        CASE
+				WHEN q.course_question_status = 1 THEN 1 
+	        	WHEN q.course_question_status = 0 THEN null
+	        END AS answered
+	    FROM tb_course_question q
+	    LEFT JOIN tb_sysuser u ON q.writer_user_no = u.user_no
+	    WHERE q.course_no = #{courseNo}
+	    ORDER BY q.createdate DESC
+	</select>
+
+
+	<select id="selectQuestionDetail" resultType="map">
+	    SELECT 
+	        q.course_question_no AS courseQuestionNo,
+	        q.course_no AS courseNo,
+	        q.course_question_title AS courseQuestionTitle,
+	        q.course_question_content AS courseQuestionContent,
+	        q.course_question_status AS courseQuestionStatus,
+	        q.createdate AS createdate,
+	        u.user_name AS writerName
+	    FROM tb_course_question q
+	    LEFT JOIN tb_sysuser u ON q.writer_user_no = u.user_no
+	    WHERE q.course_question_no = #{courseQuestionNo}
+	</select>
+	
+	<select id="selectAnswerList" resultType="map">
+	    SELECT 
+	        a.answer_no AS answerNo,
+	        a.course_question_no AS courseQuestionNo,
+	        a.writer_user_no AS writerUserNo,
+	        u.user_name AS writerName,
+	        a.answer_content AS answerContent,
+	        a.createdate AS createdate
+	    FROM tb_course_question_answer a
+	    LEFT JOIN tb_sysuser u ON a.writer_user_no = u.user_no
+	    WHERE a.course_question_no = #{courseQuestionNo}
+	    ORDER BY a.createdate ASC
+	</select>
+
+	
+	<insert id="insertAnswer">
+	INSERT INTO tb_course_question_answer (
+	    course_question_no,
+	    writer_user_no,
+	    answer_content,
+	    createdate
+	) VALUES (
+	    #{courseQuestionNo},
+	    #{professorUserNo},
+	    #{answerContent},
+	    NOW()
+	)
+	</insert>
+	
+	<update id="updateAnswer">
+		UPDATE tb_course_question_answer
+		SET answer_content = #{answerContent}
+		WHERE answer_no = #{answerNo}
+	</update>
+	
+	<delete id="deleteAnswer">
+	DELETE FROM tb_course_question_answer
+	WHERE answer_no = #{answerNo}
+	</delete>
+	
+	<select id="answerCount" resultType="int">
+	SELECT COUNT(*) FROM tb_course_question_answer WHERE course_question_no = #{courseQuestionNo}
+	</select>
+	
+	<update id="updateQuestionStatusAnswered">
+	UPDATE tb_course_question SET course_question_status = '1' WHERE course_question_no = #{courseQuestionNo}
+	</update>
+	
+	<update id="updateQuestionStatusReopen">
+	UPDATE tb_course_question SET course_question_status = '0' WHERE course_question_no = #{courseQuestionNo}
+	</update>
+	
+</mapper>

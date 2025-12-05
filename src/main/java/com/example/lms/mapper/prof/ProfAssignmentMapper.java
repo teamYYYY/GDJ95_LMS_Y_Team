@@ -3,11 +3,16 @@ package com.example.lms.mapper.prof;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.lms.dto.AssignmentDTO;
+import com.example.lms.dto.ProfCourseAssignmentDTO;
 
 @Mapper
 public interface ProfAssignmentMapper {
+	
+	//메뉴
+	List<ProfCourseAssignmentDTO> selectCourseAssignmentSummary(int professorUserNo);
 	
 	// 강의별 과제 리스트
 	List<AssignmentDTO> selectAssignmentListByProf(int courseNo, int startRow, int rowPerPage);
@@ -15,6 +20,10 @@ public interface ProfAssignmentMapper {
 	
 	// 상세보기
 	AssignmentDTO selectAssignmentDetail(int assignmentNo);
+	
+	// 학생 과제 제출 리스트
+	List<ProfCourseAssignmentDTO> selectSubmissionList(@Param("assignmentNo") int assignmentNo,
+            											@Param("courseNo") int courseNo);
 	
 	// 등록
 	int insertAssignment(AssignmentDTO a);

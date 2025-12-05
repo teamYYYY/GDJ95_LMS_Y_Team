@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.lms.dto.CourseDTO;
 import com.example.lms.dto.CourseNoticeDTO;
@@ -29,6 +30,19 @@ public class ProfCourseNoticeController {
     ProfCourseNoticeController(ProfCourseService courseService) {
         this.courseService = courseService;
     }
+    
+    // 메뉴
+    @GetMapping("/profCourseNotice")
+    public String profCourseNotice(Model model, @SessionAttribute("loginUser") SysUserDTO user) {
+    	
+        int professorUserNo = user.getUserNo();
+        
+        List<CourseNoticeDTO> list = courseNoticeService.getCourseNoticeSummary(professorUserNo);
+        model.addAttribute("courseNoticeSummaryList", list);
+        
+        return "profCourseNotice/profCourseNotice";  // 카드형 템플릿
+    }
+
 	
 	// 공지사항 리스트
 	@GetMapping("/courseNoticeList")

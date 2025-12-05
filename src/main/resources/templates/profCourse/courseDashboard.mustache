@@ -3,162 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{#course}}{{courseName}}{{/course}} | 강의 대시보드</title>
+    <title>{{course.courseName}} | 강의 대시보드</title>
 
-    <link rel="stylesheet" as="style" crossorigin 
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body { font-family: Pretendard, sans-serif; }
-        .section-box {
+        .left-info {
             background: white;
             border: 1px solid #E5E7EB;
-            border-radius: 14px;
-            padding: 24px;
+            border-radius: 12px;
+            padding: 18px;
         }
         .menu-card {
             border: 1px solid #E5E7EB;
-            background: #FAFAFA;
+            background: white;
+            border-radius: 12px;
+            padding: 18px; /* 줄임 */
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 120px; /* 길이 줄임 */
         }
         .menu-card:hover {
-            background: #F0F4FF;
-            border-color: #CBD5E1;
+            background: #F5F7FF;
+            border-color: #C7D2FE;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 
-<body class="text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
     {{> profLayout/profHeader }}
 
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 py-8">
 
-        <div class="section-box space-y-8">
+        <div class="flex gap-7">
 
-            {{#course}}
+            <!-- 왼쪽 기본정보 -->
+            <aside class="left-info w-72 text-sm space-y-2">
 
-            <!-- 제목 -->
-            <div class="flex justify-between items-center pb-4 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-800">{{courseName}}</h2>
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user text-blue-600"></i>
+                    {{course.courseName}}
+                </h2>
+                <p class="text-xs text-gray-500 mb-3">강의 기본 정보</p>
 
-                <div class="space-x-4 text-sm font-medium">
-                    <a href="/modifyCourse?courseNo={{courseNo}}" 
-                       class="text-indigo-600 hover:text-indigo-800">
-                        <i class="fa-solid fa-pen-to-square mr-1"></i> 강의 수정
-                    </a>
-                    <a href="/removeCourse?courseNo={{courseNo}}" 
-                       onclick="return confirm('삭제할까요?');"
-                       class="text-red-600 hover:text-red-800">
-                        <i class="fa-solid fa-trash mr-1"></i> 강의 삭제
-                    </a>
+                <div class="flex justify-between"><span class="text-gray-500">개설연도</span><span>{{course.courseYear}}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">학기</span><span>{{course.courseSemester}}학기</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">학과</span><span>{{course.deptName}}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">시간</span><span>{{course.yoilName}} · {{course.courseTimeStart}}~{{course.courseTimeEnd}}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">강의실</span><span>{{course.courseClassroom}}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">정원</span><span>{{course.courseCapacity}}명</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">학점</span><span>{{course.courseScore}}</span></div>
+
+                <div class="">
+                    <span class="text-gray-500 block text-xs mt-3">강의 설명</span>
+                    <p class="mt-1 whitespace-pre-line text-sm">{{course.courseDescription}}</p>
                 </div>
-            </div>
 
-            <!-- 강의 상세 정보 -->
-            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                    <tbody class="bg-white divide-y divide-gray-100">
-                    
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 w-1/4 text-left font-medium">개설연도</th>
-                            <td class="px-6 py-3">{{courseYear}}</td>
-                        </tr>
+                <!-- 수정/삭제 -->
+                <div class="pt-3 flex gap-3">
 
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">학기</th>
-                            <td class="px-6 py-3">{{courseSemester}}학기</td>
-                        </tr>
+                    <a href="/modifyCourse?courseNo={{course.courseNo}}" 
+                       class="text-blue-600 text-sm hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-pen"></i> 수정
+                    </a>
 
-                        <!-- 학과 표시 -->
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">학과</th>
-                            <td class="px-6 py-3">
-                                {{deptName}} ({{deptCode}})
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">시간</th>
-                            <td class="px-6 py-3">
-                                {{yoilName}}요일 · {{courseTimeStart}}교시 ~ {{courseTimeEnd}}교시
-                            </td>
-                        </tr>
+                    <a href="/removeCourse?courseNo={{course.courseNo}}"
+                       onclick="return confirm('정말 삭제하시겠습니까?');"
+                       class="text-red-500 text-sm hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-trash"></i> 삭제
+                    </a>
 
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">강의실</th>
-                            <td class="px-6 py-3">{{courseClassroom}}</td>
-                        </tr>
+                </div>
+                
+            </aside>
 
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">정원</th>
-                            <td class="px-6 py-3">{{courseCapacity}}명</td>
-                        </tr>
+            <!-- 오른쪽 카드 메뉴 -->
+            <section class="flex-1 grid grid-cols-2 gap-5">
 
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">학점</th>
-                            <td class="px-6 py-3">{{courseScore}}</td>
-                        </tr>
-
-                        <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-left font-medium">강의 설명</th>
-                            <td class="px-6 py-3 whitespace-pre-line">{{courseDescription}}</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 메뉴 -->
-            <h3 class="text-xl font-semibold text-gray-700 pt-4">강의 관리 메뉴</h3>
-
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            
-                <!-- 공지 -->
-                <a href="/courseNoticeList?courseNo={{courseNo}}" class="menu-card p-4 rounded-lg text-center transition">
-                    <i class="fa-solid fa-thumbtack text-gray-600 text-2xl mb-2"></i>
-                    <div class="text-sm font-medium">공지사항</div>
+                <a href="/courseNoticeList?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-thumbtack text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">공지사항</div>
                 </a>
 
-                <!-- 과제 -->
-                <a href="/assignmentListByProf?courseNo={{courseNo}}" class="menu-card p-4 rounded-lg text-center transition">
-                    <i class="fa-solid fa-clipboard-check text-gray-600 text-2xl mb-2"></i>
-                    <div class="text-sm font-medium">과제 관리</div>
+                <a href="/assignmentListByProf?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-clipboard-check text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">과제 관리</div>
                 </a>
 
-                <!-- 수강생 -->
-                <a href="/profCourseStudList?courseNo={{courseNo}}" class="menu-card p-4 rounded-lg text-center transition">
-                    <i class="fa-solid fa-users text-gray-600 text-2xl mb-2"></i>
-                    <div class="text-sm font-medium">수강생</div>
+                <a href="/profCourseQnAList?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-circle-question text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">문의사항 관리</div>
                 </a>
 
-                <!-- ⭐ 출석 관리 메뉴 새로 추가 -->
-                <a href="/courseAttendWeekList?courseNo={{courseNo}}" class="menu-card p-4 rounded-lg text-center transition">
-                    <i class="fa-solid fa-calendar-check text-gray-600 text-2xl mb-2"></i>
-                    <div class="text-sm font-medium">출석 관리</div>
+                <a href="/profCourseStudList?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-users text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">수강생</div>
                 </a>
 
-                <!-- 성적 -->
-                <a href="/gradeManage?courseNo={{courseNo}}" class="menu-card p-4 rounded-lg text-center transition">
-                    <i class="fa-solid fa-chart-bar text-gray-600 text-2xl mb-2"></i>
-                    <div class="text-sm font-medium">성적</div>
+                <a href="/courseAttendWeekList?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-calendar-check text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">출석 관리</div>
                 </a>
 
-            </div>
-
-            <!-- 목록 -->
-            <div class="pt-6 text-center">
-                <a href="/courseList" class="inline-block bg-gray-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition shadow">
-                    <i class="fa-solid fa-list-ul mr-2"></i> 목록으로
+                <a href="/profCourseGradeList?courseNo={{course.courseNo}}" class="menu-card">
+                    <i class="fa-solid fa-chart-bar text-xl mb-2 text-gray-600"></i>
+                    <div class="font-medium">성적 관리</div>
                 </a>
-            </div>
 
-            {{/course}}
+            </section>
 
         </div>
-
     </main>
 
     {{> profLayout/profFooter }}

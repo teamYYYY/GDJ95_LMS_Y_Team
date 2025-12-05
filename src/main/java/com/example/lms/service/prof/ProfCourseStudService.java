@@ -25,4 +25,8 @@ public class ProfCourseStudService {
 		return profCourseStudMapper.selectStudentCountByProf(courseNo);
 	}
 	
+	public double getAttendanceRate(int courseNo, int studentUserNo) {
+		return profCourseStudMapper.selectAttendanceRate(courseNo, studentUserNo);
+	}
+	
 }

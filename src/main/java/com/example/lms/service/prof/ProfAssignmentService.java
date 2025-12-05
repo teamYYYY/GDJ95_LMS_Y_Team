@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.lms.dto.AssignmentDTO;
+import com.example.lms.dto.AssignmentSubmissionDTO;
+import com.example.lms.dto.ProfCourseAssignmentDTO;
 import com.example.lms.mapper.prof.ProfAssignmentMapper;
 
 @Service
@@ -15,6 +17,11 @@ public class ProfAssignmentService {
 
 	@Autowired
 	ProfAssignmentMapper assignmentMapper;
+	
+	// 메뉴
+	public List<ProfCourseAssignmentDTO> getCourseAssignmentSummary(int professorUserNo) {
+        return assignmentMapper.selectCourseAssignmentSummary(professorUserNo);
+    }
 	
 	// 강의별 과제 리스트
 	public List<AssignmentDTO> getAssignmentListByProf(int courseNo, int startRow, int rowPerPage) {
@@ -31,6 +38,11 @@ public class ProfAssignmentService {
 	public AssignmentDTO getAssignmentDetail(int assignmentNo) {
 		
 		return assignmentMapper.selectAssignmentDetail(assignmentNo);
+	}
+	
+	// 학생 과제 제출 리스트
+	public List<ProfCourseAssignmentDTO> getSubmissionList(int assignmentNo, int courseNo) {
+		return assignmentMapper.selectSubmissionList(assignmentNo, courseNo);
 	}
 	
 	// 등록

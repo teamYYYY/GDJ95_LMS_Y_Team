@@ -9,8 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.lms.dto.AssignmentDTO;
+import com.example.lms.dto.ProfCourseAssignmentDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.service.prof.ProfAssignmentService;
 
@@ -21,6 +23,18 @@ public class ProfAssignmentController {
 
     @Autowired
     ProfAssignmentService assignmentService;
+    
+    // 메뉴
+    @GetMapping("/profCourseAssignment")
+    public String profAssignmentList(Model model, @SessionAttribute("loginUser") SysUserDTO user) {
+
+        int professorUserNo = user.getUserNo();
+        List<ProfCourseAssignmentDTO> list = assignmentService.getCourseAssignmentSummary(professorUserNo);
+
+        model.addAttribute("courseAssignmentSummaryList", list);
+
+        return "profAssignment/profCourseAssignment"; // 카드형 템플릿
+    }
 
     // 리스트
     @GetMapping("/assignmentListByProf")
@@ -63,7 +77,10 @@ public class ProfAssignmentController {
             @RequestParam("courseNo") int courseNo) {
 
         AssignmentDTO assignmentDTO = assignmentService.getAssignmentDetail(assignmentNo);
+        List<ProfCourseAssignmentDTO> submissionList = assignmentService.getSubmissionList(assignmentNo, courseNo);
+        
         model.addAttribute("assignment", assignmentDTO);
+        model.addAttribute("submissionList", submissionList);
         model.addAttribute("courseNo", courseNo);
 
         return "profAssignment/assignmentDetail";
@@ -130,4 +147,5 @@ public class ProfAssignmentController {
 
         return "redirect:/assignmentListByProf?courseNo=" + courseNo;
     }
+    
 }
