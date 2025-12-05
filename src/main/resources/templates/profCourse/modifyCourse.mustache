@@ -30,6 +30,14 @@
 <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
 
     <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">강의 수정</h2>
+    
+    {{#errorMsg}}
+		<div class="mb-3 px-3 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-sm flex items-center">
+		    <i class="fa-solid fa-circle-info mr-2"></i>
+		    {{errorMsg}}
+		</div>
+	{{/errorMsg}}
+    
 
     {{#course}}
     <form action="/modifyCourse" method="post" class="space-y-6">
@@ -125,25 +133,42 @@
             {{#timeList}}
             <div class="flex items-center gap-3 time-row">
 
+                <!-- 요일 -->
                 <select name="yoil">
-                    <option value="1" {{#yoil1}}selected{{/yoil1}}>월요일</option>
-                    <option value="2" {{#yoil2}}selected{{/yoil2}}>화요일</option>
-                    <option value="3" {{#yoil3}}selected{{/yoil3}}>수요일</option>
-                    <option value="4" {{#yoil4}}selected{{/yoil4}}>목요일</option>
-                    <option value="5" {{#yoil5}}selected{{/yoil5}}>금요일</option>
-                </select>
+				    <option value="1" {{#yoil1}}selected{{/yoil1}}>월요일</option>
+				    <option value="2" {{#yoil2}}selected{{/yoil2}}>화요일</option>
+				    <option value="3" {{#yoil3}}selected{{/yoil3}}>수요일</option>
+				    <option value="4" {{#yoil4}}selected{{/yoil4}}>목요일</option>
+				    <option value="5" {{#yoil5}}selected{{/yoil5}}>금요일</option>
+				</select>
 
                 <select name="start">
-                    {{#range}}
-                        <option value="{{.}}" {{#isStart}}selected{{/isStart}}>{{.}}교시</option>
-                    {{/range}}
-                </select>
+				    <option value="1" {{#start1}}selected{{/start1}}>1교시</option>
+				    <option value="2" {{#start2}}selected{{/start2}}>2교시</option>
+				    <option value="3" {{#start3}}selected{{/start3}}>3교시</option>
+				    <option value="4" {{#start4}}selected{{/start4}}>4교시</option>
+				    <option value="5" {{#start5}}selected{{/start5}}>5교시</option>
+				    <option value="6" {{#start6}}selected{{/start6}}>6교시</option>
+				    <option value="7" {{#start7}}selected{{/start7}}>7교시</option>
+				    <option value="8" {{#start8}}selected{{/start8}}>8교시</option>
+				    <option value="9" {{#start9}}selected{{/start9}}>9교시</option>
+				    <option value="10" {{#start10}}selected{{/start10}}>10교시</option>
+				</select>
+				
+				<select name="end">
+				    <option value="1" {{#end1}}selected{{/end1}}>1교시</option>
+				    <option value="2" {{#end2}}selected{{/end2}}>2교시</option>
+				    <option value="3" {{#end3}}selected{{/end3}}>3교시</option>
+				    <option value="4" {{#end4}}selected{{/end4}}>4교시</option>
+				    <option value="5" {{#end5}}selected{{/end5}}>5교시</option>
+				    <option value="6" {{#end6}}selected{{/end6}}>6교시</option>
+				    <option value="7" {{#end7}}selected{{/end7}}>7교시</option>
+				    <option value="8" {{#end8}}selected{{/end8}}>8교시</option>
+				    <option value="9" {{#end9}}selected{{/end9}}>9교시</option>
+				    <option value="10" {{#end10}}selected{{/end10}}>10교시</option>
+				</select>
 
-                <select name="end">
-                    {{#range}}
-                        <option value="{{.}}" {{#isEnd}}selected{{/isEnd}}>{{.}}교시</option>
-                    {{/range}}
-                </select>
+
 
                 <button type="button" class="remove-time text-red-600 hover:text-red-800">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -153,12 +178,6 @@
             {{/timeList}}
 
         </div>
-
-        <!-- 시간 추가 버튼 -->
-        <button type="button" id="addTime"
-            class="mt-4 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
-            <i class="fa-solid fa-plus mr-1"></i> 시간 추가
-        </button>
 
         <!-- 버튼 -->
         <div class="pt-6 flex justify-end gap-3">
@@ -182,23 +201,6 @@
 
 {{> profLayout/profFooter }}
 
-<script>
-    const periods = Array.from({ length: 10 }, (_, i) => i + 1);
-
-    document.getElementById('addTime').addEventListener('click', () => {
-        const row = document.querySelector('.time-row').cloneNode(true);
-        document.getElementById('timeContainer').appendChild(row);
-    });
-
-    document.getElementById('timeContainer').addEventListener('click', (e) => {
-        if (e.target.closest('.remove-time')) {
-            const rows = document.querySelectorAll('.time-row');
-            if (rows.length > 1) {
-                e.target.closest('.time-row').remove();
-            }
-        }
-    });
-</script>
 
 </body>
 </html>

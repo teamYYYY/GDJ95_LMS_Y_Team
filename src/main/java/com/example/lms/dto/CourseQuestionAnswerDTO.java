@@ -10,9 +10,22 @@ import lombok.Data;
 
 @Data
 public class CourseQuestionAnswerDTO {
-    private int answerNo;          // PK
-    private int questionNo;        // 어떤 질문에 대한 답변인지
-    private int writerUserNo;      // 작성자(교수)
-    private String answerContent;  // 답변 내용
-    private String createdate;     // 작성 시간
+
+    // 댓글 PK
+    private int answerNo;
+
+    // 어떤 질문의 댓글인지 FK
+    private int courseQuestionNo;
+
+    // 작성자 정보
+    private int writerUserNo;
+    private String writerName;
+    private String writerRole; // PROFESSOR만 댓글 작성 가능
+
+    // 댓글 내용
+    private String answerContent;
+    private String createdate;
+
+    // 교수 본인 댓글인지
+    private boolean answerOwner;
 }

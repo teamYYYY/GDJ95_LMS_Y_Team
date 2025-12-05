@@ -116,6 +116,14 @@
 		</dependency>
 		<!-- 졸업증명서 여기까지 -->
 	    
+	    <!--
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>db</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		-->
+		
 	</dependencies>
 
 	<build>

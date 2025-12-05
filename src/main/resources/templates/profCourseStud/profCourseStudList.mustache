@@ -54,35 +54,33 @@
 
                     <tbody class="bg-white divide-y divide-gray-200">
 
-                        {{#list}}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentName}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentId}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{deptName}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentGrade}}학년</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentPhone}}</td>
-
-                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                {{attendanceRate}}%
-                            </td>
-
-                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                {{gradeValue}}
-                            </td>
-
-                        </tr>
-                        {{/list}}
-
-                        {{^list}}
-                        <tr>
-                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-                                등록된 학생이 없습니다.
-                            </td>
-                        </tr>
-                        {{/list}}
-
-                    </tbody>
-
+					    {{#list}}
+					    <tr>
+					        <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentName}}</td>
+					        <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentId}}</td>
+					        <td class="px-6 py-4 whitespace-nowrap text-sm">{{deptName}}</td>
+					        <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentGrade}}학년</td>
+					        <td class="px-6 py-4 whitespace-nowrap text-sm">{{studentPhone}}</td>
+					
+					        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+					            {{attendanceRate}}%
+					        </td>
+					
+					        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+					            {{gradeValue}}
+					        </td>
+					    </tr>
+					    {{/list}}
+					
+					    {{^list}}
+					    <tr>
+					        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+					            등록된 학생이 없습니다.
+					        </td>
+					    </tr>
+					    {{/list}}
+					
+					</tbody>
                 </table>
             </div>
 
