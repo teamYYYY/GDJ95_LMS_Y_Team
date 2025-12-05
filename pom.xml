@@ -101,6 +101,21 @@
 	    </dependency>
 	    <!-- 엑셀관련 여기 까지 -->
 	    
+		<!-- 졸업증명서 기능때문에 추가 -->	    
+	    <!-- Flying Saucer Core (HTML to PDF 변환 엔진) -->
+		<dependency>
+		    <groupId>org.xhtmlrenderer</groupId>
+		    <artifactId>flying-saucer-core</artifactId>
+		    <version>9.1.22</version>
+		</dependency>
+		<!-- Flying Saucer PDF 확장 (iText 라이브러리 기반) -->
+		<dependency>
+		    <groupId>org.xhtmlrenderer</groupId>
+		    <artifactId>flying-saucer-pdf</artifactId>
+		    <version>9.1.22</version>
+		</dependency>
+		<!-- 졸업증명서 여기까지 -->
+	    
 	</dependencies>
 
 	<build>

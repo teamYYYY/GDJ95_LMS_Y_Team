@@ -234,9 +234,11 @@
                     <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
                         <i class="fa-regular fa-calendar-check"></i> 학사일정
                     </a>
-                    <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
-                        <i class="fa-solid fa-file-lines"></i> 증명서발급
-                    </a>
+                    <a id="certificateLink"
+			           href="/main/certificateOfGraduation"
+			           class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition cursor-pointer">
+			            <i class="fa-solid fa-file-lines"></i> 졸업증명서 발급 (팝업)
+			        </a>
                     <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
                         <i class="fa-solid fa-gear"></i> 설정
                     </a>
@@ -1167,6 +1169,52 @@ document.addEventListener('DOMContentLoaded', function() {
         el.textContent = formatDate(raw);
     });
 });
+</script>
+
+<!-- 졸업증명서 팝업창 처리 -->
+<script>
+    /**
+     * 지정된 URL을 새로운 팝업 창으로 엽니다.
+     * @param {string} url 팝업으로 띄울 URL
+     */
+    function openCertificatePopup(url) {
+        // 팝업 창의 이름, 크기 및 옵션을 정의합니다.
+        const windowName = 'CertificatePopup';
+        const width = 800; // 팝업 창 너비
+        const height = 600; // 팝업 창 높이
+        
+        // 화면 중앙에 팝업을 위치시키기 위한 계산
+        const left = (window.screen.width / 2) - (width / 2);
+        const top = (window.screen.height / 2) - (height / 2);
+
+        const windowFeatures = `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+
+        // window.open()을 사용하여 팝업 창을 엽니다.
+        const popupWindow = window.open(url, windowName, windowFeatures);
+
+        // 팝업이 성공적으로 열렸는지 확인 (브라우저 팝업 차단 등을 대비)
+        if (popupWindow) {
+            popupWindow.focus();
+        } else {
+            alert('팝업 창이 차단되었습니다. 브라우저 설정을 확인해주세요.');
+        }
+    }
+
+    // 1. 링크 요소를 가져옵니다.
+    const linkElement = document.getElementById('certificateLink');
+
+    // 2. 링크 클릭 이벤트를 오버라이드(가로채기)합니다.
+    linkElement.addEventListener('click', function(event) {
+        // 기본 <a> 태그 동작(페이지 이동)을 막습니다.
+        event.preventDefault(); 
+
+        // <a> 태그의 href 속성에서 URL을 가져옵니다.
+        const targetUrl = this.href; 
+        
+        // 팝업 함수를 호출합니다.
+        openCertificatePopup(targetUrl);
+    });
+
 </script>
 
 </body>

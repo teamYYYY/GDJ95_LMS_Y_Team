@@ -116,7 +116,7 @@
 			a.user_id as userId,
 			b.dept_name as deptName,
 			a.user_createdate as userCreatedate
-		FROM tb_sysuser a,
+		FROM tb_sysuser a
 		INNER JOIN tb_dept b
 		ON a.dept_code = b.dept_code
 		WHERE user_no = #{userNo}

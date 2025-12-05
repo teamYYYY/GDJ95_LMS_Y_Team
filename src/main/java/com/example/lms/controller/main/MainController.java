@@ -1,5 +1,10 @@
 package com.example.lms.controller.main;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +27,14 @@ import com.example.lms.dto.MainDTO;
 import com.example.lms.dto.SysUserDTO;
 import com.example.lms.dto.UniversityNoticeDTO;
 import com.example.lms.service.admin.UniversityNoticeService;
+import com.example.lms.service.certifipdf.CertificatePdfService;
+import com.example.lms.service.common.authorization.CertificateOfGraduationValidateService;
 import com.example.lms.service.common.authorization.ViewAuthorizationValidateService;
 import com.example.lms.service.main.MainService;
+import com.lowagie.text.DocumentException;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +56,12 @@ public class MainController {
 		
 		@Autowired
 		private UniversityNoticeService universityNoticeService;
+		
+		@Autowired
+		private CertificateOfGraduationValidateService certificateOfGraduationValidateService;
+		
+		@Autowired
+		private CertificatePdfService certificatePdfService;
 		
 	
 		// 메인 페이지 GET
@@ -305,4 +322,102 @@ public class MainController {
 
 	        return resultMap;
 	    }
+	    
+	    
+	    /**
+		 * 졸업증명서 사용자 항목 (일반 뷰 페이지)
+		 */
+		@GetMapping("/main/certificateOfGraduation")
+		public String certificateOfGraduation(HttpSession session, Model model) {
+
+			// 세션불러오기
+			SysUserDTO loginSysUserDTO = (SysUserDTO) session.getAttribute("loginUser");
+
+			Integer userNo = loginSysUserDTO.getUserNo();
+			String authCode = loginSysUserDTO.getAuthCode();
+			String authDetailName = loginSysUserDTO.getAuthDetailName();
+			Integer userGrade = loginSysUserDTO.getUserGrade(); // 새로 추가된 항목
+
+			MainDTO paramMainDto = new MainDTO();
+			paramMainDto.setUserNo(userNo);
+			paramMainDto.setAuthCode(authCode);
+			paramMainDto.setAuthDetailName(authDetailName);
+			paramMainDto.setUserGrade(userGrade); // 새로 추가된 항목 반영
+
+			List<MainDTO> certificateOfGraduationList = new ArrayList<>();
+
+			boolean certificateValidate = certificateOfGraduationValidateService.certificateOfGraduationValidate(paramMainDto);
+
+			if (certificateValidate) {
+				certificateOfGraduationList = mainService.certificateOfGraduationList(userNo);
+			}
+
+			model.addAttribute("certificateOfGraduationList", certificateOfGraduationList);
+			// false면 다운 불가하도록
+			model.addAttribute("certificateValidate", certificateValidate);
+
+			return "/certificate/certificateOfGraduation";
+		}
+
+		/**
+	     * 졸업증명서 PDF 발급
+	     */
+		@GetMapping("/main/certificateOfGraduation/pdf")
+		public void certificateOfGraduationPdf(
+	            HttpSession session, 
+	            HttpServletResponse response
+	    ) throws IOException, DocumentException { // DocumentException은 PDF 라이브러리 예외
+
+			SysUserDTO loginSysUserDTO = (SysUserDTO) session.getAttribute("loginUser");
+
+			Integer userNo = loginSysUserDTO.getUserNo();
+			String authCode = loginSysUserDTO.getAuthCode();
+			String authDetailName = loginSysUserDTO.getAuthDetailName();
+			Integer userGrade = loginSysUserDTO.getUserGrade(); // 새로 추가된 항목
+
+			MainDTO paramMainDto = new MainDTO();
+			paramMainDto.setUserNo(userNo);
+			paramMainDto.setAuthCode(authCode);
+			paramMainDto.setAuthDetailName(authDetailName);
+			paramMainDto.setUserGrade(userGrade); // 새로 추가된 항목 반영
+
+			boolean certificateValidate = certificateOfGraduationValidateService.certificateOfGraduationValidate(paramMainDto);
+
+			if (!certificateValidate) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "발급 권한이 없습니다.");
+				return;
+			}
+
+			// 1) 원본 데이터 조회 (Date/Timestamp 포함)
+			List<MainDTO> certificateOfGraduationList = mainService.certificateOfGraduationList(userNo);
+            
+            // ⭐️⭐️⭐️ 2) 서비스 메서드를 호출하여 날짜 포맷팅을 수행 ⭐️⭐️⭐️
+            // Date 객체를 'YYYY-MM-DD' 형식의 문자열로 변환하여 Map 리스트를 얻습니다.
+            List<Map<String, Object>> formattedDataList = 
+                certificatePdfService.formatCertificateDates(certificateOfGraduationList);
+
+			// 3) Mustache로 HTML 문자열 렌더링
+			// ⭐️ 가공된 리스트(formattedDataList)를 서비스로 전달
+			String html = certificatePdfService.renderCertificateHtml(formattedDataList, certificateValidate);
+
+			// 4) HTML -> PDF 변환
+	        // DocumentException이 여기서 발생할 수 있습니다.
+			byte[] pdfBytes = certificatePdfService.generatePdfFromHtml(html); 
+
+			// 5) HTTP 응답으로 내려주기
+	        // 파일명 인코딩 (한글 파일명 깨짐 방지)
+	        String filename = "졸업증명서.pdf";
+	        // URL 인코딩은 서비스 레이어가 아닌 컨트롤러에서 처리하는 것이 일반적입니다.
+	        String encodedFilename = java.net.URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
+
+			response.setContentType("application/pdf");
+	        // Content-Disposition 헤더에 파일명 인코딩을 적용합니다.
+			response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"; filename*=UTF-8''%s", encodedFilename, encodedFilename));
+			response.setContentLength(pdfBytes.length);
+
+			ServletOutputStream os = response.getOutputStream();
+			os.write(pdfBytes);
+			os.flush();
+		}
+
 }
