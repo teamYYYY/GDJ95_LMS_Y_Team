@@ -1,0 +1,55 @@
+<!-- studentGrade.mustache -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>성적 확인 | 학사관리시스템</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+
+{{> studentLayout/studentHeader }}
+{{> studentCourse/_studentCourseSubNav }}
+
+<main class="max-w-6xl mx-auto px-4 py-10">
+
+    <!-- 최종 성적 -->
+    {{#gradeList}}
+	<section class="bg-white rounded-2xl shadow-xl p-8 border border-gray-200 mb-8">
+	
+	    <div class="text-lg font-semibold text-gray-700 mb-6">
+	        최종 성적 :
+	        <span class="text-blue-600 text-2xl font-bold">{{gradeValue}}</span>
+	    </div>
+	
+	    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+	
+	        <div class="p-4 bg-gray-50 rounded-xl">
+	            <div class="text-sm text-gray-600 mb-1">평점</div>
+	            <div class="text-xl font-bold text-gray-800">{{gradeScore}}</div>
+	        </div>
+	
+	    </div>
+	
+	</section>
+	{{/gradeList}}
+	
+	{{^gradeList}}
+	<p class="text-center text-gray-400">아직 성적이 입력되지 않았습니다.</p>
+	{{/gradeList}}
+    
+</main>
+
+{{> studentLayout/studentFooter }}
+
+</body>
+</html>

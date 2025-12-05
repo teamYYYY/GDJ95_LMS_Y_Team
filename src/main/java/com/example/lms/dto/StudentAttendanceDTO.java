@@ -7,7 +7,6 @@ public class StudentAttendanceDTO {
 
     private int weekNo;            // 회차 (1~15)
     private int attendanceStatus;     // -1,0,1,2
-    private String createdate;
     private Double attendanceRate;
     
     public boolean isAttend() { return attendanceStatus == 0; }

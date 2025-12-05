@@ -1,4 +1,4 @@
-package com.example.lms.mapper.studentAssignment;
+package com.example.lms.mapper.studentCourse;
 
 import java.util.List;
 
@@ -12,24 +12,23 @@ import com.example.lms.dto.StudentAssignmentListDTO;
 @Mapper
 public interface StudentAssignmentMapper {
 
-    // 과제 목록
     List<StudentAssignmentListDTO> selectAssignmentList(
             @Param("courseNo") int courseNo,
-            @Param("studentUserNo") int studentUserNo);
+            @Param("writerUserNo") int writerUserNo);
 
-    // 과제 상세
     StudentAssignmentDetailDTO selectAssignmentDetail(
             @Param("assignmentNo") int assignmentNo,
-            @Param("studentUserNo") int studentUserNo);
+            @Param("writerUserNo") int writerUserNo);
 
-    // 내 제출 1건 조회
+    Integer selectSubmissionExists(
+            @Param("assignmentNo") int assignmentNo,
+            @Param("writerUserNo") int writerUserNo);
+
+    void insertSubmission(AssignmentSubmissionDTO dto);
+
+    void updateSubmission(AssignmentSubmissionDTO dto);
+
     AssignmentSubmissionDTO selectMySubmission(
             @Param("assignmentNo") int assignmentNo,
-            @Param("studentUserNo") int studentUserNo);
-
-    // INSERT
-    int insertSubmission(AssignmentSubmissionDTO dto);
-
-    // UPDATE
-    int updateSubmission(AssignmentSubmissionDTO dto);
+            @Param("writerUserNo") int writerUserNo);
 }

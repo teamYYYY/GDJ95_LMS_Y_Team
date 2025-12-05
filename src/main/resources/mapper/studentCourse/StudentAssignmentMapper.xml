@@ -2,31 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.lms.mapper.studentAssignment.StudentAssignmentMapper">
+<mapper namespace="com.example.lms.mapper.studentCourse.StudentAssignmentMapper">
 
     <!-- 학생 과제 목록 -->
-    <select id="selectAssignmentList"
+    <select id="selectAssignmentList" parameterType="map"
             resultType="com.example.lms.dto.StudentAssignmentListDTO">
 
         SELECT 
-              a.assignment_no AS assignmentNo
-            , a.assignment_title AS assignmentTitle
-            , a.assignment_due_date AS assignmentDeadline
-            , a.course_no AS courseNo
+	        a.assignment_no AS assignmentNo,
+	        a.course_no AS courseNo,
+	        a.assignment_title AS assignmentTitle,
+	        DATE_FORMAT(a.assignment_due_date, '%Y-%m-%d') AS assignmentDeadline,
+	        IFNULL(s.assignment_score, 0) AS assignmentScore,
+	        CASE WHEN s.assignment_submission_no IS NULL THEN 0 ELSE 1 END AS assignmentSubmitted
+	    FROM tb_assignment a
+	    LEFT JOIN tb_assignment_submission s
+	        ON a.assignment_no = s.assignment_no
+	       AND s.writer_user_no = #{writerUserNo}
+	    WHERE a.course_no = #{courseNo}
+	    ORDER BY a.assignment_due_date ASC
 
-            , CASE 
-                WHEN s.assignment_submission_no IS NULL THEN FALSE
-                ELSE TRUE
-              END AS submitted
-
-        FROM tb_assignment a
-        LEFT JOIN tb_assignment_submission s
-            ON s.assignment_no = a.assignment_no
-           AND s.writer_user_no = #{studentUserNo}
-           AND s.assignment_submission_status = 0
-
-        WHERE a.course_no = #{courseNo}
-        ORDER BY a.assignment_no DESC
     </select>
 
     <!-- 과제 상세 + 내 제출 정보 -->
@@ -59,7 +54,7 @@
 	    FROM tb_assignment a
 	    LEFT JOIN tb_assignment_submission s
 	        ON s.assignment_no = a.assignment_no
-	       AND s.writer_user_no = #{studentUserNo}
+	       AND s.writer_user_no = #{writerUserNo}
 	       AND s.assignment_submission_status = 0
 	
 	    WHERE a.assignment_no = #{assignmentNo}
@@ -83,7 +78,7 @@
             , updatedate
         FROM tb_assignment_submission
         WHERE assignment_no = #{assignmentNo}
-          AND writer_user_no = #{studentUserNo}
+          AND writer_user_no = #{writerUserNo}
           AND assignment_submission_status = 0
         LIMIT 1
     </select>

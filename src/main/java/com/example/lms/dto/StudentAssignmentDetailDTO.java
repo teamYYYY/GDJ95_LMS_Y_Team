@@ -11,8 +11,7 @@ public class StudentAssignmentDetailDTO {
     private String assignmentTitle;
     private String assignmentDescription;
 
-    // DATETIME → LocalDateTime으로 받기
-    private LocalDateTime assignmentDeadline;
+    private String assignmentDeadline;
 
     private Integer courseNo;
 
@@ -22,7 +21,7 @@ public class StudentAssignmentDetailDTO {
     private String assignmentSubmissionFileUrl;
     private Integer assignmentScore;
 
-    private LocalDateTime submittedDate;
+    private String submittedDate;
 
     // 상태 값
     private Boolean submitted;       // 제출 여부

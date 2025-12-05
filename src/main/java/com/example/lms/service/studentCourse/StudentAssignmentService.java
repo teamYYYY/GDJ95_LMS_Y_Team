@@ -1,4 +1,4 @@
-package com.example.lms.service.studentAssignment;
+package com.example.lms.service.studentCourse;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.lms.dto.AssignmentSubmissionDTO;
 import com.example.lms.dto.StudentAssignmentDetailDTO;
 import com.example.lms.dto.StudentAssignmentListDTO;
-import com.example.lms.mapper.studentAssignment.StudentAssignmentMapper;
+import com.example.lms.mapper.studentCourse.StudentAssignmentMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +19,21 @@ public class StudentAssignmentService {
 
     // 과제 목록
     public List<StudentAssignmentListDTO> getAssignmentList(int courseNo, int studentUserNo) {
-        return mapper.selectAssignmentList(courseNo, studentUserNo);
+
+        System.out.println("DEBUG >>> getAssignmentList() 호출됨");
+        System.out.println("DEBUG >>> courseNo = " + courseNo);
+        System.out.println("DEBUG >>> studentUserNo = " + studentUserNo);
+
+        List<StudentAssignmentListDTO> list = mapper.selectAssignmentList(courseNo, studentUserNo);
+
+        System.out.println("DEBUG >>> mapper.selectAssignmentList 결과 = " + list);
+        if (list != null) {
+            System.out.println("DEBUG >>> 결과 개수 = " + list.size());
+        }
+
+        return list;
     }
+
 
     // 과제 상세 + 내 제출 정보까지
     public StudentAssignmentDetailDTO getAssignmentDetail(int assignmentNo, int studentUserNo) {
