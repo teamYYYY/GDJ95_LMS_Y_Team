@@ -1,0 +1,82 @@
+<!-- studentAttendance.mustache -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>출석 | 학사관리시스템</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+
+{{> studentLayout/studentHeader }}
+{{> studentCourse/_studentCourseSubNav }}
+
+<main class="max-w-6xl mx-auto px-4 py-10">
+
+    <!-- 출석 요약 -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        {{#summary}}
+        <div class="bg-white rounded-xl p-5 shadow flex flex-col items-center">
+            <p class="text-sm text-gray-600">출석</p>
+            <p class="text-2xl font-bold text-indigo-700">{{attendanceCount}}</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow flex flex-col items-center">
+            <p class="text-sm text-gray-600">지각</p>
+            <p class="text-2xl font-bold text-amber-700">{{lateCount}}</p>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow flex flex-col items-center">
+            <p class="text-sm text-gray-600">결석</p>
+            <p class="text-2xl font-bold text-rose-700">{{absentCount}}</p>
+        </div>
+        {{/summary}}
+        {{^summary}}
+        <p class="text-gray-400">출석 정보가 아직 없습니다.</p>
+        {{/summary}}
+    </section>
+
+    <!-- 회차별 출석 상세 -->
+    <section class="bg-white rounded-2xl shadow p-6">
+        <table class="w-full text-sm text-gray-700 border">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-2 border">회차</th>
+                    <th class="p-2 border">상태</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#detailList}}
+                <tr>
+                    <td class="p-2 border text-center">{{weekNo}}</td>
+                    <td class="p-2 border text-center">
+                        {{#attendanceStatus}}
+                            {{#isAttend}}출석{{/isAttend}}
+                            {{#isLate}}지각{{/isLate}}
+                            {{#isAbsent}}결석{{/isAbsent}}
+                        {{/attendanceStatus}}
+                    </td>
+                </tr>
+                {{/detailList}}
+                {{^detailList}}
+                <tr>
+                    <td colspan="3" class="p-2 text-center text-gray-400">출석 정보가 없습니다.</td>
+                </tr>
+                {{/detailList}}
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+{{> studentLayout/studentFooter }}
+
+</body>
+</html>
