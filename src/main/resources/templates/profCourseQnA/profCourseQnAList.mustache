@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>문의 관리</title>
+
+    <link rel="stylesheet" as="style" crossorigin 
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: Pretendard, sans-serif; }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    {{> profLayout/profHeader }}
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-6">
+
+            <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <i class="fa-regular fa-circle-question mr-2 text-blue-600"></i> 문의 목록
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">번호</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작성자</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">등록일</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {{#list}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 text-sm text-gray-700 font-medium">{{courseQuestionNo}}</td>
+                            <td class="px-6 py-4 text-sm font-medium">
+                                <a href="/profCourseQnADetail?courseQuestionNo={{courseQuestionNo}}&courseNo={{courseNo}}"
+                                   class="text-blue-600 hover:text-indigo-900 font-medium">
+                                    {{courseQuestionTitle}}
+                                </a>
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-700">{{writerName}}</td>
+
+                            <td class="px-6 py-4 text-center">
+                                {{#answered}}
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">답변완료</span>
+                                {{/answered}}
+                                {{^answered}}
+                                    <span class="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full font-medium">미답변</span>
+                                {{/answered}}
+                            </td>
+
+                            <td class="px-6 py-4 text-center text-sm text-gray-700">{{createdate}}</td>
+                        </tr>
+                        {{/list}}
+
+                        {{^list}}
+                        <tr>
+                            <td colspan="5" class="px-6 py-6 text-center text-sm text-gray-500">
+                                등록된 문의가 없습니다.
+                            </td>
+                        </tr>
+                        {{/list}}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    {{> profLayout/profFooter }}
+
+</body>
+</html>

@@ -1,4 +1,6 @@
 <header>
+
+    <!-- 상단 로고 & 타이틀 -->
     <div class="bg-white py-4 px-6 border-b border-gray-200">
         <div class="max-w-7xl mx-auto flex items-center gap-3">
             <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white">
@@ -11,24 +13,65 @@
         </div>
     </div>
 
-    <div class="hero-bg h-24 w-full bg-blue-500"></div>
+    <!-- 히어로 배경 -->
+    <div class="hero-bg h-32 w-full"></div>
 
+    <!-- 내비게이션 -->
     <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <nav class="flex space-x-8 overflow-x-auto">
-                <a href="/courseList" class="flex items-center gap-2 py-4 text-blue-600 font-medium border-b-2 border-blue-600 transition">
+
+                <a href="/courseList"
+                   class="menu-link flex items-center gap-2 py-4 text-gray-600 font-medium border-b-2 border-transparent transition">
                     <i class="fa-solid fa-chalkboard-user"></i> 강의관리
                 </a>
-                <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
-                    <i class="fa-solid fa-user-check"></i> 출석관리
+
+                <a href="/profCourseNotice"
+                   class="menu-link flex items-center gap-2 py-4 text-gray-600 font-medium border-b-2 border-transparent transition">
+                    <i class="fa-solid fa-bullhorn"></i> 공지관리
                 </a>
-                <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition">
-                    <i class="fa-solid fa-square-poll-vertical"></i> 성적관리
+
+                <a href="/profCourseAssignment"
+                   class="menu-link flex items-center gap-2 py-4 text-gray-600 font-medium border-b-2 border-transparent transition">
+                    <i class="fa-solid fa-file-pen"></i> 과제관리
                 </a>
-                <a href="#" class="flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 font-medium border-b-2 border-transparent hover:border-blue-600 transition"> 
+
+                <a href="/profCourseQnAList"
+                   class="menu-link flex items-center gap-2 py-4 text-gray-600 font-medium border-b-2 border-transparent transition">
+                    <i class="fa-solid fa-circle-question"></i> 문의관리
+                </a>
+
+                <a href="/profSetting"
+                   class="menu-link flex items-center gap-2 py-4 text-gray-600 font-medium border-b-2 border-transparent transition">
                     <i class="fa-solid fa-gear"></i> 설정
                 </a>
+
             </nav>
         </div>
     </div>
 </header>
+
+<!-- URL 기반 메뉴 활성화 -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const links = document.querySelectorAll('.menu-link');
+        const currentUrl = window.location.pathname;
+
+        links.forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.remove('text-gray-600', 'border-transparent');
+                link.classList.add('text-blue-600', 'border-blue-600');
+            }
+        });
+    });
+</script>
+
+<style>
+    .hero-bg {
+        background-image: linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.8)),
+        url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+</style>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>성적관리</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+	{{> profLayout/profHeader }}
+	
+	<main class="max-w-7xl mx-auto px-4 py-8">
+	
+	    <!-- 강의 정보 -->
+	    <div class="bg-white p-6 rounded-xl shadow-sm border mb-6">
+	        <h2 class="text-2xl font-bold mb-2">성적 관리</h2>
+	        <p class="text-gray-600">강의번호: {{courseNo}}</p>
+	    </div>
+	
+	    <!-- 리스트 테이블 -->
+	    <div class="bg-white p-6 rounded-xl shadow-sm border">
+	
+	        <table class="min-w-full divide-y divide-gray-200">
+	            <thead class="bg-gray-50">
+	            <tr>
+	                <th class="px-4 py-3 text-left text-xs font-bold text-gray-600">이름</th>
+	                <th class="px-4 py-3 text-left text-xs font-bold text-gray-600">학번</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">출석률</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">과제점수</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">시험점수</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">최종점수</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">등급</th>
+	                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600">관리</th>
+	            </tr>
+	            </thead>
+	
+	            <tbody class="divide-y divide-gray-200">
+	
+	            {{#list}}
+	            <tr>
+	                <td class="px-4 py-3 text-sm">{{studentName}}</td>
+	                <td class="px-4 py-3 text-sm">{{studentId}}</td>
+	                <td class="px-4 py-3 text-center text-sm">{{attendanceRate}}%</td>
+	                <td class="px-4 py-3 text-center text-sm">
+	                	{{#assignmentScore}}{{assignmentScore}}{{/assignmentScore}}
+   						{{^assignmentScore}}-{{/assignmentScore}}
+	                </td>
+	                <td class="px-4 py-3 text-center text-sm">
+	               	 	{{#examScore}}{{examScore}}{{/examScore}}
+    					{{^examScore}}-{{/examScore}}
+	                </td>
+	                <td class="px-4 py-3 text-center text-sm font-bold">
+	                	{{#finalScore}}{{finalScore}}{{/finalScore}}
+    					{{^finalScore}}-{{/finalScore}}
+    				</td>
+					<td class="px-4 py-3 text-center text-sm font-bold">
+						{{#gradeValue}}{{gradeValue}}{{/gradeValue}}
+    					{{^gradeValue}}-{{/gradeValue}}
+					</td>
+	
+	                <td class="px-4 py-3 text-center">
+	                    <a href="/profCourseGradeForm?courseNo={{courseNo}}&studentUserNo={{studentUserNo}}"
+	                       class="px-3 py-1 bg-indigo-600 text-white rounded text-xs hover:bg-indigo-700">
+	                        성적입력
+	                    </a>
+	                </td>
+	            </tr>
+	            {{/list}}
+	
+	            {{^list}}
+	            <tr>
+	                <td colspan="8" class="py-6 text-center text-gray-400">
+	                    등록된 학생이 없습니다.
+	                </td>
+	            </tr>
+	            {{/list}}
+	
+	            </tbody>
+	        </table>
+	    </div>
+	</main>
+	
+	{{> profLayout/profFooter }}
+
+</body>
+</html>

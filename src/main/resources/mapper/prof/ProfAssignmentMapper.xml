@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.prof.ProfAssignmentMapper">
+
+	<!-- 메뉴 -->
+	<select id="selectCourseAssignmentSummary" resultType="com.example.lms.dto.ProfCourseAssignmentDTO">
+        SELECT
+            c.course_no AS courseNo,
+            c.course_name AS courseName,
+            (SELECT COUNT(*) 
+             FROM tb_assignment a
+             WHERE a.course_no = c.course_no
+            ) AS assignmentCount,
+            (SELECT a.assignment_title
+             FROM tb_assignment a
+             WHERE a.course_no = c.course_no
+             ORDER BY a.createdate DESC LIMIT 1
+            ) AS latestAssignmentTitle
+        FROM tb_course c
+        WHERE c.professor_user_no = #{professorUserNo}
+    </select>
+
+    <!-- 강의별 과제 리스트 -->
+    <select id="selectAssignmentListByProf" resultType="com.example.lms.dto.AssignmentDTO">
+        select 
+            assignment_no assignmentNo,
+            course_no courseNo,
+            assignment_title assignmentTitle,
+            assignment_status assignmentStatus,
+            createdate
+        from tb_assignment 
+        where course_no = #{courseNo}
+        order by assignment_no desc
+        limit #{startRow}, #{rowPerPage}
+    </select>
+    
+    <select id="selectAssignmentCount" resultType="int">
+        select count(*) from tb_assignment where course_no = #{courseNo}
+    </select>
+    
+    <!-- 상세보기 -->
+    <select id="selectAssignmentDetail" resultType="com.example.lms.dto.AssignmentDTO">
+        select 
+            assignment_no assignmentNo,
+            course_no courseNo,
+            assignment_title assignmentTitle,
+            assignment_description assignmentDescription,
+            assignment_due_date assignmentDueDate,
+            assignment_status assignmentStatus,
+            createdate,
+            updatedate
+        from tb_assignment
+        where assignment_no = #{assignmentNo}
+    </select>
+    
+    <!-- 학생 과제 제출 리스트 -->
+    <select id="selectSubmissionList" resultType="com.example.lms.dto.ProfCourseAssignmentDTO">
+	    SELECT
+	        st.user_no AS writerUserNo,
+	        st.user_name AS writerName,
+	        st.user_id AS writerId,
+	
+	        sb.assignment_submission_no AS assignmentSubmissionNo,
+	        sb.assignment_submission_content AS assignmentSubmissionContent,
+	        sb.assignment_submission_file_url AS assignmentSubmissionFileUrl,
+	        sb.assignment_score AS assignmentScore,
+	        sb.assignment_submission_status AS assignmentSubmissionStatus,
+	        sb.createdate AS createdate,
+	        sb.updatedate AS updatedate,
+	
+	        CASE WHEN sb.assignment_submission_no IS NULL THEN FALSE ELSE TRUE END AS isSubmitted,
+	        CASE WHEN sb.assignment_submission_no IS NULL THEN TRUE ELSE FALSE END AS isNotSubmitted
+	
+	    FROM tb_enrollment e
+	    JOIN tb_sysuser st ON e.student_user_no = st.user_no
+	    LEFT JOIN tb_assignment_submission sb 
+	        ON e.student_user_no = sb.writer_user_no
+	        AND sb.assignment_no = #{assignmentNo}
+	
+	    WHERE e.course_no = #{courseNo}
+	    ORDER BY st.user_name ASC
+	</select>
+    
+    <!-- 등록 -->
+    <insert id="insertAssignment" parameterType="com.example.lms.dto.AssignmentDTO"
+            useGeneratedKeys="true" keyColumn="assignment_no" keyProperty="assignmentNo">
+        insert into tb_assignment (
+            course_no,
+            assignment_title,
+            assignment_description,
+            assignment_due_date,
+            assignment_status,
+            createdate
+        ) values (
+            #{courseNo},
+            #{assignmentTitle},
+            #{assignmentDescription},
+            #{assignmentDueDate},
+            #{assignmentStatus},
+            NOW()
+        )
+    </insert>
+    
+    <!-- 수정 -->
+    <update id="updateAssignment" parameterType="com.example.lms.dto.AssignmentDTO">
+        update tb_assignment
+        set
+            assignment_title = #{assignmentTitle},
+            assignment_description = #{assignmentDescription},
+            assignment_due_date = #{assignmentDueDate},
+            assignment_status = #{assignmentStatus},
+            updatedate = NOW()
+        where assignment_no = #{assignmentNo}
+    </update>
+    
+    <!-- 삭제 -->
+    <delete id="deleteAssignment">
+        delete from tb_assignment
+        where assignment_no = #{assignmentNo}
+    </delete>
+</mapper>
